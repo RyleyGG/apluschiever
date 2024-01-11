@@ -13,9 +13,9 @@ fi
 
 if [ ! -d ./backend/.venv ]; then
     echo "Creating and initializing python virtual environment..."
-    python3 -m venv ./backend/.venv
+    python -m venv ./backend/.venv
     echo "Activating the virtual environment..."
-    source ./backend/.venv/bin/activate
+    source ./backend/.venv/Scripts/activate
     pip install -r backend/requirements.txt
 fi
 
