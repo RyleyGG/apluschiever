@@ -6,14 +6,13 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from services.config_service import config
-
-from services.config_service import config
+from services import auth_service
+from routers import auth_router
 from models.db_models import User as UserDb
 
 
 app = FastAPI()
-# Template for adding router:
-# app.include_router(some_router.router, prefix='/some_router')
+app.include_router(auth_router.router, prefix='/auth')
 
 origins = ["*"]
 
@@ -32,11 +31,6 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-# Template for adding authentication to FastAPI endpoint:
-# @app.get("/")
-# async def root(user: UserDb = Depends(auth_service.validateToken)):
-#     return {'message': 'Hello World'}
-
 @app.get("/")
-async def root():
+async def root(user: UserDb = Depends(auth_service.validateToken)):
     return {'message': 'Hello World'}

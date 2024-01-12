@@ -29,13 +29,12 @@ NOTE: if on Windows, shell scripts should be run in Git Bash to ensure compatibi
 
 
 ### Running pytest
-A+chiever utilizes the pytest framework to implement a test suite. Steps to run locally:
+A+chiever utilizes the pytest framework to implement a test suite. To run, either use the *run_test_suite.sh* script or use the following commands:
 1. Activate Python virtual environment:
 ```
 cd [repository]/backend
 Windows: .venv\Scripts\activate
 Mac/Linux: source .venv/bin/activate
-cd backend
 pytest
 ```
 ### Helpful Tools

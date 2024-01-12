@@ -1,5 +1,4 @@
 from models.dto_models import SignUpInfo
-from models.db_models import UserToken, Meal, MealIngredient, Ingredient
 from services.config_service import logger
 from services.config_service import config
 from conftest import testClient, dbSession
@@ -7,7 +6,6 @@ from conftest import testClient, dbSession
 # NOTE: All tests must have dbSession and overrideDbDepend passed in
 _accessToken = None
 
-    
 
 def test_sign_up(testClient, dbSession, overrideDbDepend):
     res = testClient.post(
