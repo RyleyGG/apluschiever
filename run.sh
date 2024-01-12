@@ -7,5 +7,5 @@ docker compose build
 docker compose up &
 
 cd ../frontend
-# TODO: start frontend app
+ng serve --open
 wait
