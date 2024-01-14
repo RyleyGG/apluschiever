@@ -1,0 +1,13 @@
+pydantic
+pydantic-settings
+fastapi
+uvicorn
+psycopg2
+sqlalchemy
+passlib
+pyjwt
+requests
+pytest
+httpx
+loguru
+bcrypt
