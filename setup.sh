@@ -48,4 +48,5 @@ else
     echo "Could not find mini_nuke.sh file. Your repository may be corrupted, or need to be re-pulled."
 fi
 
+cd frontend
 npm install
