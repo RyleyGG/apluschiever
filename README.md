@@ -12,6 +12,7 @@ A+chiever is a node-based education framework
 A+chiever utilizes a Python virtual environment to aid in dependency resolution.
 
 1. Install Python 3.10 or newer
+2. Install Angular [here](https://angular.io/guide/setup-local)
 2. Pull down the most recent version of this repository to a local location.
 3. Install PostgreSQL binaries if you don't have it installed already:
     ```
