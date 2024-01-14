@@ -13,13 +13,13 @@ A+chiever utilizes a Python virtual environment to aid in dependency resolution.
 
 1. Install Python 3.10 or newer
 2. Install Angular [here](https://angular.io/guide/setup-local)
-2. Pull down the most recent version of this repository to a local location.
-3. Install PostgreSQL binaries if you don't have it installed already:
+3. Pull down the most recent version of this repository to a local location.
+4. Install PostgreSQL binaries if you don't have it installed already:
     ```
     Windows: https://www.postgresql.org/download/windows/
     Mac (requires brew [https://brew.sh/]): Run brew install postgresql
     ```
-4. Setup environment (create .env and virtual environment):
+5. Setup environment (create .env and virtual environment):
     ```
     cd [repository]
     ./setup.sh
