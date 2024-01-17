@@ -10,7 +10,7 @@
     "compodoc:build": "compodoc -p tsconfig.doc.json",
     "compodoc:build-and-serve": "compodoc -p tsconfig.doc.json -s --port 5555 -w -o",
     "compodoc:serve": "compodoc -s --port 5555 -w -o",
-    "build:ci": "ng build --prod",
+    "build:ci": "ng build",
     "test:ci": "ng test --browsers=ChromeHeadless --watch=false --code-coverage"
   },
   "private": true,
