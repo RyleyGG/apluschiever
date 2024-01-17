@@ -1,0 +1,20 @@
+# local dev environment
+.env
+.vscode
+.expo
+.DS_Store
+frontend/.editorconfig
+
+# backend
+backend/__pycache__
+backend/routers/__pycache__
+backend/models/__pycache__
+backend/services/__pycache__
+backend/.venv
+backend/logs/*
+!backend/logs/.gitkeep
+
+# frontend
+frontend/dist
+frontend/.angular
+frontend/node_modules
