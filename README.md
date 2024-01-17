@@ -53,5 +53,7 @@ npm run compodoc:serve-and-build
 ### Helpful Links/Docs
 * [Pydantic Dev Docs](https://docs.pydantic.dev/latest/) - Docs for Pydantic, the tool we use for backend validation and transformation
 
+* [Angular DevTools](https://angular.dev/tools/devtools) - This is a useful browser extension for debugging angular applications.
+
 ### Other Tips
 * FastAPI endpoints can quickly be tested locally without requiring the front-end by either visiting localhost:8000/docs or with the use of third-party tools such as [Postman](https://www.postman.com/).
