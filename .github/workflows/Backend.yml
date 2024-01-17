@@ -9,17 +9,34 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         python-version: ["3.11", "3.12"]
+
     defaults:
       run:
         working-directory: ./backend
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: pass
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+
     steps:
     - uses: actions/checkout@v4
     - name: Use Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -29,7 +46,7 @@ jobs:
         python -m pip install --upgrade pip
         echo "Installing dependencies..."
         if  [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
+      
     - name: Test
       run: |
         pytest
