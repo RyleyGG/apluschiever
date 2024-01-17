@@ -38,3 +38,8 @@ jobs:
       run: |
         source .venv/Scripts/activate
         pytest
+
+    - name: Run PyLint
+      run: |
+        pip install pylint
+        pylint --fail-under=6.5 $(git ls-files '*.py')
