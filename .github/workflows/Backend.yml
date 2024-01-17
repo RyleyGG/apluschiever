@@ -27,16 +27,11 @@ jobs:
       run: |
         echo "Installing PIP..."
         python -m pip install --upgrade pip
-        echo "Creating and initializing python virtual environment..."
-        python -m venv ./.venv
-        echo "Activating the virtual environment..."
-        source ./.venv/Scripts/activate
         echo "Installing dependencies..."
         if  [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Test
       run: |
-        source .venv/Scripts/activate
         pytest
 
     - name: Run PyLint
