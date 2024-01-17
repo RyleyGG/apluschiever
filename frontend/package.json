@@ -8,8 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "compodoc:build": "compodoc -p tsconfig.doc.json",
-    "compodoc:build-and-serve": "compodoc -p tsconfig.doc.json -s",
-    "compodoc:serve": "compodoc -s"
+    "compodoc:build-and-serve": "compodoc -p tsconfig.doc.json -s --port 5555",
+    "compodoc:serve": "compodoc -s --port 5555"
   },
   "private": true,
   "dependencies": {

@@ -2,6 +2,7 @@
 A+chiever is a node-based education framework
 
 ### Requirements
+* Angular CLI
 * Python 3.10 or newer
 * Docker Desktop
 * All library requirements are present in included in the *requirements.txt* file. Instructions on how to download these included in the Setup section.
@@ -28,7 +29,6 @@ A+chiever utilizes a Python virtual environment to aid in dependency resolution.
 
 NOTE: if on Windows, shell scripts should be run in Git Bash to ensure compatibility.
 
-
 ### Running pytest
 A+chiever utilizes the pytest framework to implement a test suite. To run, either use the *run_test_suite.sh* script or use the following commands:
 1. Activate Python virtual environment:
@@ -38,6 +38,15 @@ Windows: .venv\Scripts\activate
 Mac/Linux: source .venv/bin/activate
 pytest
 ```
+
+### Running CompoDoc Documentation
+A+chiever utilizes CompoDoc to automatically generate documentation for the Angular web application. To run this documentation
+either use the *run_docs.sh* script or use the following commands:
+```
+cd [repository]/frontend
+npm run compodoc:serve-and-build
+```
+
 ### Helpful Tools
 * [PGAdmin](https://www.pgadmin.org/download/) - GUI for interacting with PostgreSQL database. Makes debugging and backend testing much easier.
 
