@@ -18,3 +18,4 @@ backend/logs/*
 frontend/dist
 frontend/.angular
 frontend/node_modules
+frontend/documentation/*

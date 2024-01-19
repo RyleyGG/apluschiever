@@ -1,0 +1,59 @@
+name: Backend
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Dependencies
+      run: |
+        echo "Installing PIP..."
+        python -m pip install --upgrade pip
+        echo "Installing dependencies..."
+        if  [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      
+    - name: Test
+      run: |
+        pytest
+      env:
+        postgres_password: postgres
+
+    - name: Run PyLint
+      run: |
+        pip install pylint
+        pylint --fail-under=6.5 $(git ls-files '*.py')
