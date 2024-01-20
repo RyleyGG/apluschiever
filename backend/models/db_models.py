@@ -23,7 +23,7 @@ class Course(SQLModel, table=True):
     __tablename__ = 'Course'
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     title: str = Field(nullable=False)
-    short_description: str
+    short_description: Optional[str]
     course_owner_id: uuid.UUID = Field(foreign_key='User.id')
     course_owner: User = Relationship(back_populates='courses')
     nodes: Optional[List[Node]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[Node]])))
