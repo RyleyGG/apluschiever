@@ -9,6 +9,7 @@ from services.config_service import logger
 _access_token = None
 _user_id = None
 
+
 def test_sign_up(db: Session, client: TestClient):
     res = client.post(
         '/auth/sign_up',
