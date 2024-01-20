@@ -18,6 +18,7 @@ class SuccessfulUserAuth(BaseModel):
     token_type: str
     access_token: str
     refresh_token: str
+    user_id: UUID4
 
 
 class RefreshToken(BaseModel):

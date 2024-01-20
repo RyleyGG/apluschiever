@@ -24,7 +24,7 @@ async def attempt_sign_in(signin_obj: SignInInfo, db: Session = Depends(get_sess
 
     access_token = auth_service.create_token({'sub': existing_user.email_address}, config.access_token_lifetime)
     refresh_token = auth_service.create_token({'sub': existing_user.email_address}, config.refresh_token_lifetime)
-    return {'access_token': access_token, 'refresh_token': refresh_token, 'token_type': 'bearer'}
+    return {'access_token': access_token, 'refresh_token': refresh_token, 'token_type': 'bearer', 'user_id': existing_user.id}
 
 
 @router.post('/sign_up')
