@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel
@@ -8,8 +10,10 @@ from models.db_models import User, Course
 from services.api_utility_service import engine
 
 
-def on_startup():
+@asynccontextmanager
+async def on_startup(app: FastAPI):
     SQLModel.metadata.create_all(engine)
+    yield
 
 
 app = FastAPI(lifespan=on_startup)
