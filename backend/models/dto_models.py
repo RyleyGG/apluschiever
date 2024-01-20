@@ -1,8 +1,4 @@
-import uuid
-
 from pydantic import BaseModel, UUID4
-from models.pydantic_models import User
-
 from typing import Optional, List
 
 

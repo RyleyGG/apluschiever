@@ -3,12 +3,12 @@ from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
+from sqlmodel import Session, select
 
+from models.db_models import User
 from services.config_service import config
-from models.db_models import User as UserDb
-from db import getDb
-from sqlalchemy.orm import Session
 
+from services.api_utility_service import get_session
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -30,7 +30,7 @@ def gen_password_hash(password):
     return pwd_context.hash(password)
 
 
-async def validate_token(token: str = Depends(oauth_scheme), db: Session = Depends(getDb)):
+async def validate_token(token: str = Depends(oauth_scheme), db: Session = Depends(get_session)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -51,7 +51,7 @@ async def validate_token(token: str = Depends(oauth_scheme), db: Session = Depen
     except Exception as e:
         raise credentials_exception
 
-    user = db.query(UserDb).filter(UserDb.email_address == email).first()
+    user = db.exec(select(User).where(User.email_address == email)).first()
     if not user:
         raise credentials_exception
 
@@ -62,5 +62,5 @@ async def validate_token(token: str = Depends(oauth_scheme), db: Session = Depen
             raise token_exception
     except Exception:
         raise token_exception
-    
+
     return user

@@ -1,24 +1,25 @@
 from fastapi import APIRouter, Depends
-from db import getDb
-from sqlalchemy.orm import Session
 from typing import List
 
-from models.db_models import User as UserDb
-from models.pydantic_models import User as UserPyd
+from sqlmodel import Session, select
+
+from models.db_models import User
 from models.dto_models import UserFilters
+from services.api_utility_service import get_session
 
 router = APIRouter()
 
 
-@router.post('/search', response_model=List[UserPyd], response_model_by_alias=False)
-async def search_users(filters: UserFilters, db: Session = Depends(getDb)):
+@router.post('/search', response_model=List[User], response_model_by_alias=False)
+async def search_users(filters: UserFilters, db: Session = Depends(get_session)):
     if not filters:
         return None
 
-    return_obj = db.query(UserDb)
+    query_statement = select(User)
     if filters.ids:
-        return_obj = return_obj.filter(UserDb.id.in_(filters.ids))
+        query_statement = query_statement.where(User.id.in_(filters.ids))
     if filters.emails:
-        return_obj = return_obj.filter(UserDb.email_address.in_(filters.emails))
+        query_statement = query_statement.where(User.email_address.in_(filters.emails))
 
+    return_obj = db.exec(query_statement).all()
     return return_obj

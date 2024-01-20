@@ -1,18 +1,19 @@
 from fastapi import APIRouter, Depends
-from db import getDb
-from sqlalchemy.orm import Session
 from typing import List
 
-from models.db_models import Course as CourseDb
-from models.pydantic_models import Course as CoursePyd, Node
-from models.dto_models import CourseFilters, NewCourse
+from sqlmodel import select, Session
+
+from models.db_models import Course
+from models.dto_models import CourseFilters
+from models.pydantic_models import Node
+from services.api_utility_service import get_session
 
 router = APIRouter()
 
 
 # @router.get('/')
-# async def test_add_course(db: Session = Depends(getDb)):
-#     test_course = CourseDb(title="Test", course_owner_id="HARDCODE ID HERE")
+# async def test_add_course(db: Session = Depends(get_session)):
+#     test_course = Course(title="Test", course_owner_id="HARDCODE ID HERE")
 #
 #     test_nodes = []
 #
@@ -23,28 +24,31 @@ router = APIRouter()
 #     db.add(test_course)
 #     db.commit()
 
+
 # @router.get('/')
-# async def test_add_course(db: Session = Depends(getDb)):
-#     test_course = db.query(CourseDb).filter(CourseDb.id == "HARDCODE ID HERE").first()
+# async def test_get_nodes(db: Session = Depends(get_session)):
+#     test_course = db.query(Course).filter(Course.id == "HARDCODE ID HERE").first()
 #     node_names = []
 #     for node in test_course.nodes:
 #         node_names.append(node.title)
 #
 #     return node_names
 
-@router.post('/search', response_model=List[CoursePyd], response_model_by_alias=False)
-async def search_courses(filters: CourseFilters, db: Session = Depends(getDb)):
+
+@router.post('/search', response_model=List[Course], response_model_by_alias=False)
+async def search_courses(filters: CourseFilters, db: Session = Depends(get_session)):
     if not filters:
         return None
 
-    return_obj = db.query(CourseDb)
+    query_statement = select(Course)
     if filters.ids:
-        return_obj = return_obj.filter(CourseDb.id.in_(filters.ids))
+        query_statement = query_statement.where(Course.id.in_(filters.ids))
     if filters.owned_by:
-        return_obj = return_obj.filter(CourseDb.course_owner_id.in_(filters.owned_by))
+        query_statement = query_statement.where(Course.course_owner_id.in_(filters.owned_by))
 
     # TODO: make this more resilient (i.e. fuzzy searching, case-insensitivity)
     if filters.course_title:
-        return_obj = return_obj.filter(CourseDb.title.like(f'%{filters.course_title}%'))
+        query_statement = query_statement.where(Course.title.like(f'%{filters.course_title}%'))
 
+    return_obj = db.exec(query_statement).all()
     return return_obj

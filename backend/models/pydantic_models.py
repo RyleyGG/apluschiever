@@ -1,24 +1,6 @@
-import uuid
-from typing import Optional, List
-from pydantic import BaseModel
+from sqlmodel import SQLModel
 
 
-class User(BaseModel):
-    id: uuid.UUID
-    email_address: str
-    first_name: str
-    last_name: str
-    password: str
-
-
-class Node(BaseModel):
+class Node(SQLModel, table=False):
     title: str
     short_description: str
-
-
-class Course(BaseModel):
-    id: uuid.UUID
-    title: str
-    short_description: Optional[str] = None
-    course_owner_id: uuid.UUID
-    nodes: Optional[List[Node]] = None
