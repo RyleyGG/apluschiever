@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Depends
 from db import getDb
 from sqlalchemy.orm import Session
 from typing import List
@@ -8,11 +8,6 @@ from models.pydantic_models import User as UserPyd
 from models.dto_models import UserFilters
 
 router = APIRouter()
-
-
-@router.get('/', response_model_by_alias=False)
-def hello_world():
-    return {'message': 'Hello world!'}
 
 
 @router.post('/search', response_model=List[UserPyd], response_model_by_alias=False)

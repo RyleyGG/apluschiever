@@ -8,13 +8,14 @@ from sqlalchemy.orm import sessionmaker
 from db import getDb
 from services.config_service import config
 from services import auth_service
-from routers import auth_router, user_router
+from routers import auth_router, user_router, course_router
 from models.db_models import User as UserDb
 
 
 app = FastAPI()
 app.include_router(auth_router.router, prefix='/auth')
-app.include_router(user_router.router, prefix='/user')
+app.include_router(user_router.router, prefix='/user', dependencies=[Depends(auth_service.validate_token)])
+app.include_router(course_router.router, prefix='/course', dependencies=[Depends(auth_service.validate_token)])
 
 origins = ["*"]
 

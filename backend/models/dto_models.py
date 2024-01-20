@@ -31,3 +31,9 @@ class RefreshToken(BaseModel):
 class UserFilters(BaseModel):
     ids: Optional[List[UUID4]] = None
     emails: Optional[List[str]] = None
+
+
+class CourseFilters(BaseModel):
+    ids: Optional[List[UUID4]] = None
+    owned_by: Optional[List[UUID4]] = None
+    course_title: Optional[str] = None
