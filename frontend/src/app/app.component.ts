@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { InternetConnectionService } from './core/services/internet-connection/internet-connection.service';
 
 /**
  * The main application component, currently the sample hello world page. 
@@ -14,4 +15,12 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'apluschiever';
+
+  constructor(private internetConnection: InternetConnectionService) {
+    console.log(this.internetConnection.getConnectionStatus());
+
+    this.internetConnection.observeConnectionStatus().subscribe((connected: boolean) => {
+      console.log(connected);
+    });
+  }
 }
