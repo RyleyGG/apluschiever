@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from "rxjs";
 /**
  * Gets a reference to the browser's window api
  */
-declare var window: any;
+declare var window: Window;
 
 /**
  * A service which allows components to view internet connection status according to the browser. 
