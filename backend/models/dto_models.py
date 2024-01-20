@@ -1,7 +1,10 @@
-from pydantic import BaseModel
+import uuid
+
+from pydantic import BaseModel, UUID4
 from models.pydantic_models import User
 
-from typing import Optional
+from typing import Optional, List
+
 
 class SignUpInfo(BaseModel):
     email_address: str
@@ -9,14 +12,22 @@ class SignUpInfo(BaseModel):
     last_name: str
     password: str
 
+
 class SignInInfo(BaseModel):
     email_address: str
     password: str
-    
+
+
 class SuccessfulUserAuth(BaseModel):
     token_type: str
     access_token: str
     refresh_token: str
-    
+
+
 class RefreshToken(BaseModel):
     refresh_token: str
+
+
+class UserFilters(BaseModel):
+    ids: Optional[List[UUID4]] = None
+    emails: Optional[List[str]] = None

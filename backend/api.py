@@ -5,14 +5,16 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+from db import getDb
 from services.config_service import config
 from services import auth_service
-from routers import auth_router
+from routers import auth_router, user_router
 from models.db_models import User as UserDb
 
 
 app = FastAPI()
 app.include_router(auth_router.router, prefix='/auth')
+app.include_router(user_router.router, prefix='/user')
 
 origins = ["*"]
 

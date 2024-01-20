@@ -9,18 +9,18 @@ from services.config_service import dbUrl
 from models.db_models import User
 
 @pytest.fixture(scope="module")
-def overrideDbDepend(dbSession):
-    app.dependency_overrides[getDb] = lambda: dbSession
+def override_db_depend(db_session):
+    app.dependency_overrides[getDb] = lambda: db_session
     yield
     app.dependency_overrides.pop(getDb, None)
     
 @pytest.fixture(scope="module")
-def testClient():
+def test_client():
     with TestClient(app) as client:
         yield client
         
 @pytest.fixture(scope="module")
-def dbSession():
+def db_session():
     engine = create_engine(dbUrl.replace('@db', '@localhost'))
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     connection = engine.connect()
