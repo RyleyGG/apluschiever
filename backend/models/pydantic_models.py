@@ -19,6 +19,6 @@ class Node(BaseModel):
 class Course(BaseModel):
     id: uuid.UUID
     title: str
-    short_description: str
+    short_description: Optional[str] = None
     course_owner_id: uuid.UUID
-    nodes: List[Node]
+    nodes: Optional[List[Node]] = None

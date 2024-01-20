@@ -37,3 +37,9 @@ class CourseFilters(BaseModel):
     ids: Optional[List[UUID4]] = None
     owned_by: Optional[List[UUID4]] = None
     course_title: Optional[str] = None
+
+
+class NewCourse(BaseModel):
+    title: str
+    short_description: Optional[str] = None
+    course_owner_id: UUID4

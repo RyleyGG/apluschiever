@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.post('/search', response_model=List[UserPyd], response_model_by_alias=False)
-def search_users(filters: UserFilters, db: Session = Depends(getDb)):
+async def search_users(filters: UserFilters, db: Session = Depends(getDb)):
     if not filters:
         return None
 

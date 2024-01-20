@@ -19,8 +19,8 @@ class User(Base):
 class Course(Base):
     __tablename__ = 'Course'
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
-    title = Column(String)
+    title = Column(String, nullable=False)
     short_description = Column(String)
-    course_owner_id = Column(UUID(as_uuid=True), ForeignKey('User.id'))
+    course_owner_id = Column(UUID(as_uuid=True), ForeignKey('User.id'), nullable=False)
     course_owner = relationship("User")
     nodes = Column(JSON)
