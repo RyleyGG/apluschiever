@@ -39,5 +39,31 @@ describe('InternetConnectionService', () => {
 
     });
 
+    it('should observe changes in connection status', fakeAsync(() => {
+        const onlineStatuses: boolean[] = []; // Observed statuses
+        const expectedOnlineStatuses = [true, false, true, false]; // Expected status changes
 
+        // Trigger online event and wait for changes to propagate (so there is a known start state)
+        window.dispatchEvent(new Event('online'));
+        tick();
+
+        /**
+         * Monitor the reported status changes to the array
+         */
+        const subscription = service.observeConnectionStatus().subscribe((isOnline) => {
+            onlineStatuses.push(isOnline);
+        });
+
+        // Send rest of the events
+        window.dispatchEvent(new Event('offline'));
+        tick();
+        window.dispatchEvent(new Event('online'));
+        tick();
+        window.dispatchEvent(new Event('offline'));
+        tick();
+
+        // Check that the service correctly reports online/offline status changes.
+        expect(onlineStatuses).toEqual(expectedOnlineStatuses);
+        subscription.unsubscribe(); // Clean up subscription
+    }));
 });
