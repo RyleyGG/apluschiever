@@ -1,5 +1,8 @@
 import { Injectable } from "@angular/core";
 
+/**
+ * Gets a reference to the browser's window api
+ */
 declare var window: Window;
 
 /**
@@ -9,8 +12,6 @@ declare var window: Window;
     providedIn: 'root'
 })
 export class SessionStorageService {
-
-    constructor() { }
 
     /**
      * Get an item in session storage.
