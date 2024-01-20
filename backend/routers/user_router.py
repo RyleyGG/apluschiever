@@ -12,7 +12,7 @@ router = APIRouter()
 
 @router.get('/', response_model_by_alias=False)
 def hello_world():
-    return {'message': 'Test worked!'}
+    return {'message': 'Hello world!'}
 
 
 @router.post('/search', response_model=List[UserPyd], response_model_by_alias=False)
