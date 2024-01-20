@@ -31,6 +31,7 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
+
 @app.get("/")
-async def root(user: UserDb = Depends(auth_service.validateToken)):
+async def root(user: UserDb = Depends(auth_service.validate_token)):
     return {'message': 'Hello World'}
