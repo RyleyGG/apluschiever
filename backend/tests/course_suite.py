@@ -5,15 +5,13 @@ from sqlmodel import Session, select
 from models.db_models import User, Course
 from models.pydantic_models import Node
 from services.config_service import logger
-
-_access_token = None
-_user_id = None
+from services.config_service import config
 
 
 def test_add_courses(db: Session, client: TestClient):
-    test_course_1 = Course(title='Test 1', course_owner_id=_user_id)
-    test_course_2 = Course(title='Test 2', course_owner_id=_user_id)
-    test_course_3 = Course(title='Test 3', course_owner_id=_user_id)
+    test_course_1 = Course(title='Test 1', course_owner_id=config._tests_user_id)
+    test_course_2 = Course(title='Test 2', course_owner_id=config._tests_user_id)
+    test_course_3 = Course(title='Test 3', course_owner_id=config._tests_user_id)
 
     test_nodes = []
 
@@ -27,12 +25,12 @@ def test_add_courses(db: Session, client: TestClient):
     db.commit()
 
     assert len(db.exec(select(Course)).all()) == 3
-    assert len(db.exec(select(User).where(User.id == _user_id)).first().courses) == 3
+    assert len(db.exec(select(User).where(User.id == config._tests_user_id)).first().courses) == 3
 
     db.delete(test_course_2)
     db.commit()
     assert len(db.exec(select(Course)).all()) == 2
-    assert len(db.exec(select(User).where(User.id == _user_id)).first().courses) == 2
+    assert len(db.exec(select(User).where(User.id == config._tests_user_id)).first().courses) == 2
 
 
 def test_get_nodes(db: Session, client: TestClient):

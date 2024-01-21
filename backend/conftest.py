@@ -9,7 +9,7 @@ from models.db_models import User, Course
 from services.api_utility_service import get_session, dbUrl
 
 
-@pytest.fixture(name="db", scope="module")
+@pytest.fixture(name="db", scope="session")
 def session_fixture():
     engine = create_engine(dbUrl.replace('@db', '@localhost'))
     SQLModel.metadata.create_all(engine)
@@ -25,7 +25,7 @@ def session_fixture():
     connection.close()
 
 
-@pytest.fixture(name="client", scope="module")
+@pytest.fixture(name="client", scope="session")
 def client_fixture(db: Session):
     def get_session_override():
         return db
