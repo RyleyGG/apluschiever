@@ -3,39 +3,40 @@ from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
+from sqlmodel import Session, select
 
+from models.db_models import User
 from services.config_service import config
-from models.db_models import User as UserDb
-from db import getDb
-from sqlalchemy.orm import Session
+
+from services.api_utility_service import get_session
+
+pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+oauth_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-pwdContext = CryptContext(schemes=['bcrypt'], deprecated='auto')
-oauthScheme = OAuth2PasswordBearer(tokenUrl="token")
-
-def createToken(data: dict, token_lifetime: int):
-    toEncode = data.copy()
+def create_token(data: dict, token_lifetime: int):
+    to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=token_lifetime)
-    toEncode.update({"exp": expire})
-    encodedJwt = jwt.encode(toEncode, config.auth_secret, algorithm=config.auth_algo)
-    return encodedJwt
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, config.auth_secret, algorithm=config.auth_algo)
+    return encoded_jwt
 
 
-def verifyPassword(plainPassword, hashedPassword):
-    return pwdContext.verify(plainPassword, hashedPassword)
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
 
 
-def genPasswordHash(password):
-    return pwdContext.hash(password)
+def gen_password_hash(password):
+    return pwd_context.hash(password)
 
 
-async def validateToken(token: str = Depends(oauthScheme), db: Session = Depends(getDb)):
-    credentialsException = HTTPException(
+async def validate_token(token: str = Depends(oauth_scheme), db: Session = Depends(get_session)):
+    credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    tokenException = HTTPException(
+    token_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Token has expired",
         headers={"WWW-Authenticate": "Bearer"},
@@ -46,20 +47,20 @@ async def validateToken(token: str = Depends(oauthScheme), db: Session = Depends
         payload = jwt.decode(token, config.auth_secret, algorithms=[config.auth_algo])
         email = payload.get('sub')
         if email is None:
-            raise credentialsException
+            raise credentials_exception
     except Exception as e:
-        raise credentialsException
+        raise credentials_exception
 
-    user = db.query(UserDb).filter(UserDb.email_address == email).first()
+    user = db.exec(select(User).where(User.email_address == email)).first()
     if not user:
-        raise credentialsException
+        raise credentials_exception
 
     # Verify that token has not expired
     try:
         exp = float(payload.get('exp'))
         if exp < datetime.now().timestamp():
-            raise tokenException
+            raise token_exception
     except Exception:
-        raise tokenException
-    
+        raise token_exception
+
     return user

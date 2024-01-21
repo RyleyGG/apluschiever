@@ -4,7 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { InternetConnectionService } from './core/services/internet-connection/internet-connection.service';
 
 /**
- * The main application component, currently the sample hello world page. 
+ * The main application component, currently the sample hello world page.
  */
 @Component({
   selector: 'app-root',

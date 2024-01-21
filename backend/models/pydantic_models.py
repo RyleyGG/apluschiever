@@ -1,10 +1,6 @@
-import uuid
-from typing import Optional
-from pydantic import BaseModel
+from sqlmodel import SQLModel
 
-class User(BaseModel):
-    id: uuid.UUID
-    email_address: str
-    first_name: str
-    last_name: str
-    password: str
+
+class Node(SQLModel, table=False):
+    title: str
+    short_description: str

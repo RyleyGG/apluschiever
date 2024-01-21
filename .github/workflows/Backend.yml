@@ -49,7 +49,7 @@ jobs:
       
     - name: Test
       run: |
-        pytest
+        pytest -vs tests/auth_suite.py tests/course_suite.py
       env:
         postgres_password: postgres
 

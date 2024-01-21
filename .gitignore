@@ -4,6 +4,8 @@
 .expo
 .DS_Store
 frontend/.editorconfig
+frontend/.idea
+backend/.idea
 
 # backend
 backend/__pycache__

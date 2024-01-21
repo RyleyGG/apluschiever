@@ -1,5 +1,6 @@
 pydantic
 pydantic-settings
+sqlmodel
 fastapi
 uvicorn
 psycopg2
