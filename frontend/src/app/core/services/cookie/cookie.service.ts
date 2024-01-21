@@ -27,7 +27,20 @@ export class CookieService {
         return (cookieValue ? cookieValue.split('=')[1] : null);
     }
 
-    // TODO: Possibly make a getAll method which returns an mappping of cookie name: value pairs.
+    /**
+     * Get all cookies that are stored.
+     * 
+     * @returns {{ name: string, value: string | null }[]} an array of key value pairs representing the cookies.
+     */
+    public getAll(): { name: string, value: string | null }[] {
+        const result: { name: string; value: string | null }[] = [];
+        console.log(document.cookie);
+        document.cookie.split(';').forEach((cookie: string) => {
+            const cookieName = cookie.trim().split('=')[0];
+            result.push({ name: cookieName, value: this.get(cookieName) });
+        });
+        return result;
+    }
 
     /**
      * Sets or updates the value of a cookie.

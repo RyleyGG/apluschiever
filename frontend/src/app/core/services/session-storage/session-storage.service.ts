@@ -23,7 +23,19 @@ export class SessionStorageService {
         return window.sessionStorage.getItem(name);
     }
 
-    //TODO: Create a getAll method
+    /**
+     * Get all items in the session storage.
+     * 
+     * @returns {{ name: string, value: string | null }[]} Key value pairs representing the session storage.
+     */
+    public getAll(): { name: string, value: string | null }[] {
+        const result: { name: string; value: string | null; }[] = [];
+        const keys = Object.keys(window.sessionStorage);
+        keys.forEach((key: string) => {
+            result.push({ "name": key, "value": window.sessionStorage.getItem(key) });
+        });
+        return result;
+    }
 
     /**
      * Create/update an item in session storage.

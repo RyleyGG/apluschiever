@@ -23,7 +23,19 @@ export class LocalStorageService {
         return window.localStorage.getItem(name);
     }
 
-    //TODO: Create a getAll method
+    /**
+     * Get all items in local storage.
+     * 
+     * @returns {{ name: string, value: string | null }[]} Key value pairs for all local storage items.
+     */
+    public getAll(): { name: string, value: string | null }[] {
+        const result: { name: string; value: string | null; }[] = [];
+        const keys = Object.keys(window.localStorage);
+        keys.forEach((key: string) => {
+            result.push({ "name": key, "value": window.localStorage.getItem(key) });
+        });
+        return result;
+    }
 
     /**
      * Create/update an item in local storage.
