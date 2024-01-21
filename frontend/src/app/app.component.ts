@@ -17,10 +17,6 @@ export class AppComponent {
   title = 'apluschiever';
 
   constructor(private internetConnection: InternetConnectionService) {
-    console.log(this.internetConnection.getConnectionStatus());
-
-    this.internetConnection.observeConnectionStatus().subscribe((connected: boolean) => {
-      console.log(connected);
-    });
+    console.log(this.internetConnection.isOnline());
   }
 }

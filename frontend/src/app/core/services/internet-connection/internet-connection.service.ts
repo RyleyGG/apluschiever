@@ -1,5 +1,4 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
+import { Injectable, signal } from "@angular/core";
 
 /**
  * Gets a reference to the browser's window api
@@ -17,33 +16,20 @@ declare var window: Window;
 })
 export class InternetConnectionService {
     /**
-     * Stores if connected to the internet or not.
+     * Private signal used to montior / update internet connection status based on browser events.
      */
-    private isOnline$ = new BehaviorSubject<boolean>(window.navigator.onLine);
+    private isOnlineSignal = signal<boolean>(window.navigator.onLine);
+
+    /**
+     * Public readonly signal which is used to monitor internet connection status.
+     */
+    public readonly isOnline = this.isOnlineSignal.asReadonly();
 
     /**
      * Initializes the event listeners for the service.
      */
     constructor() {
-        window.addEventListener('online', () => this.isOnline$.next(true));
-        window.addEventListener('offline', () => this.isOnline$.next(false));
-    }
-
-    /**
-     * Tell if connected to the network/internet at this instant.
-     * 
-     * @returns {boolean} true if connected to the internet, false if not.
-     */
-    public getConnectionStatus(): boolean {
-        return this.isOnline$.getValue();
-    }
-
-    /**
-     * Observe the network/internet connection status for any future changes.
-     * 
-     * @returns {Observable<boolean>} an observable which will emit true when connected and false when not.
-     */
-    public observeConnectionStatus(): Observable<boolean> {
-        return this.isOnline$.asObservable();
+        window.addEventListener('online', () => this.isOnlineSignal.set(true));
+        window.addEventListener('offline', () => this.isOnlineSignal.set(false));
     }
 }

@@ -1,5 +1,6 @@
 import { TestBed, fakeAsync, tick } from "@angular/core/testing";
 import { InternetConnectionService } from "./internet-connection.service";
+import { effect } from "@angular/core";
 
 
 describe('InternetConnectionService', () => {
@@ -16,7 +17,7 @@ describe('InternetConnectionService', () => {
     });
 
     it('should initially return the correct status', () => {
-        const initialStatus = service.getConnectionStatus();
+        const initialStatus = service.isOnline();
         const online = window.navigator.onLine; // Grab the correct status from the browser api
         expect(initialStatus).toBe(online);
     });
@@ -25,7 +26,7 @@ describe('InternetConnectionService', () => {
         const onlineEvent = new Event('online');
         window.dispatchEvent(onlineEvent);
 
-        const onlineStatus = service.getConnectionStatus();
+        const onlineStatus = service.isOnline();
         expect(onlineStatus).toBe(true);
 
     });
@@ -34,36 +35,26 @@ describe('InternetConnectionService', () => {
         const onlineEvent = new Event('offline');
         window.dispatchEvent(onlineEvent);
 
-        const onlineStatus = service.getConnectionStatus();
+        const onlineStatus = service.isOnline();
         expect(onlineStatus).toBe(false);
 
     });
 
     it('should observe changes in connection status', fakeAsync(() => {
-        const onlineStatuses: boolean[] = []; // Observed statuses
-        const expectedOnlineStatuses = [true, false, true, false]; // Expected status changes
-
-        // Trigger online event and wait for changes to propagate (so there is a known start state)
         window.dispatchEvent(new Event('online'));
         tick();
+        expect(service.isOnline()).toBe(true);
 
-        /**
-         * Monitor the reported status changes to the array
-         */
-        const subscription = service.observeConnectionStatus().subscribe((isOnline) => {
-            onlineStatuses.push(isOnline);
-        });
-
-        // Send rest of the events
         window.dispatchEvent(new Event('offline'));
         tick();
+        expect(service.isOnline()).toBe(false);
+
         window.dispatchEvent(new Event('online'));
         tick();
+        expect(service.isOnline()).toBe(true);
+
         window.dispatchEvent(new Event('offline'));
         tick();
-
-        // Check that the service correctly reports online/offline status changes.
-        expect(onlineStatuses).toEqual(expectedOnlineStatuses);
-        subscription.unsubscribe(); // Clean up subscription
+        expect(service.isOnline()).toBe(false);
     }));
 });
