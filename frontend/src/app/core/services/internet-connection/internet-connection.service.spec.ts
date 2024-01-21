@@ -1,7 +1,5 @@
 import { TestBed, fakeAsync, tick } from "@angular/core/testing";
 import { InternetConnectionService } from "./internet-connection.service";
-import { effect } from "@angular/core";
-
 
 describe('InternetConnectionService', () => {
     let service: InternetConnectionService;
