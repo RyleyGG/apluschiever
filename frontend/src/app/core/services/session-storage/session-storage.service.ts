@@ -17,9 +17,9 @@ export class SessionStorageService {
      * Get an item in session storage.
      * 
      * @param {string} name the name of the item to get
-     * @returns {any} the value of the item in session storage (null if the key does not exist)
+     * @returns {string | null} the value of the item in session storage (null if the key does not exist)
      */
-    public get(name: string): any {
+    public get(name: string): string | null {
         return window.sessionStorage.getItem(name);
     }
 

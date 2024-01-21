@@ -21,6 +21,10 @@ describe('LocalStorageService', () => {
         service = TestBed.inject(LocalStorageService);
     });
 
+    afterAll(() => {
+        service.deleteAll();
+    });
+
     it('should be able to set an item in local storage', () => {
         service.set(MOCK_ITEMS[0].name, MOCK_ITEMS[0].value);
         expect(service.get(MOCK_ITEMS[0].name)).toBe('' + MOCK_ITEMS[0].value);
@@ -34,6 +38,20 @@ describe('LocalStorageService', () => {
         MOCK_ITEMS.forEach(mock_item => {
             expect(service.get(mock_item.name)).toBe('' + mock_item.value);
         });
+    });
+
+    it('should be able to get all items in local storage', () => {
+        MOCK_ITEMS.forEach((mock_item: any) => {
+            service.set(mock_item.name, mock_item.value);
+        });
+        const SET_ITEMS = service.getAll().sort();
+
+        // Modify the below because we set with number but storage returns in string form
+        const EXPECTED_ITEMS = MOCK_ITEMS;
+        EXPECTED_ITEMS.forEach(item => item.value = item.value + '');
+
+        expect(SET_ITEMS.length).toBe(EXPECTED_ITEMS.length);
+        expect(SET_ITEMS).toEqual(jasmine.arrayWithExactContents(EXPECTED_ITEMS));
     });
 
     it('should be able to overwrite an item in local storage', () => {

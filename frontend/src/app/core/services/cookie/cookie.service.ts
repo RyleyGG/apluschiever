@@ -29,6 +29,7 @@ export class CookieService {
 
     /**
      * Get all cookies that are stored.
+     * NOTE: You cannot retrieve expiration dates for cookies with browser APIs.
      * 
      * @returns {{ name: string, value: string | null }[]} an array of key value pairs representing the cookies.
      */
