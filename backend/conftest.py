@@ -1,40 +1,37 @@
 from fastapi.testclient import TestClient
 import pytest
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, delete
 from sqlalchemy.orm import sessionmaker
+from sqlmodel import SQLModel, Session, select
 
 from api import app
-from db import Base, getDb
-from services.config_service import dbUrl
-from models.db_models import User
+from models.db_models import User, Course
+from services.api_utility_service import get_session, dbUrl
 
-@pytest.fixture(scope="module")
-def overrideDbDepend(dbSession):
-    app.dependency_overrides[getDb] = lambda: dbSession
-    yield
-    app.dependency_overrides.pop(getDb, None)
-    
-@pytest.fixture(scope="module")
-def testClient():
-    with TestClient(app) as client:
-        yield client
-        
-@pytest.fixture(scope="module")
-def dbSession():
+
+@pytest.fixture(name="db", scope="session")
+def session_fixture():
     engine = create_engine(dbUrl.replace('@db', '@localhost'))
-    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    SQLModel.metadata.create_all(engine)
     connection = engine.connect()
     transaction = connection.begin()
-    Base.metadata.bind = engine
-    Base.metadata.create_all(bind=engine)
+    session = Session(bind=connection)
+    session.exec(delete(Course))
+    session.exec(delete(User))
+    yield session
 
-    db = TestingSessionLocal(bind=connection)
-
-    # delete all data before starting tests
-    db.query(User).delete()
-    db.commit()
-
-    yield db
-
+    session.close()
     transaction.rollback()
     connection.close()
+
+
+@pytest.fixture(name="client", scope="session")
+def client_fixture(db: Session):
+    def get_session_override():
+        return db
+
+    app.dependency_overrides[get_session] = get_session_override
+
+    client = TestClient(app)
+    yield client
+    app.dependency_overrides.clear()

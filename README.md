@@ -35,7 +35,7 @@ A+chiever utilizes the pytest framework to implement a test suite. To run, eithe
 ```
 cd [repository]/backend
 Windows: .venv\Scripts\activate
-Mac/Linux: source .venv/bin/activate
+Mac/Linux: source .venv/Scripts/activate
 pytest
 ```
 
