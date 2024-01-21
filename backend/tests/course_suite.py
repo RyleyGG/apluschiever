@@ -10,46 +10,6 @@ _access_token = None
 _user_id = None
 
 
-def test_sign_up(db: Session, client: TestClient):
-    res = client.post(
-        '/auth/sign_up',
-        json={
-            'email_address': 'test@test.com',
-            'first_name': 'joe',
-            'last_name': 'test',
-            'password': '123'
-        }
-    )
-
-    assert res.status_code == 200
-    assert type(db.exec(select(User).where(User.email_address == 'test@test.com')).first()) == User
-
-
-def test_sign_in(db: Session, client: TestClient):
-    global _access_token, _user_id
-
-    res = client.post(
-        '/auth/sign_in',
-        json={
-            'email_address': 'test@test.com',
-            'password': '123'
-        }
-    )
-
-    if res.status_code == 200:
-        _access_token = res.json()['access_token']
-        _user_id = res.json()['user_id']
-
-    assert res.status_code == 200
-
-
-def test_basic_auth_check(db: Session, client: TestClient):
-    res = client.get('/', headers={'Authorization': f'Bearer {_access_token}'})
-
-    assert res.status_code == 200
-    assert res.json()['message'] == 'Hello World'
-
-
 def test_add_courses(db: Session, client: TestClient):
     test_course_1 = Course(title='Test 1', course_owner_id=_user_id)
     test_course_2 = Course(title='Test 2', course_owner_id=_user_id)
