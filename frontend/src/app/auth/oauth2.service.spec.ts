@@ -5,7 +5,7 @@ import { HttpClient, provideHttpClient } from "@angular/common/http";
 
 describe('OAuth2Service', () => {
     let httpClient: HttpClient;
-    let httpTesting: HttpTestingController;
+    let httpTestingController: HttpTestingController;
     let service: OAuth2Service;
 
     beforeEach(() => {
@@ -16,8 +16,12 @@ describe('OAuth2Service', () => {
             ]
         });
         httpClient = TestBed.inject(HttpClient);
-        httpTesting = TestBed.inject(HttpTestingController);
+        httpTestingController = TestBed.inject(HttpTestingController);
         service = TestBed.inject(OAuth2Service);
+    });
+
+    afterEach(() => {
+        httpTestingController.verify();
     });
 
 
