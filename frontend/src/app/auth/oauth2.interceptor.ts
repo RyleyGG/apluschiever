@@ -1,6 +1,7 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
+import { LocalStorageService } from "../core/services/local-storage/local-storage.service";
 
 
 /**
@@ -11,7 +12,7 @@ import { Observable } from "rxjs";
 })
 export class OAuth2Interceptor implements HttpInterceptor {
 
-    constructor(/*private localStorageService: LocalStorageService*/) { }
+    constructor(private localStorageService: LocalStorageService) { }
 
     /**
      * Intercept the HTTP request and add the authorization token if available in local storage.
@@ -21,7 +22,7 @@ export class OAuth2Interceptor implements HttpInterceptor {
      */
     intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
         // Get from local storage
-        const token = ''; //this.localStorageService.get('Token')
+        const token = this.localStorageService.get('Token');
 
         // Update the outgoing request
         if (token) {
