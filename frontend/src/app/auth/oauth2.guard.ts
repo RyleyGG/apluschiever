@@ -6,7 +6,7 @@ import { OAuth2Service } from "./oauth2.service";
 
 /**
  * Guard to prevent access to the sign up page for authenticated users.
- * Will redirect to 
+ * Will redirect to the landing page
  */
 export const signupGuard: CanActivateFn = async () => {
     const authService = inject(OAuth2Service);
@@ -15,8 +15,7 @@ export const signupGuard: CanActivateFn = async () => {
     const isUserAuthenticated = await authService.verify_token();
 
     if (isUserAuthenticated) {
-        // Navigate somewhere
-        router.navigate(['/'])
+        router.navigate(['/landing']);
         return false;
     }
 
@@ -25,7 +24,7 @@ export const signupGuard: CanActivateFn = async () => {
 
 /**
  * Guard to prevent access to the sign in page for authenticated users.
- * Will redirect to 
+ * Will redirect to the landing page
  */
 export const signinGuard: CanActivateFn = async () => {
     const authService = inject(OAuth2Service);
@@ -34,8 +33,7 @@ export const signinGuard: CanActivateFn = async () => {
     const isUserAuthenticated = await authService.verify_token();
 
     if (isUserAuthenticated) {
-        // Navigate somewhere
-        router.navigate(['/'])
+        router.navigate(['/landing']);
         return false;
     }
 
@@ -44,7 +42,7 @@ export const signinGuard: CanActivateFn = async () => {
 
 /**
  * Guard to prevent access to the sign out page for unauthenticated users.
- * Will redirect to 
+ * Will redirect to the landing page
  */
 export const signoutGuard: CanActivateFn = async () => {
     const authService = inject(OAuth2Service);
@@ -53,8 +51,7 @@ export const signoutGuard: CanActivateFn = async () => {
     const isUserAuthenticated = await authService.verify_token();
 
     if (!isUserAuthenticated) {
-        // Navigate somewhere
-        router.navigate(['/'])
+        router.navigate(['/landing']);
         return false;
     }
 

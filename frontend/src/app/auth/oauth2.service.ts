@@ -1,8 +1,13 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { SignInInfo, SignUpInfo, SuccessfulUserAuth } from '../core/models/Auth';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
+import { SignInInfo, SignUpInfo, SuccessfulUserAuth } from '../core/models/Auth';
 
+
+@Injectable({
+    providedIn: 'root'
+})
 export class OAuth2Service {
     private REST_API_SERVER = "http://localhost:8000/";
 
