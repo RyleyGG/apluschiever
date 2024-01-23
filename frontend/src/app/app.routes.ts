@@ -4,9 +4,9 @@ import { signinGuard, signoutGuard, signupGuard } from './auth/oauth2.guard';
 
 export const routes: Routes = [
     // Routes for authentication (TODO: replace component with proper pages, etc)
-    { path: "sign_up", component: AppComponent, canActivate: [signupGuard] },
-    { path: "sign_in", component: AppComponent, canActivate: [signinGuard] },
-    { path: "sign_out", component: AppComponent, canActivate: [signoutGuard] },
+    { path: "signup", component: AppComponent, canActivate: [signupGuard] },
+    { path: "signin", component: AppComponent, canActivate: [signinGuard] },
+    { path: "signout", component: AppComponent, canActivate: [signoutGuard] },
 
     // General routes
     { path: "landing", component: AppComponent },
