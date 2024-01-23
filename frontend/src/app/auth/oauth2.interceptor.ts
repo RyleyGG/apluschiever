@@ -1,5 +1,5 @@
 import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
-import { inject } from "@angular/core";
+import { Injector, inject, runInInjectionContext } from "@angular/core";
 import { Observable, catchError, switchMap, throwError } from "rxjs";
 import { LocalStorageService } from "../core/services/local-storage/local-storage.service";
 import { OAuth2Service } from "./oauth2.service";
@@ -20,9 +20,9 @@ export const OAuth2Interceptor = (request: HttpRequest<unknown>, next: HttpHandl
 
     // Check the response to see if automatic token refresh should be attempted
     return next(request).pipe(
-        catchError(error => {
+        catchError((error: any) => {
             if (error.status === 401) {
-                HandleRefreshToken(request, next);
+                runInInjectionContext(Injector.create({ providers: [] }), () => HandleRefreshToken(request, next));
             }
             return throwError(() => error);
         })
@@ -37,10 +37,12 @@ export const OAuth2Interceptor = (request: HttpRequest<unknown>, next: HttpHandl
  */
 const HandleRefreshToken = (request: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
     const authService = inject(OAuth2Service);
+    const localStorageService = inject(LocalStorageService);
+
     return authService.refresh_token().pipe(
         switchMap((data: SuccessfulUserAuth) => {
             // Retry the request after the refresh
-            const token = inject(LocalStorageService).get('access_token');
+            const token = localStorageService.get('access_token');
             if (token) {
                 request = AddTokenHeader(request, token);
             }
@@ -60,7 +62,7 @@ const HandleRefreshToken = (request: HttpRequest<unknown>, next: HttpHandlerFn):
  * @param { string } token the token to add
  * @returns { HttpRequest<unknown> } the new request
  */
-const AddTokenHeader = (request: HttpRequest<unknown>, token: string) => {
+const AddTokenHeader = (request: HttpRequest<unknown>, token: string): HttpRequest<unknown> => {
     return request.clone({
         setHeaders: {
             Authorization: 'Token ' + token

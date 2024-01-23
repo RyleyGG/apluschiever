@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map, of, throwError } from 'rxjs';
+import { Observable, catchError, map, of, take, throwError } from 'rxjs';
 
 import { SignInInfo, SignUpInfo, SuccessfulUserAuth } from '../core/models/Auth';
 import { LocalStorageService } from '../core/services/local-storage/local-storage.service';
@@ -24,6 +24,7 @@ export class OAuth2Service {
      */
     public sign_up(signUpInfo: SignUpInfo): Observable<any> {
         return this.httpClient.post<any>(this.REST_API_SERVER + "auth/sign_up", signUpInfo).pipe(
+            take(1),
             map((res: any) => {
                 console.log(res);
                 return res;
@@ -48,6 +49,7 @@ export class OAuth2Service {
         this.localStorageService.delete('refresh_token');
 
         return this.httpClient.post<SuccessfulUserAuth>(this.REST_API_SERVER + "auth/sign_in", signInInfo).pipe(
+            take(1),
             map((res: SuccessfulUserAuth) => {
                 this.localStorageService.set('access_token', res.access_token);
                 this.localStorageService.set('refresh_token', res.refresh_token);
@@ -74,12 +76,20 @@ export class OAuth2Service {
     }
 
     /**
-     * Refreshes the users access tokens. 
+     * Refreshes the users access tokens.
      * 
-     * @returns { Observable<SuccessfulUserAuth> } the resultin api response as an observable stream
+     * @returns { Observable<SuccessfulUserAuth> } the resulting api response as an observable stream
      */
     public refresh_token(): Observable<SuccessfulUserAuth> {
-        return this.httpClient.post<SuccessfulUserAuth>(this.REST_API_SERVER + "auth/refresh", this.localStorageService.get('refresh_token')).pipe(
+        // Ensure valid token before making request
+        const token = this.localStorageService.get('refresh_token');
+        if (token == null) {
+            return throwError(() => new Error('Tried to refresh null token!'));
+        }
+
+        const body = { refresh_token: token };
+        return this.httpClient.post<SuccessfulUserAuth>(this.REST_API_SERVER + "auth/refresh", body).pipe(
+            take(1),
             map((res: SuccessfulUserAuth) => {
                 this.localStorageService.set('access_token', res.access_token);
                 this.localStorageService.set('refresh_token', res.refresh_token);
@@ -95,19 +105,24 @@ export class OAuth2Service {
     }
 
     /**
-     * Verifies the user's access tokens are valid. DOES NOT REFRESH ANY TOKENS.
+     * Validates and refreshes the users access tokens (used by route guards)
      * 
-     * @returns { Observable<boolean> } an observable which will emit the boolean value true if verified and false if not.
+     * @returns { boolean } true if tokens are valid, false if not.
      */
-    public verify_token(): Observable<boolean> {
-        return this.httpClient.post<any>(this.REST_API_SERVER + "auth/verify", {}).pipe(
-            map((res: any) => {
+    public validate_token(): Observable<boolean> {
+        const token = this.localStorageService.get('refresh_token');
+        if (token == null) {
+            return of(false);
+        }
+
+        return this.refresh_token().pipe(
+            take(1),
+            map((res) => {
                 return true;
             }),
-            catchError((error: HttpErrorResponse) => {
-                console.error('HTTP error:', error);
+            catchError(() => {
                 return of(false);
             })
-        )
+        );
     }
 }

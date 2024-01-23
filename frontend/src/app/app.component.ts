@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
-import { InternetConnectionService } from './core/services/internet-connection/internet-connection.service';
-import { OAuth2Service } from './auth/oauth2.service';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 /**
  * The main application component, currently the sample hello world page.
@@ -10,17 +8,12 @@ import { OAuth2Service } from './auth/oauth2.service';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
   title = 'apluschiever';
 
-  constructor(private oauthService: OAuth2Service) {
-    oauthService.sign_in({
-      email_address: 'hello-world@gmail.com',
-      password: 'SAMPLE'
-    });
-  }
+  constructor() { }
 }
