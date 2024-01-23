@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, map, of, take, throwError } from 'rxjs';
 
-import { SignInInfo, SignUpInfo, SuccessfulUserAuth } from '../core/models/Auth';
+import { SignInInfo, SignUpInfo, SuccessfulUserAuth } from '../core/models/auth.interface';
 import { LocalStorageService } from '../core/services/local-storage/local-storage.service';
 
 /**
@@ -12,8 +12,17 @@ import { LocalStorageService } from '../core/services/local-storage/local-storag
     providedIn: 'root'
 })
 export class OAuth2Service {
+    /**
+     * The authentication server to hit
+     */
     private REST_API_SERVER = "http://localhost:8000/";
 
+    /**
+     * Creates a new OAuth2Service
+     * 
+     * @param { HttpClient } httpClient an injected HttpClient
+     * @param { LocalStorageService } localStorageService an injected instance of the LocalStorageService
+     */
     constructor(private httpClient: HttpClient, private localStorageService: LocalStorageService) { }
 
     /**

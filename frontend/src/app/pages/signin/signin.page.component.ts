@@ -1,21 +1,22 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
 
 import { OAuth2Service } from '../../auth/oauth2.service';
-import { SuccessfulUserAuth } from '../../core/models/Auth';
+import { SuccessfulUserAuth } from '../../core/models/auth.interface';
 
 /**
- * The login page component
+ * The sign in page component
+ * 
+ * Right now it has a single button for signing in, and prints the SuccessfulUserAuth result to the console.
  */
 @Component({
-    selector: 'login-page',
+    selector: 'signin-page',
     standalone: true,
     imports: [CommonModule],
-    templateUrl: './login.page.component.html',
-    styleUrl: './login.page.component.css'
+    templateUrl: './signin.page.component.html',
+    styleUrl: './signin.page.component.css'
 })
-export class LoginPageComponent {
+export class SignInPageComponent {
     title = 'apluschiever'
 
     constructor(private oauthService: OAuth2Service) { }
@@ -28,10 +29,5 @@ export class LoginPageComponent {
         }).subscribe((res: SuccessfulUserAuth) => {
             console.log(res);
         });
-    }
-
-    public signout(): void {
-        // Sample of how to sign out
-        this.oauthService.sign_out();
     }
 }

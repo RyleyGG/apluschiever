@@ -3,7 +3,7 @@ import { Injector, inject, runInInjectionContext } from "@angular/core";
 import { Observable, catchError, switchMap, throwError } from "rxjs";
 import { LocalStorageService } from "../core/services/local-storage/local-storage.service";
 import { OAuth2Service } from "./oauth2.service";
-import { SuccessfulUserAuth } from "../core/models/Auth";
+import { SuccessfulUserAuth } from "../core/models/auth.interface";
 
 /**
  * Interceptor to automatically add token to outgoing HTTP requests
