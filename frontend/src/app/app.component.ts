@@ -18,6 +18,9 @@ export class AppComponent {
   title = 'apluschiever';
 
   constructor(private oauthService: OAuth2Service) {
-
+    oauthService.sign_in({
+      email_address: 'hello-world@gmail.com',
+      password: 'SAMPLE'
+    });
   }
 }
