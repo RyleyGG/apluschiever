@@ -1,38 +1,28 @@
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
+import { inject } from "@angular/core";
 import { Observable } from "rxjs";
 import { LocalStorageService } from "../core/services/local-storage/local-storage.service";
 
-
 /**
- * Interceptor to add authorization token to outgoing HTTP requests
+ * Interceptor to automatically add token to outgoing HTTP requests
+ * @param request 
+ * @param next 
+ * @returns 
  */
-@Injectable({
-    providedIn: 'root'
-})
-export class OAuth2Interceptor implements HttpInterceptor {
+export const OAuth2Interceptor = (request: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
+    // Get from local storage
+    const token = inject(LocalStorageService).get('Token');
+    console.log("INTERCEPTED");
+    console.log(request);
 
-    constructor(private localStorageService: LocalStorageService) { }
-
-    /**
-     * Intercept the HTTP request and add the authorization token if available in local storage.
-     * @param {HttpRequest<unknown>} request - The original HTTP request.
-     * @param {HttpHandler} next - The next HTTP handler in the chain.
-     * @returns {Observable<HttpEvent<unknown>>} An observable of the HTTP event.
-     */
-    intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-        // Get from local storage
-        const token = this.localStorageService.get('Token');
-
-        // Update the outgoing request
-        if (token) {
-            request = request.clone({
-                setHeaders: {
-                    Authorization: 'Token ' + token
-                }
-            })
-        }
-
-        return next.handle(request);
+    // Update the outgoing request
+    if (token) {
+        request = request.clone({
+            setHeaders: {
+                Authorization: 'Token ' + token
+            }
+        })
     }
+
+    return next(request);
 }
