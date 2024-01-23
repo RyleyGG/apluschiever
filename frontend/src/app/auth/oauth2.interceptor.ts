@@ -12,16 +12,14 @@ import { LocalStorageService } from "../core/services/local-storage/local-storag
 export const OAuth2Interceptor = (request: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
     // Get from local storage
     const token = inject(LocalStorageService).get('Token');
-    console.log("INTERCEPTED");
-    console.log(request);
 
-    // Update the outgoing request
+    // Update the outgoing request (if applicable)
     if (token) {
         request = request.clone({
             setHeaders: {
                 Authorization: 'Token ' + token
             }
-        })
+        });
     }
 
     return next(request);
