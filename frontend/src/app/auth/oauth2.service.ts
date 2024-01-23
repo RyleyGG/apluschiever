@@ -51,6 +51,7 @@ export class OAuth2Service {
         return this.httpClient.post<SuccessfulUserAuth>(this.REST_API_SERVER + "auth/sign_in", signInInfo).pipe(
             take(1),
             map((res: SuccessfulUserAuth) => {
+                console.log(res);
                 this.localStorageService.set('access_token', res.access_token);
                 this.localStorageService.set('refresh_token', res.refresh_token);
                 return res;
@@ -84,7 +85,7 @@ export class OAuth2Service {
         // Ensure valid token before making request
         const token = this.localStorageService.get('refresh_token');
         if (token == null) {
-            return throwError(() => new Error('Tried to refresh null token!'));
+            return throwError(() => new Error('Tried to refresh bad token!'));
         }
 
         const body = { refresh_token: token };
