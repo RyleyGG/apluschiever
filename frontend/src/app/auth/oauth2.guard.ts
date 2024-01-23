@@ -1,6 +1,7 @@
 
 import { CanActivateFn, Router } from "@angular/router";
 import { inject } from "@angular/core";
+import { firstValueFrom } from "rxjs";
 
 import { OAuth2Service } from "./oauth2.service";
 
@@ -12,7 +13,7 @@ export const signupGuard: CanActivateFn = async () => {
     const authService = inject(OAuth2Service);
     const router = inject(Router);
 
-    const isUserAuthenticated = await authService.verify_token();
+    const isUserAuthenticated = await firstValueFrom(authService.verify_token());
 
     if (isUserAuthenticated) {
         router.navigate(['/landing']);
@@ -30,7 +31,7 @@ export const signinGuard: CanActivateFn = async () => {
     const authService = inject(OAuth2Service);
     const router = inject(Router);
 
-    const isUserAuthenticated = await authService.verify_token();
+    const isUserAuthenticated = await firstValueFrom(authService.verify_token());
 
     if (isUserAuthenticated) {
         router.navigate(['/landing']);
@@ -48,7 +49,7 @@ export const signoutGuard: CanActivateFn = async () => {
     const authService = inject(OAuth2Service);
     const router = inject(Router);
 
-    const isUserAuthenticated = await authService.verify_token();
+    const isUserAuthenticated = await firstValueFrom(authService.verify_token());
 
     if (!isUserAuthenticated) {
         router.navigate(['/landing']);

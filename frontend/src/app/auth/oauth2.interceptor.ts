@@ -1,6 +1,6 @@
 import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { inject } from "@angular/core";
-import { Observable, catchError, map, switchMap, throwError } from "rxjs";
+import { Observable, catchError, switchMap, throwError } from "rxjs";
 import { LocalStorageService } from "../core/services/local-storage/local-storage.service";
 import { OAuth2Service } from "./oauth2.service";
 import { SuccessfulUserAuth } from "../core/models/Auth";
