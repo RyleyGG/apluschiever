@@ -46,8 +46,8 @@ describe('OAuth2Service', () => {
     });
 
     afterEach(() => {
-        httpTestingController.verify();
-        localStorageService.deleteAll();
+        httpTestingController.verify(); // this ensures we made no calls that were unnecessary
+        localStorageService.deleteAll(); // this clears any local storage so it doesn't affect other tests
     });
 
 
