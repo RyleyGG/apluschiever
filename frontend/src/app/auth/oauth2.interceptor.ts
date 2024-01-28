@@ -1,6 +1,6 @@
-import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { Injector, inject, runInInjectionContext } from "@angular/core";
-import { Observable, catchError, switchMap, throwError } from "rxjs";
+import { Observable, catchError, map, mergeMap, switchMap, throwError } from "rxjs";
 import { LocalStorageService } from "../core/services/local-storage/local-storage.service";
 import { OAuth2Service } from "./oauth2.service";
 import { SuccessfulUserAuth } from "../core/models/auth.interface";
@@ -12,8 +12,13 @@ import { SuccessfulUserAuth } from "../core/models/auth.interface";
  * @returns { Observable<HttpEvent<unknown>> } the observable for the request response
  */
 export const OAuth2Interceptor = (request: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
-    // Get from local storage
-    const token = inject(LocalStorageService).get('access_token');
+    // Angular can only inject within certain contexts,
+    // so here we grab the services so we can pass them to other functions
+    const localStorageService = inject(LocalStorageService);
+    const authService = inject(OAuth2Service);
+
+    // Get token from local storage
+    const token = localStorageService.get('access_token');
     if (token) {
         request = AddTokenHeader(request, token);
     }
@@ -22,7 +27,7 @@ export const OAuth2Interceptor = (request: HttpRequest<unknown>, next: HttpHandl
     return next(request).pipe(
         catchError((error: any) => {
             if (error.status === 401) {
-                runInInjectionContext(Injector.create({ providers: [] }), () => HandleRefreshToken(request, next));
+                return HandleRefreshToken(request, next, localStorageService, authService);
             }
             return throwError(() => error);
         })
@@ -33,14 +38,13 @@ export const OAuth2Interceptor = (request: HttpRequest<unknown>, next: HttpHandl
  * A helper function to the OAuth2Interceptor to automatically refresh tokens
  * @param { HttpRequest<unknown> } request the original request
  * @param { HttpHandlerFn } next the handler function
+ * @param { LocalStorageService } localStorageService the localStorageService instance to use
+ * @param { OAuth2Service } authService the OAuth2Service instance to use
  * @returns { Observable<HttpEvent<unknown>> } 
  */
-const HandleRefreshToken = (request: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
-    const authService = inject(OAuth2Service);
-    const localStorageService = inject(LocalStorageService);
-
+const HandleRefreshToken = (request: HttpRequest<unknown>, next: HttpHandlerFn, localStorageService: LocalStorageService, authService: OAuth2Service): Observable<HttpEvent<unknown>> => {
     return authService.refresh_token().pipe(
-        switchMap((data: SuccessfulUserAuth) => {
+        mergeMap((data: SuccessfulUserAuth) => {
             // Retry the request after the refresh
             const token = localStorageService.get('access_token');
             if (token) {
@@ -65,7 +69,7 @@ const HandleRefreshToken = (request: HttpRequest<unknown>, next: HttpHandlerFn):
 const AddTokenHeader = (request: HttpRequest<unknown>, token: string): HttpRequest<unknown> => {
     return request.clone({
         setHeaders: {
-            Authorization: 'Token ' + token
+            Authorization: 'Bearer ' + token
         }
     });
 }

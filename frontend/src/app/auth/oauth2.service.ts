@@ -60,7 +60,6 @@ export class OAuth2Service {
         return this.httpClient.post<SuccessfulUserAuth>(this.REST_API_SERVER + "auth/sign_in", signInInfo).pipe(
             take(1),
             map((res: SuccessfulUserAuth) => {
-                console.log(res);
                 this.localStorageService.set('access_token', res.access_token);
                 this.localStorageService.set('refresh_token', res.refresh_token);
                 return res;
@@ -78,8 +77,6 @@ export class OAuth2Service {
      * Clear the tokens from storage, effectively signing out the user.
      */
     public sign_out(): void {
-        // TODO: Implement this logic.
-        // Should this ping a sign out route? None is currently there. 
         this.localStorageService.delete('access_token');
         this.localStorageService.delete('refresh_token');
         // navigate the router to the login or main landing page??
@@ -125,12 +122,12 @@ export class OAuth2Service {
             return of(false);
         }
 
-        return this.refresh_token().pipe(
+        return this.httpClient.post<boolean>(this.REST_API_SERVER + 'auth/validate', {}).pipe(
             take(1),
             map((res) => {
                 return true;
             }),
-            catchError(() => {
+            catchError((error: HttpErrorResponse) => {
                 return of(false);
             })
         );

@@ -12,8 +12,8 @@ export const signupGuard: CanActivateFn = async () => {
     const authService = inject(OAuth2Service);
     const router = inject(Router);
 
-
     const isUserAuthenticated = await firstValueFrom(authService.validate_token());
+
     if (isUserAuthenticated) {
         router.navigate(['/landing']);
         return false;
@@ -30,8 +30,7 @@ export const signinGuard: CanActivateFn = async () => {
     const authService = inject(OAuth2Service);
     const router = inject(Router);
 
-    const isUserAuthenticated = await firstValueFrom(authService.validate_token());
-    console.log(isUserAuthenticated);
+    const isUserAuthenticated = await firstValueFrom(authService.validate_token())
 
     if (isUserAuthenticated) {
         router.navigate(['/landing']);
