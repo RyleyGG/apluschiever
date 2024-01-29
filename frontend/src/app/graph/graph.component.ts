@@ -1,6 +1,6 @@
 import { Component, ContentChild, ElementRef, QueryList, TemplateRef, ViewChildren, computed, effect, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Node, Edge, Cluster } from './graph.interface';
+import { Node, Edge, Cluster, Graph } from './graph.interface';
 import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
 
 /**
@@ -58,6 +58,7 @@ export class GraphComponent {
     private transformationMatrix = signal<Matrix>(identity());
     private transform = computed(() => toSVG(smoothMatrix(this.transformationMatrix(), 100)));
 
+    private graph: Graph;
 
     constructor(private el: ElementRef) {
 
@@ -102,11 +103,24 @@ export class GraphComponent {
 
     }
 
+    /**
+     * Pan the graph by a fixed x and y amount.
+     * 
+     * @param {number} x the x amount to pan by
+     * @param {number} y the y amount to pan by
+     * @param {boolean} ignoreZoomLevel whether to scale the panning by the zoom factor or no. Default is false.
+     */
     private pan(x: number, y: number, ignoreZoomLevel: boolean = false): void {
         const zoomLevel = ignoreZoomLevel ? 1 : this.zoomLevel();
         this.transformationMatrix.set(transform(this.transformationMatrix(), translate(x / zoomLevel, y / zoomLevel)));
     }
 
+    /**
+     * Pan the graph so it is centered at a given position.
+     * 
+     * @param {number} x x coord to pan to.
+     * @param {number} y y coord to pan to.
+     */
     private panTo(x: number, y: number): void {
         // Ensure proper input
         if (isNaN(x) || isNaN(y)) {
@@ -122,8 +136,18 @@ export class GraphComponent {
         ));
     }
 
+    /**
+     * Pan to be centered on a node.
+     * 
+     * @param {string} id the id of the node to pan to.
+     */
     private panToNodeId(id: string): void {
+        const node = this.graph.nodes.find((node: Node) => node.id === id);
+        if (!node || !node.position) {
+            return;
+        }
 
+        this.panTo(node.position?.x, node.position?.y);
     }
 
     //#endregion Pan Methods

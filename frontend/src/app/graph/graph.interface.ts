@@ -27,3 +27,9 @@ export interface Edge {
 export interface Cluster {
 
 };
+
+export interface Graph {
+    nodes: Node[];
+    edges: Edge[];
+    clusters?: Cluster[];
+}
