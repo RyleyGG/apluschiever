@@ -1,9 +1,9 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, ElementRef, computed, effect, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Node, Edge, Cluster } from './graph.interface';
 
 /**
- * The main application component, currently the sample hello world page.
+ * The graph component.
  */
 @Component({
     selector: 'graph',
@@ -35,6 +35,7 @@ export class GraphComponent {
     zoomLevel = input<number>(1);
     minZoomLevel = input<number>(0.1);
     maxZoomLevel = input<number>(5);
+    panOnZoom = input<boolean>(true);
 
     // Public Properties & Computed Values
     width = computed(() => { });
@@ -42,14 +43,81 @@ export class GraphComponent {
 
     // Private Properties
 
-    constructor() {
+    constructor(private el: ElementRef) {
 
+
+        // Setup the effect for pan to node functionality
+        effect(() => {
+            const nodeId = this.panToNode();
+            if (!nodeId) { return; }
+            this.panToNodeId(nodeId);
+        })
     }
 
     //#region Helper Methods
 
     private getParentDimensions(): void {
 
+    }
+
+    private onDrag(): void {
+
+    }
+
+    private onPan(): void {
+
+    }
+
+    private pan(x: number, y: number, ignoreZoomLevel: boolean = false): void {
+        const zoomLevel = ignoreZoomLevel ? 1 : this.zoomLevel();
+
+    }
+
+    private panTo(x: number, y: number): void {
+
+    }
+
+    private panToNodeId(id: string): void {
+
+    }
+
+    private onZoom($event: WheelEvent, direction: any): void {
+        // Check that zoom is enabled
+        if (!this.zoomEnabled()) {
+            return;
+        }
+
+        const zoomFactor = 1 + (direction === 'in' ? this.zoomSpeed() : -this.zoomSpeed());
+
+        // Check we won't go out of bounds
+        const newZoomLevel = this.zoomLevel() * zoomFactor;
+        if (newZoomLevel <= this.minZoomLevel() || newZoomLevel >= this.maxZoomLevel()) {
+            return;
+        }
+
+        // Apply the actual zoom
+        if (this.panOnZoom() && $event) {
+            // Absolute mouse X/Y on the screen
+            const mouseX = $event.clientX;
+            const mouseY = $event.clientY;
+
+            // Transform to SVG X/Y
+            const svg = this.el.nativeElement.querySelector('svg');
+            const svgGroup = svg.querySelector('g.chart');
+
+            // Create a SVG point
+            const point = svg.createSVGPoint();
+            point.x = mouseX;
+            point.y = mouseY;
+            const svgPoint = point.matrixTransform(svgGroup.getScreenCTM().inverse());
+
+            // Pan around SVG, zoom, then unpan
+            this.pan(svgPoint.x, svgPoint.y, true);
+            this.zoom(zoomFactor);
+            this.pan(-svgPoint.x, -svgPoint.y, true);
+        } else {
+            this.zoom(zoomFactor);
+        }
     }
 
     private zoom(factor: number): void {
@@ -61,18 +129,6 @@ export class GraphComponent {
     }
 
     private zoomToFit(): void {
-
-    }
-
-    private pan(x: number, y: number): void {
-
-    }
-
-    private panTo(x: number, y: number): void {
-
-    }
-
-    private panToNodeId(id: string): void {
 
     }
 
