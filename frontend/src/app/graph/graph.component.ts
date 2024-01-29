@@ -51,8 +51,18 @@ export class GraphComponent {
     panOnZoom = input<boolean>(true);
 
     // Public Properties & Computed Values
-    width = computed(() => { });
-    height = computed(() => { });
+    width = computed(() => {
+        // Try setting width through the input property view()
+        // If that fails then try getting parent
+        // If that fails use a default
+        return Math.floor((this.view() || this.getParentDimensions() || [600, 400])[0]);
+    });
+    height = computed(() => {
+        // Try setting height through the input property view()
+        // If that fails then try getting parent
+        // If that fails use a default
+        return Math.floor((this.view() || this.getParentDimensions() || [600, 400])[1]);
+    });
 
     // Private Properties
     private transformationMatrix = signal<Matrix>(identity());
@@ -105,8 +115,19 @@ export class GraphComponent {
 
     //#region Helper Methods
 
-    private getParentDimensions(): void {
+    /**
+     * Get the dimensions of the parent element.
+     * 
+     * @returns the dimensions of the parent container, or null if operation failed
+     */
+    private getParentDimensions(): number[] | null {
+        const dims = this.el.nativeElement.parentNode?.getBoundingClientRect();
 
+        if (dims && dims.width && dims.height) {
+            return [dims.width, dims.height];
+        }
+
+        return null;
     }
 
     //#region Drag Node Methods
@@ -244,6 +265,9 @@ export class GraphComponent {
         });
     }
 
+    /**
+     * Zoom to center the graph in the view.
+     */
     private zoomToFit(): void {
 
     }
