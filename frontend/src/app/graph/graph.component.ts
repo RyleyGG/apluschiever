@@ -63,8 +63,12 @@ export class GraphComponent {
             const nodeId = this.panToNode();
             if (!nodeId) { return; }
             this.panToNodeId(nodeId);
-        })
+        });
     }
+
+    //#region Host Listener Functions
+
+    //#endregion Host Listener Functions
 
     //#region Helper Methods
 
@@ -102,7 +106,20 @@ export class GraphComponent {
     }
 
     private panTo(x: number, y: number): void {
+        // Ensure proper input
+        if (isNaN(x) || isNaN(y)) {
+            return;
+        }
 
+        const panX = -this.transformationMatrix.e - x * this.zoomLevel(); // todo add half dimension width/height here
+        const panY = -this.transformationMatrix.f - y * this.zoomLevel();
+
+        this.transformationMatrix = transform(
+            this.transformationMatrix,
+            translate(panX / this.zoomLevel(), panY / this.zoomLevel())
+        );
+
+        this.updateTransform();
     }
 
     private panToNodeId(id: string): void {
@@ -152,11 +169,21 @@ export class GraphComponent {
         }
     }
 
+    /**
+     * Zoom by a factor.
+     * 
+     * @param {number} factor the factor to zoom by
+     */
     private zoom(factor: number): void {
         this.transformationMatrix = transform(this.transformationMatrix, scale(factor, factor));
         this.updateTransform();
     }
 
+    /**
+     * Zoom to a specific level.
+     * 
+     * @param {number} level the level to zoom to
+     */
     private zoomTo(level: number): void {
 
     }
