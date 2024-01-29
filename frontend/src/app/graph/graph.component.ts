@@ -1,6 +1,16 @@
 import { Component, ElementRef, computed, effect, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Node, Edge, Cluster } from './graph.interface';
+import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
+
+interface Matrix {
+    a: number, // zoom level
+    b: number,
+    c: number,
+    d: number,
+    e: number, // x position
+    f: number  // y position
+};
 
 /**
  * The graph component.
@@ -42,6 +52,8 @@ export class GraphComponent {
     height = computed(() => { });
 
     // Private Properties
+    private transformationMatrix: Matrix = identity();
+    private transform: string = '';
 
     constructor(private el: ElementRef) {
 
@@ -60,17 +72,33 @@ export class GraphComponent {
 
     }
 
-    private onDrag(): void {
+    //#region Drag Node Methods
+
+    private onDrag(event: MouseEvent): void {
+        // Check that drag is enabled
+        if (!this.dragEnabled()) {
+            return;
+        }
+
 
     }
 
+    //#endregion Drag Node Methods
+
+    //#region Pan Methods
+
     private onPan(): void {
+        // Check that pan is enabled
+        if (!this.panEnabled()) {
+            return;
+        }
 
     }
 
     private pan(x: number, y: number, ignoreZoomLevel: boolean = false): void {
         const zoomLevel = ignoreZoomLevel ? 1 : this.zoomLevel();
-
+        this.transformationMatrix = transform(this.transformationMatrix, translate(x / zoomLevel, y / zoomLevel));
+        this.updateTransform();
     }
 
     private panTo(x: number, y: number): void {
@@ -80,6 +108,10 @@ export class GraphComponent {
     private panToNodeId(id: string): void {
 
     }
+
+    //#endregion Pan Methods
+
+    //#region Zoom Methods
 
     private onZoom($event: WheelEvent, direction: any): void {
         // Check that zoom is enabled
@@ -121,7 +153,8 @@ export class GraphComponent {
     }
 
     private zoom(factor: number): void {
-
+        this.transformationMatrix = transform(this.transformationMatrix, scale(factor, factor));
+        this.updateTransform();
     }
 
     private zoomTo(level: number): void {
@@ -130,6 +163,12 @@ export class GraphComponent {
 
     private zoomToFit(): void {
 
+    }
+
+    //#endregion Zoom Methods
+
+    private updateTransform(): void {
+        this.transform = toSVG(smoothMatrix(this.transformationMatrix, 100));
     }
 
     //#endregion Helper Methods
