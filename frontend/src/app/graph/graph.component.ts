@@ -1,4 +1,4 @@
-import { Component, ContentChild, ElementRef, QueryList, TemplateRef, ViewChildren, computed, effect, input, signal } from '@angular/core';
+import { Component, ContentChild, ElementRef, HostListener, QueryList, TemplateRef, ViewChildren, computed, effect, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Node, Edge, Cluster, Graph } from './graph.interface';
 import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
@@ -39,7 +39,7 @@ export class GraphComponent {
     panEnabled = input<boolean>(true);
     panOffsetX = input<number>();
     panOffsetY = input<number>();
-    panningAxis = input<'horizontal' | 'vertical' | 'both'>('both');
+    panningAxis = input<'horizontal' | 'vertical' | 'both'>('both'); // TODO: maybe make enum
     panToNode = input<string>(); // Accepts Node ID
 
     // Graph Zoom Inputs
@@ -61,6 +61,15 @@ export class GraphComponent {
     private graph: Graph;
 
     constructor(private el: ElementRef) {
+        // Setup the effect for zoom functionality
+        effect(() => {
+            this.zoomTo(this.zoomLevel());
+        });
+
+        // Setup the effect for pan offset functionality
+        effect(() => {
+            this.panTo(this.panOffsetX() || 0, this.panOffsetY() || 0);
+        });
 
         // Setup the effect for pan to node functionality
         effect(() => {
@@ -71,6 +80,26 @@ export class GraphComponent {
     }
 
     //#region Host Listener Functions
+
+    @HostListener('document:mousemove', ['$event'])
+    private onMouseMove($event: MouseEvent): void {
+
+    }
+
+    @HostListener('document:mousedown', ['$event'])
+    private onMouseDown($event: MouseEvent): void {
+
+    }
+
+    @HostListener('document:mouseclick', ['$event'])
+    private onMouseClick($event: MouseEvent): void {
+
+    }
+
+    @HostListener('document:mouseup', ['$event'])
+    private onMouseUp($event: MouseEvent): void {
+
+    }
 
     //#endregion Host Listener Functions
 
@@ -208,7 +237,11 @@ export class GraphComponent {
      * @param {number} level the level to zoom to
      */
     private zoomTo(level: number): void {
-
+        this.transformationMatrix.update((value) => {
+            value.a = isNaN(level) ? value.a : Number(level);
+            value.d = isNaN(level) ? value.d : Number(level);
+            return value;
+        });
     }
 
     private zoomToFit(): void {
