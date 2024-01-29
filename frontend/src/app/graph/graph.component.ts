@@ -1,8 +1,11 @@
-import { Component, ElementRef, computed, effect, input } from '@angular/core';
+import { Component, ContentChild, ElementRef, QueryList, TemplateRef, ViewChildren, computed, effect, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Node, Edge, Cluster } from './graph.interface';
 import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
 
+/**
+ * Interface for a matrix, used by GraphComponent internally.
+ */
 interface Matrix {
     a: number, // zoom level
     b: number,
@@ -52,11 +55,11 @@ export class GraphComponent {
     height = computed(() => { });
 
     // Private Properties
-    private transformationMatrix: Matrix = identity();
-    private transform: string = '';
+    private transformationMatrix = signal<Matrix>(identity());
+    private transform = computed(() => toSVG(smoothMatrix(this.transformationMatrix(), 100)));
+
 
     constructor(private el: ElementRef) {
-
 
         // Setup the effect for pan to node functionality
         effect(() => {
@@ -101,8 +104,7 @@ export class GraphComponent {
 
     private pan(x: number, y: number, ignoreZoomLevel: boolean = false): void {
         const zoomLevel = ignoreZoomLevel ? 1 : this.zoomLevel();
-        this.transformationMatrix = transform(this.transformationMatrix, translate(x / zoomLevel, y / zoomLevel));
-        this.updateTransform();
+        this.transformationMatrix.set(transform(this.transformationMatrix(), translate(x / zoomLevel, y / zoomLevel)));
     }
 
     private panTo(x: number, y: number): void {
@@ -111,15 +113,13 @@ export class GraphComponent {
             return;
         }
 
-        const panX = -this.transformationMatrix.e - x * this.zoomLevel(); // todo add half dimension width/height here
-        const panY = -this.transformationMatrix.f - y * this.zoomLevel();
+        const panX = -this.transformationMatrix().e - x * this.zoomLevel(); // todo add half dimension width/height here
+        const panY = -this.transformationMatrix().f - y * this.zoomLevel();
 
-        this.transformationMatrix = transform(
-            this.transformationMatrix,
+        this.transformationMatrix.set(transform(
+            this.transformationMatrix(),
             translate(panX / this.zoomLevel(), panY / this.zoomLevel())
-        );
-
-        this.updateTransform();
+        ));
     }
 
     private panToNodeId(id: string): void {
@@ -175,8 +175,7 @@ export class GraphComponent {
      * @param {number} factor the factor to zoom by
      */
     private zoom(factor: number): void {
-        this.transformationMatrix = transform(this.transformationMatrix, scale(factor, factor));
-        this.updateTransform();
+        this.transformationMatrix.set(transform(this.transformationMatrix(), scale(factor, factor)));
     }
 
     /**
@@ -193,10 +192,6 @@ export class GraphComponent {
     }
 
     //#endregion Zoom Methods
-
-    private updateTransform(): void {
-        this.transform = toSVG(smoothMatrix(this.transformationMatrix, 100));
-    }
 
     //#endregion Helper Methods
 }
