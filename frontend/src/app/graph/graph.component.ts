@@ -103,6 +103,8 @@ export class GraphComponent {
             if (!nodeId) { return; }
             this.panToNodeId(nodeId);
         });
+
+        this.createGraph();
     }
 
     //#region Host Listener Functions
@@ -156,6 +158,29 @@ export class GraphComponent {
     //#endregion Host Listener Functions
 
     //#region Helper Methods
+
+    private createGraph(): void {
+        const initNode = (n: Node): Node => {
+            // Set default settings for the nodes here.
+            return n;
+        };
+
+        const initEdge = (e: Edge): Edge => {
+            // Set default settings for the edges here.
+            return e;
+        };
+
+        const initCluster = (c: Cluster): Cluster => {
+            // Set default settings for the clusters here.
+            return c;
+        };
+
+        this.graph = {
+            nodes: this.nodes().length > 0 ? [...this.nodes()].map(initNode) : ([] as Node[]),
+            edges: this.edges().length > 0 ? [...this.edges()].map(initEdge) : ([] as Edge[]),
+            clusters: this.clusters().length > 0 ? [...this.clusters()].map(initCluster) : ([] as Cluster[])
+        };
+    }
 
     /**
      * Get the dimensions of the parent element.
