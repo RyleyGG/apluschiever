@@ -107,6 +107,11 @@ export class GraphComponent {
 
     //#region Host Listener Functions
 
+    /**
+     * A function which fires on each mouse movement. Needed to allow panning and dragging of nodes.
+     * 
+     * @param {MouseEvent} $event the event which triggered this function call
+     */
     @HostListener('document:mousemove', ['$event'])
     private onMouseMove($event: MouseEvent): void {
         if (this.isPanning && this.panEnabled()) {
@@ -116,16 +121,31 @@ export class GraphComponent {
         }
     }
 
+    /**
+     * A function which fires on each mouse down event. Needed to allow panning and dragging of nodes.
+     * 
+     * @param { MouseEvent } $event the event which triggered this function call 
+     */
     @HostListener('document:mousedown', ['$event'])
     private onMouseDown($event: MouseEvent): void {
 
     }
 
+    /**
+     * A function which fires on each mouse click event. 
+     * 
+     * @param { MouseEvent } $event the event which triggered this function call 
+     */
     @HostListener('document:mouseclick', ['$event'])
     private onMouseClick($event: MouseEvent): void {
 
     }
 
+    /**
+     * A function which fires on each mouse up event. Needed to allow panning and dragging of nodes.
+     * 
+     * @param { MouseEvent } $event the event which triggered this function call 
+     */
     @HostListener('document:mouseup', ['$event'])
     private onMouseUp($event: MouseEvent): void {
         this.isDragging = false;
