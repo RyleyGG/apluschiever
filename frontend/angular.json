@@ -25,7 +25,17 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              {
+                "input": "src/app/core/services/theme/saga-blue.css",
+                "bundleName": "saga-blue",
+                "inject": false
+              },
+              {
+                "input": "src/app/core/services/theme/arya-blue.css",
+                "bundleName": "arya-blue",
+                "inject": false
+              }
             ],
             "scripts": []
           },
