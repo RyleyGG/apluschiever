@@ -1,3 +1,5 @@
+import { Observable } from "rxjs";
+
 export interface NodePosition {
     x: number;
     y: number;
@@ -34,4 +36,13 @@ export interface Graph {
     nodes: Node[];
     edges: Edge[];
     clusters?: Cluster[];
-}
+};
+
+export interface Layout {
+    settings?: any;
+    run(graph: Graph): Graph | Observable<Graph>;
+    updateEdge(graph: Graph, edge: Edge): Graph | Observable<Graph>;
+    onDragStart?(draggingNode: Node, $event: MouseEvent): void;
+    onDrag?(draggingNode: Node, $event: MouseEvent): void;
+    onDragEnd?(draggingNode: Node, $event: MouseEvent): void;
+};

@@ -68,7 +68,7 @@ export class GraphComponent {
     private transformationMatrix = signal<Matrix>(identity());
     private transform = computed(() => toSVG(smoothMatrix(this.transformationMatrix(), 100)));
 
-    private graph: Graph;
+    private graph!: Graph; // Initialized within the createGraph() method, which is called in constructor.
 
     private isDragging: boolean = false;
     private isPanning: boolean = false;
