@@ -1,3 +1,6 @@
+/**
+ * Information representing a user
+ */
 export interface User {
   id: string,
   first_name: string,
@@ -5,6 +8,9 @@ export interface User {
   email_address: string
 }
 
+/**
+ * Available filtering options for users
+ */
 export interface UserFilters {
   ids: string[],
   emails: string[],

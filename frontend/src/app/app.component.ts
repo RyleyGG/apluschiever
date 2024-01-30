@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
-import { RouterOutlet } from '@angular/router';
-import { InternetConnectionService } from './core/services/internet-connection/internet-connection.service';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ThemeService } from './core/services/theme/theme.service';
+import { InternetConnectionService } from './core/services/internet-connection/internet-connection.service';
 
 /**
  * The main application component, currently the sample hello world page.
@@ -11,7 +11,7 @@ import { ThemeService } from './core/services/theme/theme.service';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, ButtonModule],
+  imports: [CommonModule, RouterOutlet, ButtonModule, RouterLink, RouterLinkActive],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
