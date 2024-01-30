@@ -15,6 +15,8 @@ export interface Node {
     transform?: string;
     label?: string;
     data?: any;
+    color?: any;
+    hidden?: boolean;
 };
 
 export interface Edge {

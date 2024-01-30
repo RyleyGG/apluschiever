@@ -70,6 +70,22 @@ export class GraphComponent {
 
     private graph: Graph;
 
+    private isDragging: boolean = false;
+    private isPanning: boolean = false;
+
+    @ContentChild('nodeTemplate') nodeTemplate!: TemplateRef<any>;
+    @ContentChild('edgeTemplate') edgeTemplate!: TemplateRef<any>;
+    @ContentChild('clusterTemplate') clusterTemplate!: TemplateRef<any>;
+    @ContentChild('defsTemplate') defsTemplate!: TemplateRef<any>;
+
+    @ViewChildren('nodeElement') nodeElements!: QueryList<ElementRef>;
+    @ViewChildren('edgeElement') edgeElements!: QueryList<ElementRef>;
+
+    /**
+     * Creates the GraphComponent.
+     * 
+     * @param { ElementRef } el a reference to itself in the HTML DOM, injected by Angular.
+     */
     constructor(private el: ElementRef) {
         // Setup the effect for zoom functionality
         effect(() => {
@@ -93,7 +109,11 @@ export class GraphComponent {
 
     @HostListener('document:mousemove', ['$event'])
     private onMouseMove($event: MouseEvent): void {
-
+        if (this.isPanning && this.panEnabled()) {
+            this.onPan($event);
+        } else if (this.isDragging && this.dragEnabled()) {
+            this.onDrag($event);
+        }
     }
 
     @HostListener('document:mousedown', ['$event'])
@@ -108,7 +128,9 @@ export class GraphComponent {
 
     @HostListener('document:mouseup', ['$event'])
     private onMouseUp($event: MouseEvent): void {
-
+        this.isDragging = false;
+        this.isPanning = false;
+        // Call on drag end for whatever drawing software is put in place.
     }
 
     //#endregion Host Listener Functions
@@ -145,12 +167,28 @@ export class GraphComponent {
 
     //#region Pan Methods
 
-    private onPan(): void {
+    /**
+     * A helper function for panning the graph based on a mouse movement.
+     * 
+     * @param {MouseEvent} event the mouse event to read panning information from.
+     */
+    private onPan(event: MouseEvent): void {
         // Check that pan is enabled
         if (!this.panEnabled()) {
             return;
         }
 
+        // Pan with the appropriate axes enabled.
+        switch (this.panningAxis()) {
+            case 'horizontal':
+                this.pan(event.movementX, 0);
+                break;
+            case 'vertical':
+                this.pan(0, event.movementY);
+                break;
+            default:
+                this.pan(event.movementX, event.movementY);
+        }
     }
 
     /**
