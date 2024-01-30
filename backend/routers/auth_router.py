@@ -65,5 +65,9 @@ async def revalidate_access_token(refresh_token: RefreshToken, db: Session = Dep
     access_token = auth_service.create_token({'sub': user.email_address}, config.access_token_lifetime)
     refresh_token = auth_service.create_token({'sub': user.email_address}, config.refresh_token_lifetime)
 
-    return {'access_token': access_token, 'refresh_token': refresh_token, 'token_type': 'bearer'}
+    return {'access_token': access_token, 'refresh_token': refresh_token, 'token_type': 'bearer', 'user_id': user.id}
 
+
+@router.post('/validate')
+async def revalidate_access_token(user = Depends(auth_service.validate_token)):
+    return True
