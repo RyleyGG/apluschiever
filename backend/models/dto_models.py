@@ -1,3 +1,4 @@
+from enum import Enum
 from pydantic import BaseModel, UUID4
 from typing import Optional, List
 
@@ -40,3 +41,9 @@ class NewCourse(BaseModel):
     title: str
     short_description: Optional[str] = None
     course_owner_id: UUID4
+
+
+class UserType(Enum):
+    STUDENT = 'Student'
+    ADMIN = 'Administrator'
+    TEACHER = 'Teacher'

@@ -5,6 +5,7 @@ from pydantic import field_validator
 from sqlalchemy import JSON, Column
 from sqlmodel import SQLModel, Field, Relationship
 
+from models.dto_models import UserType
 from models.pydantic_models import Node
 from services.api_utility_service import pydantic_column_type
 
@@ -17,6 +18,7 @@ class User(SQLModel, table=True):
     email_address: str
     password: str
     courses: Optional[List["Course"]] = Relationship(back_populates='course_owner')
+    user_type: UserType
 
 
 class Course(SQLModel, table=True):
