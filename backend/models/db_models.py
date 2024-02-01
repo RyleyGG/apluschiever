@@ -20,13 +20,18 @@ class User(SQLModel, table=True):
     courses: Optional[List["Course"]] = Relationship(back_populates='course_owner')
 
 
+class NodeCourseAssociation(SQLModel, table=True):
+    node_id: uuid.UUID = Field(default=None, foreign_key="Node.id", primary_key=True)
+    course_id: uuid.UUID = Field(default=None, foreign_key="Course.id", primary_key=True)
+
+
 class Node(SQLModel, table=True):
     __tablename__ = 'Node'
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     title: str
     short_description: str
-    content: List[Content]
-    courses: Optional[List["Course"]] = Relationship(back_populates='nodes')
+    content: Optional[List[Content]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[Content]])))
+    courses: List["Course"] = Relationship(back_populates="nodes", link_model=NodeCourseAssociation)
 
 
 class Course(SQLModel, table=True):
@@ -36,4 +41,4 @@ class Course(SQLModel, table=True):
     short_description: Optional[str]
     course_owner_id: uuid.UUID = Field(foreign_key='User.id')
     course_owner: User = Relationship(back_populates='courses')
-    nodes: Optional[List[Node]] = Relationship(back_populates='courses')
+    nodes: List[Node] = Relationship(back_populates="courses", link_model=NodeCourseAssociation)

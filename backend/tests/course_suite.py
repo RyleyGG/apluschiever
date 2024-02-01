@@ -12,34 +12,48 @@ def test_add_courses_and_nodes(db: Session, client: TestClient):
     test_course_1 = Course(title='Test 1', course_owner_id=config._tests_user_id)
     test_course_2 = Course(title='Test 2', course_owner_id=config._tests_user_id)
     test_course_3 = Course(title='Test 3', course_owner_id=config._tests_user_id)
+    test_course_4 = Course(title='Test 4', course_owner_id=config._tests_user_id)
 
     test_nodes = []
-
     for i in range(0, 5):
         new_node = Node(title=f'Node {i}', short_description=f'Node {i}')
         new_node.content = [Video(title='wasd', embed_link='wasd', video_source='wasd')]
         test_nodes.append(Node(title=f'Node {i}', short_description=f'Node {i}').model_dump())
-    test_course_1.nodes = test_nodes
 
     db.add(test_course_1)
     db.add(test_course_2)
     db.add(test_course_3)
+    db.add(test_course_4)
+
+    for node in test_nodes:
+        db.add(node)
     db.commit()
 
+    assert len(db.exec(select(Course)).all()) == 4
+    assert len(db.exec(select(User).where(User.id == config._tests_user_id)).first().courses) == 4
+
+    db.delete(test_course_4)
+    db.commit()
     assert len(db.exec(select(Course)).all()) == 3
     assert len(db.exec(select(User).where(User.id == config._tests_user_id)).first().courses) == 3
 
-    db.delete(test_course_2)
-    db.commit()
-    assert len(db.exec(select(Course)).all()) == 2
-    assert len(db.exec(select(User).where(User.id == config._tests_user_id)).first().courses) == 2
+    assert len(db.exec(select(Node)).all()) == 5
 
 
-def test_get_nodes(db: Session, client: TestClient):
+def test_node_course_connection(db: Session, client: TestClient):
     test_course = db.exec(select(Course).where(Course.title == 'Test 1')).first()
-    node_names = []
-    for node in test_course.nodes:
-        node_names.append(node.title)
+    assert test_course.nodes is None
 
-    assert len(node_names) == 5
-    assert node_names[0] == 'Node 0'
+    test_node_1 = db.exec(select(Node).where(Node.title == 'Node 1')).first()
+    test_node_2 = db.exec(select(Node).where(Node.title == 'Node 2')).first()
+    test_node_3 = db.exec(select(Node).where(Node.title == 'Node 3')).first()
+
+    assert test_node_1.courses is None
+
+    test_course.nodes = [test_node_1]
+    db.add(test_course)
+    db.refresh(test_course)
+    db.refresh(test_node_1)
+
+    assert len(test_course.nodes) == 1
+    assert len(test_node_1.courses) == 1
