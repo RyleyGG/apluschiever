@@ -40,3 +40,8 @@ class NewCourse(BaseModel):
     title: str
     short_description: Optional[str] = None
     course_owner_id: UUID4
+
+
+class NodeProgressDetails(BaseModel):
+    node_id: str
+    completed_content: List[str]
