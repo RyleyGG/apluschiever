@@ -1,4 +1,5 @@
-<div class="graph-outer">
+<div class="graph-outer" (mouseWheelUp)="onZoom($any($event), 'in')" (mouseWheelDown)="onZoom($any($event), 'out')"
+    mouseWheel>
     <svg:svg class="graph" [attr.width]="width()" [attr.height]="height()">
         <!--This rect is just for user interaction via panning-->
         <svg:g *ngIf="initialized && graph">
@@ -7,7 +8,7 @@
         </svg:g>
 
         <!--This group displays the actual graph and content-->
-        <svg:g *ngIf="initialized && graph" [attr.transform]="transform()">
+        <svg:g class="graph" *ngIf="initialized && graph" [attr.transform]="transform()">
             <defs>
                 <ng-container *ngIf="defsTemplate" [ngTemplateOutlet]="defsTemplate"></ng-container>
                 <svg:path class="text-path" *ngFor="let edge of graph.edges" [attr.d]="edge.textPath"

@@ -1,7 +1,8 @@
-import { Component, ContentChild, ElementRef, HostListener, QueryList, TemplateRef, ViewChildren, computed, effect, input, signal, untracked } from '@angular/core';
+import { Component, ContentChild, ElementRef, HostListener, QueryList, TemplateRef, ViewChildren, computed, effect, input, signal, untracked, ɵINPUT_SIGNAL_BRAND_WRITE_TYPE } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Node, Edge, Cluster, Graph } from './graph.interface';
 import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
+import { MouseWheelDirective } from '../core/directives/mouse-wheel.directive';
 
 /**
  * Interface for a matrix, used by GraphComponent internally.
@@ -21,7 +22,7 @@ interface Matrix {
 @Component({
     selector: 'graph',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, MouseWheelDirective],
     templateUrl: './graph.component.html',
     styleUrl: './graph.component.css'
 })
@@ -45,7 +46,7 @@ export class GraphComponent {
     // Graph Zoom Inputs
     zoomEnabled = input<boolean>(true);
     zoomSpeed = input<number>(0.1);
-    zoomLevel = input<number>(1);
+    zoomLevel = signal<number>(1);
     minZoomLevel = input<number>(0.1);
     maxZoomLevel = input<number>(5);
     panOnZoom = input<boolean>(true);
@@ -91,12 +92,15 @@ export class GraphComponent {
     constructor(private el: ElementRef) {
         // Setup the effect for zoom functionality
         effect(() => {
-            untracked(() => this.zoomTo(this.zoomLevel()));
+            const level = this.zoomLevel();
+            untracked(() => this.zoomTo(level));
         });
 
         // Setup the effect for pan offset functionality
         effect(() => {
-            untracked(() => this.panTo(this.panOffsetX() || 0, this.panOffsetY() || 0));
+            const offX = this.panOffsetX();
+            const offY = this.panOffsetY();
+            untracked(() => this.panTo(offX || 0, offY || 0));
         });
 
         // Setup the effect for pan to node functionality
@@ -105,8 +109,6 @@ export class GraphComponent {
             if (!nodeId) { return; }
             untracked(() => this.panToNodeId(nodeId));
         });
-
-
     }
 
     ngOnInit(): void {
@@ -295,8 +297,8 @@ export class GraphComponent {
             return;
         }
 
-        const panX = -this.transformationMatrix().e - x * this.zoomLevel(); // todo add half dimension width/height here
-        const panY = -this.transformationMatrix().f - y * this.zoomLevel();
+        const panX = -this.transformationMatrix().e - x * this.zoomLevel() + this.width() / 2; // todo add half dimension width/height here
+        const panY = -this.transformationMatrix().f - y * this.zoomLevel() + this.height() / 2;
 
         this.transformationMatrix.set(transform(
             this.transformationMatrix(),
@@ -322,7 +324,7 @@ export class GraphComponent {
 
     //#region Zoom Methods
 
-    private onZoom($event: WheelEvent, direction: any): void {
+    public onZoom($event: WheelEvent, direction: any): void {
         // Check that zoom is enabled
         if (!this.zoomEnabled()) {
             return;
@@ -344,7 +346,7 @@ export class GraphComponent {
 
             // Transform to SVG X/Y
             const svg = this.el.nativeElement.querySelector('svg');
-            const svgGroup = svg.querySelector('g.chart');
+            const svgGroup = svg.querySelector('g.graph');
 
             // Create a SVG point
             const point = svg.createSVGPoint();
@@ -354,10 +356,10 @@ export class GraphComponent {
 
             // Pan around SVG, zoom, then unpan
             this.pan(svgPoint.x, svgPoint.y, true);
-            this.zoom(zoomFactor);
+            this.zoomLevel.update((value) => value * zoomFactor);
             this.pan(-svgPoint.x, -svgPoint.y, true);
         } else {
-            this.zoom(zoomFactor);
+            this.zoomLevel.update((value) => value * zoomFactor);
         }
     }
 
