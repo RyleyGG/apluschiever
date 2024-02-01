@@ -18,7 +18,7 @@ def test_add_courses_and_nodes(db: Session, client: TestClient):
     for i in range(0, 5):
         new_node = Node(title=f'Node {i}', short_description=f'Node {i}')
         new_node.content = [Video(title='wasd', embed_link='wasd', video_source='wasd')]
-        test_nodes.append(Node(title=f'Node {i}', short_description=f'Node {i}').model_dump())
+        test_nodes.append(new_node)
 
     db.add(test_course_1)
     db.add(test_course_2)
@@ -42,13 +42,13 @@ def test_add_courses_and_nodes(db: Session, client: TestClient):
 
 def test_node_course_connection(db: Session, client: TestClient):
     test_course = db.exec(select(Course).where(Course.title == 'Test 1')).first()
-    assert test_course.nodes is None
+    assert test_course.nodes == []
 
     test_node_1 = db.exec(select(Node).where(Node.title == 'Node 1')).first()
     test_node_2 = db.exec(select(Node).where(Node.title == 'Node 2')).first()
     test_node_3 = db.exec(select(Node).where(Node.title == 'Node 3')).first()
 
-    assert test_node_1.courses is None
+    assert test_node_1.courses == []
 
     test_course.nodes = [test_node_1]
     db.add(test_course)
