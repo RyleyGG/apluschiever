@@ -1,11 +1,12 @@
 <div class="graph-outer">
     <svg:svg class="graph" [attr.width]="width()" [attr.height]="height()">
+        <!--This rect is just for user interaction via panning-->
         <svg:g *ngIf="initialized && graph">
-            <!--This rect is just for user interaction via panning (TODO: set transform/dimensions correctly)-->
             <svg:rect class="panning-rect" [attr.width]="width()" [attr.height]="height()"
                 (mousedown)="isPanning = true" />
-
         </svg:g>
+
+        <!--This group displays the actual graph and content-->
         <svg:g *ngIf="initialized && graph" [attr.transform]="transform()">
             <defs>
                 <ng-container *ngIf="defsTemplate" [ngTemplateOutlet]="defsTemplate"></ng-container>
