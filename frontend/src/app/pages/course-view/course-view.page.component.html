@@ -1,0 +1,26 @@
+<h1>Sign In Page</h1>
+
+<graph class="course-view-graph-container" [view]="[500, 200]" [edges]="[
+  {
+    id: 'a',
+    source: 'first',
+  target: 'second',
+    label: 'is parent of'
+  }, {
+    id: 'b',
+    source: 'first',
+    target: 'third',
+    label: 'custom label'
+  }
+]" [nodes]="[
+  {
+    id: 'first',
+    label: 'A'
+  }, {
+    id: 'second',
+    label: 'B'
+  }, {
+    id: 'third',
+    label: 'C'
+  }
+]" (select)="onNodeSelect($event)"></graph>

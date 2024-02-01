@@ -1,4 +1,4 @@
-import { Component, ContentChild, ElementRef, HostListener, QueryList, TemplateRef, ViewChildren, computed, effect, input, signal } from '@angular/core';
+import { Component, ContentChild, ElementRef, HostListener, QueryList, TemplateRef, ViewChildren, computed, effect, input, signal, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Node, Edge, Cluster, Graph } from './graph.interface';
 import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
@@ -64,14 +64,16 @@ export class GraphComponent {
         return Math.floor((this.view() || this.getParentDimensions() || [600, 400])[1]);
     });
 
+    initialized: boolean = false;
+
     // Private Properties
     private transformationMatrix = signal<Matrix>(identity());
-    private transform = computed(() => toSVG(smoothMatrix(this.transformationMatrix(), 100)));
+    public transform = computed(() => toSVG(smoothMatrix(this.transformationMatrix(), 100)));
 
-    private graph!: Graph; // Initialized within the createGraph() method, which is called in constructor.
+    public graph!: Graph; // Initialized within the createGraph() method, which is called in constructor.
 
-    private isDragging: boolean = false;
-    private isPanning: boolean = false;
+    public isDragging: boolean = false;
+    public isPanning: boolean = false;
 
     @ContentChild('nodeTemplate') nodeTemplate!: TemplateRef<any>;
     @ContentChild('edgeTemplate') edgeTemplate!: TemplateRef<any>;
@@ -89,21 +91,25 @@ export class GraphComponent {
     constructor(private el: ElementRef) {
         // Setup the effect for zoom functionality
         effect(() => {
-            this.zoomTo(this.zoomLevel());
+            untracked(() => this.zoomTo(this.zoomLevel()));
         });
 
         // Setup the effect for pan offset functionality
         effect(() => {
-            this.panTo(this.panOffsetX() || 0, this.panOffsetY() || 0);
+            untracked(() => this.panTo(this.panOffsetX() || 0, this.panOffsetY() || 0));
         });
 
         // Setup the effect for pan to node functionality
         effect(() => {
             const nodeId = this.panToNode();
             if (!nodeId) { return; }
-            this.panToNodeId(nodeId);
+            untracked(() => this.panToNodeId(nodeId));
         });
 
+
+    }
+
+    ngOnInit(): void {
         this.createGraph();
     }
 
@@ -356,6 +362,18 @@ export class GraphComponent {
     }
 
     //#endregion Zoom Methods
+
+    //#region Helpers For Angular Template
+
+    public trackEdgeBy(index: number, edge: Edge): any {
+        return edge.id;
+    }
+
+    public trackNodeBy(index: number, node: Node): any {
+        return node.id;
+    }
+
+    //#endregion
 
     //#endregion Helper Methods
 }

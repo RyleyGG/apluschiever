@@ -26,16 +26,20 @@ export interface Edge {
     source: string;
     target: string;
     label?: string;
+    points?: any;
+    textPath?: any;
+    line?: any;
 };
 
-export interface Cluster {
-
+export interface Cluster extends Node {
+    childNodeIds?: string[];
 };
 
 export interface Graph {
     nodes: Node[];
     edges: Edge[];
     clusters?: Cluster[];
+    edgeLabels?: any;
 };
 
 export interface Layout {
