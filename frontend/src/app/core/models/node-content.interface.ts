@@ -14,3 +14,9 @@ export interface Markdown {
     id: string;
     content: string;
 }
+
+
+export interface NodeProgressDetails {
+    node_id: string
+    completed_content: string[]
+}
