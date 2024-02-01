@@ -1,14 +1,17 @@
 <div class="graph-outer">
-    <svg:svg class="graph">
-        <svg:g *ngIf="initialized && graph" [attr.transform]="transform">
+    <svg:svg class="graph" [attr.width]="width()" [attr.height]="height()">
+        <svg:g *ngIf="initialized && graph">
+            <!--This rect is just for user interaction via panning (TODO: set transform/dimensions correctly)-->
+            <svg:rect class="panning-rect" [attr.width]="width()" [attr.height]="height()"
+                (mousedown)="isPanning = true" />
+
+        </svg:g>
+        <svg:g *ngIf="initialized && graph" [attr.transform]="transform()">
             <defs>
                 <ng-container *ngIf="defsTemplate" [ngTemplateOutlet]="defsTemplate"></ng-container>
                 <svg:path class="text-path" *ngFor="let edge of graph.edges" [attr.d]="edge.textPath"
                     [attr.id]="edge.id"></svg:path>
             </defs>
-
-            <!--This rect is just for user interaction via panning (TODO: set transform/dimensions correctly)-->
-            <svg:rect class="panning-rect" (mousedown)="isPanning = true" />
 
             <ng-content></ng-content>
 
@@ -46,7 +49,7 @@
                     <ng-container *ngIf="nodeTemplate && !node.hidden" [ngTemplateOutlet]="nodeTemplate"
                         [ngTemplateOutletContext]="{ $implicit: node }"></ng-container>
                     <svg:circle *ngIf="!nodeTemplate" r="10" [attr.cx]="node?.dimension?.width! / 2"
-                        [attr.cy]="node?.dimension?.height! / 2" [attr.fill]="node.data.color" />
+                        [attr.cy]="node?.dimension?.height! / 2" [attr.fill]="node.data?.color" />
                 </svg:g>
             </svg:g>
 

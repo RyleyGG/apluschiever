@@ -111,6 +111,8 @@ export class GraphComponent {
 
     ngOnInit(): void {
         this.createGraph();
+        this.initialized = true;
+        requestAnimationFrame(() => this.draw());
     }
 
     //#region Host Listener Functions
@@ -168,8 +170,29 @@ export class GraphComponent {
     private createGraph(): void {
         const initNode = (n: Node): Node => {
             // Set default settings for the nodes here.
+            if (!n.meta) {
+                n.meta = {};
+            }
+            if (!n.id) {
+                n.id = ''; // id();
+            }
+            if (!n.dimension) {
+                n.dimension = {
+                    width: 30,
+                    height: 30
+                };
+                n.meta.forceDimensions = false;
+            } else {
+                n.meta.forceDimensions = n.meta.forceDimensions === undefined ? true : n.meta.forceDimensions;
+            }
+            if (!n.position) {
+                n.position = {
+                    x: 0,
+                    y: 0
+                };
+            };
             return n;
-        };
+        }
 
         const initEdge = (e: Edge): Edge => {
             // Set default settings for the edges here.
@@ -187,6 +210,12 @@ export class GraphComponent {
             clusters: this.clusters().length > 0 ? [...this.clusters()].map(initCluster) : ([] as Cluster[])
         };
     }
+
+    private draw(): void {
+        console.log("draw");
+    }
+
+
 
     /**
      * Get the dimensions of the parent element.

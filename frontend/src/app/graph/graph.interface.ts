@@ -11,13 +11,13 @@ export interface NodeDimension {
 }
 
 export interface Node {
+    meta?: any;
     id: string;
     position?: NodePosition;
     dimension?: NodeDimension;
     transform?: string;
     label?: string;
     data?: any;
-    color?: any;
     hidden?: boolean;
 };
 

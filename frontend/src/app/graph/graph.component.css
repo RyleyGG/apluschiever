@@ -1,0 +1,31 @@
+.graph {
+    user-select: none;
+}
+
+.graph .edge {
+    stroke: #666;
+    fill: none;
+}
+
+.graph .edge .edge-label {
+    stroke: none;
+    font-size: 12px;
+    fill: #251e1e;
+}
+
+.graph .panning-rect {
+    fill: rgba(0, 0, 0, 0);
+    cursor: move;
+}
+
+.graph .node-group .old-node {
+    transition: transform 0.5s ease-in-out;
+}
+
+.graph .node-group .node:focus {
+    outline: none;
+}
+
+.graph .cluster rect {
+    opacity: 0.3;
+}
