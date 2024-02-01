@@ -3,7 +3,7 @@ from sqlalchemy import delete
 from sqlmodel import Session, select
 
 from models.db_models import User, Course, Node
-from models.pydantic_models import Video
+from models.pydantic_models import Video, Markdown
 from services.config_service import logger
 from services.config_service import config
 
@@ -17,7 +17,10 @@ def test_add_courses_and_nodes(db: Session, client: TestClient):
     test_nodes = []
     for i in range(0, 5):
         new_node = Node(title=f'Node {i}', short_description=f'Node {i}')
-        new_node.content = [Video(title='wasd', embed_link='wasd', video_source='wasd')]
+        if i % 2 == 0:
+            new_node.videos = [Video(title='wasd', embed_link='wasd', video_source='wasd')]
+        else:
+            new_node.markdown_files = [Markdown(title='wasd', content='###wasd')]
         test_nodes.append(new_node)
 
     db.add(test_course_1)

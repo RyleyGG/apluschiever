@@ -3,14 +3,10 @@ from typing import List
 from sqlmodel import SQLModel
 
 
-class Content(SQLModel, table=False):
-    title: str
-
-
-class Video(Content):
+class Video(SQLModel, table=False):
     embed_link: str
     video_source: str
 
 
-class Markdown(Content):
+class Markdown(SQLModel, table=False):
     content: str
