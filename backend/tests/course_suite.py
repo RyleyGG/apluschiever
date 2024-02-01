@@ -41,19 +41,25 @@ def test_add_courses_and_nodes(db: Session, client: TestClient):
 
 
 def test_node_course_connection(db: Session, client: TestClient):
-    test_course = db.exec(select(Course).where(Course.title == 'Test 1')).first()
-    assert test_course.nodes == []
+    test_course_1 = db.exec(select(Course).where(Course.title == 'Test 1')).first()
+    test_course_2 = db.exec(select(Course).where(Course.title == 'Test 2')).first()
+    assert test_course_1.nodes == []
 
     test_node_1 = db.exec(select(Node).where(Node.title == 'Node 1')).first()
     test_node_2 = db.exec(select(Node).where(Node.title == 'Node 2')).first()
     test_node_3 = db.exec(select(Node).where(Node.title == 'Node 3')).first()
-
     assert test_node_1.courses == []
 
-    test_course.nodes = [test_node_1]
-    db.add(test_course)
-    db.refresh(test_course)
+    test_course_1.nodes = [test_node_1]
+    test_course_2.nodes = [test_node_1, test_node_2, test_node_3]
+    db.add(test_course_1)
+    db.add(test_course_2)
+    db.refresh(test_course_1)
+    db.refresh(test_course_2)
     db.refresh(test_node_1)
+    db.refresh(test_course_2)
 
-    assert len(test_course.nodes) == 1
-    assert len(test_node_1.courses) == 1
+    assert len(test_course_1.nodes) == 1
+    assert len(test_course_2.nodes) == 3
+
+    assert len(test_node_1.courses) == 2
