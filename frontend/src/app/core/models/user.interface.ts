@@ -14,6 +14,7 @@ export interface User {
 export interface UserFilters {
     ids: string[],
     emails: string[],
+    user_types: string[]
 }
 
 export enum UserType {
