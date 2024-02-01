@@ -2,6 +2,7 @@
  * Represents a video content type.
  */
 export interface Video {
+    id: string;
     embedLink: string;
     videoSource: string;
 }
@@ -10,5 +11,6 @@ export interface Video {
  * Represents a markdown content type.
  */
 export interface Markdown {
+    id: string;
     content: string;
 }

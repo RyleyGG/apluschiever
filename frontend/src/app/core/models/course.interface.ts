@@ -6,7 +6,7 @@ import {User} from "./user.interface";
  * Represents a content node within a course, including videos and markdown files.
  */
 export interface Node {
-    id?: string;
+    id: string;
     title: string;
     shortDescription: string;
     videos?: Video[];
@@ -18,7 +18,7 @@ export interface Node {
  * Represents a course, including its associated nodes and owner.
  */
 export interface Course {
-    id?: string;
+    id: string;
     title: string;
     shortDescription?: string;
     courseOwnerId: string;
