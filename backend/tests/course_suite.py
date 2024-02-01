@@ -2,13 +2,13 @@ from fastapi.testclient import TestClient
 from sqlalchemy import delete
 from sqlmodel import Session, select
 
-from models.db_models import User, Course
-from models.pydantic_models import Node
+from models.db_models import User, Course, Node
+from models.pydantic_models import Video
 from services.config_service import logger
 from services.config_service import config
 
 
-def test_add_courses(db: Session, client: TestClient):
+def test_add_courses_and_nodes(db: Session, client: TestClient):
     test_course_1 = Course(title='Test 1', course_owner_id=config._tests_user_id)
     test_course_2 = Course(title='Test 2', course_owner_id=config._tests_user_id)
     test_course_3 = Course(title='Test 3', course_owner_id=config._tests_user_id)
@@ -16,6 +16,8 @@ def test_add_courses(db: Session, client: TestClient):
     test_nodes = []
 
     for i in range(0, 5):
+        new_node = Node(title=f'Node {i}', short_description=f'Node {i}')
+        new_node.content = [Video(title='wasd', embed_link='wasd', video_source='wasd')]
         test_nodes.append(Node(title=f'Node {i}', short_description=f'Node {i}').model_dump())
     test_course_1.nodes = test_nodes
 

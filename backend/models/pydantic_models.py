@@ -1,6 +1,16 @@
+from typing import List
+
 from sqlmodel import SQLModel
 
 
-class Node(SQLModel, table=False):
+class Content(SQLModel, table=False):
     title: str
-    short_description: str
+
+
+class Video(Content):
+    embed_link: str
+    video_source: str
+
+
+class Markdown(Content):
+    content: str

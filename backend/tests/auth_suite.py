@@ -3,7 +3,6 @@ from sqlalchemy import delete
 from sqlmodel import Session, select
 
 from models.db_models import User, Course
-from models.pydantic_models import Node
 from services.config_service import logger, config
 
 

@@ -5,7 +5,6 @@ from sqlmodel import select, Session
 
 from models.db_models import Course
 from models.dto_models import CourseFilters
-from models.pydantic_models import Node
 from services.api_utility_service import get_session
 
 router = APIRouter()
