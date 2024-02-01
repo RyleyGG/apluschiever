@@ -1,6 +1,7 @@
-<h1>A+chiever Temporary Navigation</h1>
+
 <nav>
   <ul>
+    <app-navbar></app-navbar>
     <li><a routerLink="/signup" routerLinkActive="active" ariaCurrentWhenActive="page">Sign Up</a></li>
     <li><a routerLink="/signin" routerLinkActive="active" ariaCurrentWhenActive="page">Sign In</a></li>
     <li><a routerLink="/signout" routerLinkActive="active" ariaCurrentWhenActive="page">Sign Out</a></li>
@@ -8,6 +9,5 @@
   </ul>
 </nav>
 
-<router-outlet></router-outlet>
 
 <p-button (click)="swapTheme()">PrimeNG</p-button>

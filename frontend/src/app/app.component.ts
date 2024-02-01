@@ -4,14 +4,14 @@ import { ButtonModule } from 'primeng/button';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ThemeService } from './core/services/theme/theme.service';
 import { InternetConnectionService } from './core/services/internet-connection/internet-connection.service';
-
+import { NavbarComponent } from './components/navbar/navbar.component';
 /**
  * The main application component, currently the sample hello world page.
  */
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, ButtonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, ButtonModule, RouterLink, RouterLinkActive],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
