@@ -1,8 +1,12 @@
 import { Component, ContentChild, ElementRef, HostListener, QueryList, TemplateRef, ViewChildren, computed, effect, input, signal, untracked, ɵINPUT_SIGNAL_BRAND_WRITE_TYPE } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Node, Edge, Cluster, Graph } from './graph.interface';
+import { Node, Edge, Cluster, Graph, Layout } from './graph.interface';
 import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
 import { MouseWheelDirective } from '../core/directives/mouse-wheel.directive';
+import { DagreClusterLayout } from './layouts/dagreCluster';
+import { Observable, first, of } from 'rxjs';
+import { uid } from '../core/utils/unique-id';
+
 
 /**
  * Interface for a matrix, used by GraphComponent internally.
@@ -32,6 +36,9 @@ export class GraphComponent {
     nodes = input.required<Node[]>();
     edges = input.required<Edge[]>();
     clusters = input<Cluster[]>([]);
+
+    layout = signal<string | Layout>(new DagreClusterLayout());
+    layoutSettings = signal<any>(DagreClusterLayout.defaultSettings);
 
     // Drag Node Graph Inputs
     dragEnabled = input<boolean>(true);
@@ -90,6 +97,32 @@ export class GraphComponent {
      * @param { ElementRef } el a reference to itself in the HTML DOM, injected by Angular.
      */
     constructor(private el: ElementRef) {
+        // Setup the effect to reset the graph when layout or its settings change
+        effect(() => {
+            this.initialized = false;
+            const layout = this.layout();
+            const settings = this.layoutSettings();
+            if (layout == 'dagreCluser') {
+                // TODO: We should refactor this to work for more layout options. This is fine for now
+                untracked(() => {
+                    const newLayout = new DagreClusterLayout();
+                    newLayout.settings = settings;
+                    this.layout.set(newLayout);
+                });
+            }
+            this.update();
+        });
+
+        // Setup the effect to reset the graph when the graph updates
+        effect(() => {
+            this.view();
+            this.nodes();
+            this.clusters();
+            this.edges();
+
+            this.update();
+        });
+
         // Setup the effect for zoom functionality
         effect(() => {
             const level = this.zoomLevel();
@@ -169,6 +202,11 @@ export class GraphComponent {
 
     //#region Helper Methods
 
+    //#region Graph Drawing Methods
+
+    /**
+     * Creates an initial graph (cleans up input data)
+     */
     private createGraph(): void {
         const initNode = (n: Node): Node => {
             // Set default settings for the nodes here.
@@ -176,7 +214,7 @@ export class GraphComponent {
                 n.meta = {};
             }
             if (!n.id) {
-                n.id = ''; // id();
+                n.id = uid();
             }
             if (!n.dimension) {
                 n.dimension = {
@@ -198,26 +236,120 @@ export class GraphComponent {
 
         const initEdge = (e: Edge): Edge => {
             // Set default settings for the edges here.
+            if (!e.id) {
+                e.id = uid();
+            }
             return e;
-        };
-
-        const initCluster = (c: Cluster): Cluster => {
-            // Set default settings for the clusters here.
-            return c;
         };
 
         this.graph = {
             nodes: this.nodes().length > 0 ? [...this.nodes()].map(initNode) : ([] as Node[]),
             edges: this.edges().length > 0 ? [...this.edges()].map(initEdge) : ([] as Edge[]),
-            clusters: this.clusters().length > 0 ? [...this.clusters()].map(initCluster) : ([] as Cluster[])
+            clusters: this.clusters().length > 0 ? [...this.clusters()].map(initNode) : ([] as Cluster[])
         };
     }
 
-    private draw(): void {
-        console.log("draw");
+    /**
+     * Called whenever the 
+     */
+    private update(): void {
+        // Recalculate dimensions??
+
+        // Set line type??
+
+        // Set colors??
+
+        // Create Graph
+        this.createGraph();
+        this.initialized = true;
     }
 
+    /**
+     * Call whatever layout is in use to actually draw the graph.
+     */
+    private draw(): void {
+        if (!this.layout || typeof this.layout === 'string') {
+            return;
+        }
 
+        this.applyNodeDimensions();
+        const result = (this.layout() as Layout).run(this.graph);
+        const result$ = result instanceof Observable ? result : of(result);
+        // In case of dynamic graph via observable, will need to subscribe here and update accordingly
+
+        if (this.graph.nodes.length === 0 && this.graph.clusters?.length === 0) {
+            return;
+        }
+
+        console.log("draw");
+        result$.pipe(first()).subscribe(() => {
+            this.applyNodeDimensions();
+        });
+
+    }
+
+    /**
+     * Sets the node dimensions so we can display them correctly
+     */
+    private applyNodeDimensions(): void {
+        if (!this.nodeElements || !this.nodeElements.length) {
+            return;
+        }
+
+        this.nodeElements.map((element: ElementRef<any>) => {
+            const nativeElement = element.nativeElement;
+            const node = this.graph.nodes.find(n => n.id === nativeElement.id);
+
+            if (!node) { return; }
+
+            // Get the workable dimensions
+            let dims: any;
+            try {
+                dims = nativeElement.getBBox();
+                if (!dims.width || !dims.height) { return; }
+            } catch (error: any) {
+                return; // Skip if element isn't displayed
+            }
+
+            // Calculate the height
+            node.dimension!.height =
+                node.dimension!.height && node.meta.forceDimensions ? node.dimension!.height : dims.height;
+
+            // Calculate the width
+            if (nativeElement.getElementsByTagName('text').length) {
+                // Get max dimensions for text (biggest possible)
+                let maxTextDims = nativeElement.getElementsByTagName('text')[0].getBBox();
+                try {
+                    for (const textElement of nativeElement.getElementsByTagName('text')) {
+                        const currentBBox = textElement.getBBox();
+                        // Use biggest width & biggest height seen
+                        maxTextDims.width = (currentBBox.width > maxTextDims.width) ? currentBBox.width : maxTextDims.width;
+                        maxTextDims.height = (currentBBox.height > maxTextDims.height) ? currentBBox.height : maxTextDims.height;
+                    }
+                } catch (ex) {
+                    return; // Skip drawing if element is not displayed
+                }
+
+                node.dimension!.width =
+                    node.dimension!.width && node.meta.forceDimensions ? node.dimension!.width : maxTextDims.width + 20;
+            } else {
+                node.dimension!.width =
+                    node.dimension!.width && node.meta.forceDimensions ? node.dimension!.width : dims.width;
+            }
+            console.log(node);
+
+            // Update the transforms
+            const x = node.position!.x - node.dimension!.width / 2;
+            const y = node.position!.y - node.dimension!.height / 2;
+            node.transform = `translate(${x}, ${y})`;
+        });
+    }
+
+    private tick(): void {
+        // TODO: for dynamically updating graph layouts, we need this method to handle frame by frame calculations
+    }
+
+    //#endregion Graph Drawing Methods
 
     /**
      * Get the dimensions of the parent element.

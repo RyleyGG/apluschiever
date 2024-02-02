@@ -46,8 +46,8 @@
 
             <!--Handles all the nodes-->
             <svg:g class="nodes">
-                <svg:g #nodeElement *ngFor="let node of graph.nodes; trackBy: trackNodeBy" [id]="node.id"
-                    [attr.transform]="node.transform">
+                <svg:g class="node-group" #nodeElement *ngFor="let node of graph.nodes; trackBy: trackNodeBy"
+                    [id]="node.id" [attr.transform]="node.transform">
                     <ng-container *ngIf="nodeTemplate && !node.hidden" [ngTemplateOutlet]="nodeTemplate"
                         [ngTemplateOutletContext]="{ $implicit: node }"></ng-container>
                     <svg:circle *ngIf="!nodeTemplate" r="10" [attr.cx]="node?.dimension?.width! / 2"

@@ -31,8 +31,7 @@ export interface DagreSettings {
 };
 
 export class DagreClusterLayout implements Layout {
-
-    defaultSettings: DagreSettings = {
+    static defaultSettings: DagreSettings = {
         orientation: Orientation.LEFT_TO_RIGHT,
         marginX: 30,
         marginY: 30,
@@ -54,6 +53,8 @@ export class DagreClusterLayout implements Layout {
 
     run(graph: Graph): Graph {
         this.createDagreGraph(graph);
+        console.log("DAGRE GRAPH MADE");
+
         dagre.layout(this.dagreGraph);
 
         graph.edgeLabels = this.dagreGraph._edgeLabels;
@@ -99,7 +100,7 @@ export class DagreClusterLayout implements Layout {
     }
 
     private createDagreGraph(graph: Graph): void {
-        const settings = Object.assign({}, this.defaultSettings, this.settings);
+        const settings = Object.assign({}, DagreClusterLayout.defaultSettings, this.settings);
         this.dagreGraph = new dagre.graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });
 
         this.dagreGraph.setGraph({
@@ -121,10 +122,10 @@ export class DagreClusterLayout implements Layout {
         // Assign Nodes
         this.dagreNodes = graph.nodes.map((n: Node) => {
             const node: any = Object.assign({}, n);
-            node.width = n.dimension?.width || 0;
-            node.height = n.dimension?.height || 0;
-            node.x = n.position?.x || 0;
-            node.y = n.position?.y || 0;
+            node.width = n.dimension!.width;
+            node.height = n.dimension!.height;
+            node.x = n.position!.x;
+            node.y = n.position!.y;
             return node;
         });
 
