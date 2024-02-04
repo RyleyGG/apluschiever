@@ -4,7 +4,11 @@ import { Node, Edge, Cluster, Graph, Layout } from './graph.interface';
 import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
 import { MouseWheelDirective } from '../core/directives/mouse-wheel.directive';
 import { DagreClusterLayout } from './layouts/dagreCluster';
-import { Observable, first, of } from 'rxjs';
+import { Observable, first, of, shareReplay } from 'rxjs';
+import { select } from 'd3-selection';
+import * as shape from 'd3-shape';
+import * as ease from 'd3-ease';
+import 'd3-transition';
 import { uid } from '../core/utils/unique-id';
 
 
@@ -39,6 +43,10 @@ export class GraphComponent {
 
     layout = signal<string | Layout>(new DagreClusterLayout());
     layoutSettings = signal<any>(DagreClusterLayout.defaultSettings);
+    curve = signal<any>(shape.curveBundle.beta(1));
+
+    // Animation Inputs
+    animateEnabled = input<boolean>(true);
 
     // Drag Node Graph Inputs
     dragEnabled = input<boolean>(true);
@@ -91,6 +99,9 @@ export class GraphComponent {
     @ViewChildren('nodeElement') nodeElements!: QueryList<ElementRef>;
     @ViewChildren('edgeElement') edgeElements!: QueryList<ElementRef>;
 
+    private centerNodesOnPositionChange: boolean = true;
+    private _oldEdges: Edge[] = [];
+
     /**
      * Creates the GraphComponent.
      * 
@@ -119,8 +130,9 @@ export class GraphComponent {
             this.nodes();
             this.clusters();
             this.edges();
+            this.curve();
 
-            this.update();
+            untracked(() => this.update());
         });
 
         // Setup the effect for zoom functionality
@@ -255,7 +267,10 @@ export class GraphComponent {
     private update(): void {
         // Recalculate dimensions??
 
-        // Set line type??
+        // Set line type
+        if (!this.curve()) {
+            this.curve.set(shape.curveBundle.beta(1));
+        }
 
         // Set colors??
 
@@ -272,20 +287,20 @@ export class GraphComponent {
             return;
         }
 
-        this.applyNodeDimensions();
+        // this.applyNodeDimensions();
         const result = (this.layout() as Layout).run(this.graph);
         const result$ = result instanceof Observable ? result : of(result);
-        // In case of dynamic graph via observable, will need to subscribe here and update accordingly
+        // Dynamic graph will tick many times, static will tick only once
+        result$.subscribe((graph: Graph) => {
+            this.graph = graph;
+            this.tick();
+        });
 
         if (this.graph.nodes.length === 0 && this.graph.clusters?.length === 0) {
             return;
         }
 
-        console.log("draw");
-        result$.pipe(first()).subscribe(() => {
-            this.applyNodeDimensions();
-        });
-
+        result$.pipe(first()).subscribe(() => this.applyNodeDimensions());
     }
 
     /**
@@ -336,35 +351,137 @@ export class GraphComponent {
                 node.dimension!.width =
                     node.dimension!.width && node.meta.forceDimensions ? node.dimension!.width : dims.width;
             }
-            console.log(node);
-
-            // Update the transforms
-            const x = node.position!.x - node.dimension!.width / 2;
-            const y = node.position!.y - node.dimension!.height / 2;
-            node.transform = `translate(${x}, ${y})`;
         });
     }
 
     private tick(): void {
         // TODO: for dynamically updating graph layouts, we need this method to handle frame by frame calculations
+
+        // Set view options for the nodes & clusters
+        this.graph.nodes.map((n: Node) => {
+            n.transform = `translate(${n.position!.x - (this.centerNodesOnPositionChange ? n.dimension!.width / 2 : 0) || 0}, ${n.position!.y - (this.centerNodesOnPositionChange ? n.dimension!.height / 2 : 0) || 0})`;
+            if (!n.data) {
+                n.data = {};
+            }
+            // Handle colors here
+        });
+
+        (this.graph.clusters || []).map((c: Cluster) => {
+            c.transform = `translate(${c.position!.x - (this.centerNodesOnPositionChange ? c.dimension!.width / 2 : 0) || 0}, ${c.position!.y - (this.centerNodesOnPositionChange ? c.dimension!.height / 2 : 0) || 0})`;
+            if (!c.data) {
+                c.data = {};
+            }
+            // Handle colors here
+        });
+
+        // Prevent animations for the new nodes
+
+        // Update edges
+        const newEdges: Edge[] = [];
+        for (const edgeLabelId in this.graph.edgeLabels) {
+            const edgeLabel = this.graph.edgeLabels[edgeLabelId];
+
+            const normKey = edgeLabelId.replace(/[^\w-]*/g, '');
+
+            // Determine if multigraph or not (need to get layout separate for TypeScript checker)
+            const layout = this.layout();
+            const isMultigraph = typeof layout !== 'string' && layout.settings && layout.settings.multigraph;
+
+            let oldEdge = isMultigraph
+                ? this._oldEdges.find((old: Edge) => `${old.source}${old.target}${old.id}` === normKey)
+                : this._oldEdges.find((old: Edge) => `${old.source}${old.target}` === normKey);
+
+            const graphEdge = isMultigraph
+                ? this.graph.edges.find((e: Edge) => `${e.source}${e.target}${e.id}` === normKey)
+                : this.graph.edges.find((e: Edge) => `${e.source}${e.target}` === normKey);
+
+            // compare old edge to new edge and update if not same
+
+            if (!oldEdge) {
+                oldEdge = graphEdge || edgeLabel;
+            } else if (
+                oldEdge.data &&
+                graphEdge &&
+                graphEdge.data &&
+                JSON.stringify(oldEdge.data) !== JSON.stringify(graphEdge.data)
+            ) {
+                oldEdge.data = graphEdge.data;
+            }
+
+            // Set the new line, keep track of previous one for some animations.
+            oldEdge!.oldLine = oldEdge!.line;
+            const points = edgeLabel.points;
+            console.log(points);
+            const line = this.generateLine(points);
+
+            const newEdge = Object.assign({}, oldEdge);
+            newEdge.line = line;
+            newEdge.points = points;
+
+            this.updateMidpointOnEdge(newEdge, points);
+
+            const textPos = points[Math.floor(points.length / 2)];
+            if (textPos) {
+                newEdge.textTransform = `translate(${textPos.x || 0},${textPos.y || 0})`;
+            }
+
+            newEdge.textAngle = 0;
+            if (!newEdge.oldLine) {
+                newEdge.oldLine = newEdge.line;
+            }
+
+            this.setDominantBaseline(newEdge);
+            newEdges.push(newEdge);
+        }
+        this.graph.edges = newEdges;
+
+        // Setup links for animations
+        if (this.graph.edges) {
+            this._oldEdges = this.graph.edges.map(l => {
+                const newL = Object.assign({}, l);
+                newL.oldLine = l.line;
+                return newL;
+            });
+        }
+
+        // Check for auto zoom and auto center
+
+
+        requestAnimationFrame(() => this.redrawLines());
+    }
+
+    /**
+     * Updates the lines of the graph
+     * 
+     * @param _animate whether to animate the transition to new lines or not. 
+     */
+    private redrawLines(_animate: boolean = this.animateEnabled()): void {
+        this.edgeElements.map((element: ElementRef<any>) => {
+            const edge = this.graph.edges.find((e: Edge) => e.id == element.nativeElement.id);
+            if (!edge) { return; }
+
+            const edgeSelection = select(element.nativeElement).select('.line');
+            edgeSelection
+                .attr('d', edge.oldLine)
+                .transition()
+                .ease(ease.easeSinInOut)
+                .duration(_animate ? 500 : 0)
+                .attr('d', edge.line);
+
+
+            const textPathSelection = select(element.nativeElement).select(`${edge.id}`);
+            textPathSelection
+                .attr('d', edge.oldTextPath as any)
+                .transition()
+                .ease(ease.easeSinInOut)
+                .duration(_animate ? 500 : 0)
+                .attr('d', edge.textPath);
+
+            this.updateMidpointOnEdge(edge, edge.points);
+        });
     }
 
     //#endregion Graph Drawing Methods
-
-    /**
-     * Get the dimensions of the parent element.
-     * 
-     * @returns the dimensions of the parent container, or null if operation failed
-     */
-    private getParentDimensions(): number[] | null {
-        const dims = this.el.nativeElement.parentNode?.getBoundingClientRect();
-
-        if (dims && dims.width && dims.height) {
-            return [dims.width, dims.height];
-        }
-
-        return null;
-    }
 
     //#region Drag Node Methods
 
@@ -537,6 +654,78 @@ export class GraphComponent {
     }
 
     //#endregion
+
+    //#region Miscellaneous Helpers
+
+    /**
+     * A helper function to generate the correct d3 line shape when given a set of points.
+     * 
+     * @param {any} points the points to generate the line for 
+     * @returns 
+     */
+    private generateLine = (points: any) => {
+        const lineFunction = shape.line<any>().x((d) => d.x).y((d) => d.y).curve(this.curve());
+        return lineFunction(points);
+    };
+
+    /**
+     * Update an edges midpoint based on the given points.
+     * 
+     * @param edge 
+     * @param points 
+     * @returns 
+     */
+    private updateMidpointOnEdge(edge: Edge, points: any) {
+        if (!edge || !points) { return; }
+
+        if (points.length % 2 === 1) {
+            edge.midPoint = points[Math.floor(points.length / 2)];
+        } else {
+            const _first = points[points.length / 2];
+            const _second = points[points.length / 2 - 1];
+            edge.midPoint = {
+                x: (_first.x + _second.x) / 2,
+                y: (_first.y + _second.y) / 2
+            };
+        }
+    }
+
+    /**
+     * Helps calculate where text should be placed on an edge. 
+     * 
+     * @param {Edge} edge the edge to set the baseline for. 
+     */
+    private setDominantBaseline(edge: Edge) {
+        const firstPoint = edge.points[0];
+        const lastPoint = edge.points[edge.points.length - 1];
+        edge.oldTextPath = edge.textPath;
+
+        if (lastPoint.x < firstPoint.x) {
+            edge.dominantBaseline = 'text-before-edge';
+            // reverse text path for when its flipped upside down
+            edge.textPath = this.generateLine([...edge.points].reverse());
+        } else {
+            edge.dominantBaseline = 'text-after-edge';
+            edge.textPath = edge.line;
+        }
+    }
+
+    /**
+     * Get the dimensions of the parent element.
+     * 
+     * @returns the dimensions of the parent container, or null if operation failed
+     */
+    private getParentDimensions(): number[] | null {
+        const dims = this.el.nativeElement.parentNode?.getBoundingClientRect();
+
+        if (dims && dims.width && dims.height) {
+            return [dims.width, dims.height];
+        }
+
+        return null;
+    }
+
+    //#endregion Miscellaneous Helpers
 
     //#endregion Helper Methods
 }

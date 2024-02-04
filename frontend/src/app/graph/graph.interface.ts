@@ -13,6 +13,7 @@ export interface NodeDimension {
 export interface Node {
     meta?: any;
     id: string;
+    parentId?: string;
     position?: NodePosition;
     dimension?: NodeDimension;
     transform?: string;
@@ -22,6 +23,8 @@ export interface Node {
 };
 
 export interface Edge {
+    data?: Edge | undefined;
+    dominantBaseline?: string;
     id?: string;
     source: string;
     target: string;
@@ -29,6 +32,12 @@ export interface Edge {
     points?: any;
     textPath?: any;
     line?: any;
+
+    textTransform?: string;
+    textAngle?: number;
+    oldLine?: any;
+    oldTextPath?: string;
+    midPoint?: NodePosition;
 };
 
 export interface Cluster extends Node {
