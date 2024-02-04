@@ -1,10 +1,10 @@
-import { Component, ContentChild, ElementRef, HostListener, QueryList, TemplateRef, ViewChildren, computed, effect, input, signal, untracked, ɵINPUT_SIGNAL_BRAND_WRITE_TYPE } from '@angular/core';
+import { Component, ContentChild, ElementRef, HostListener, QueryList, TemplateRef, ViewChildren, computed, effect, input, signal, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Node, Edge, Cluster, Graph, Layout } from './graph.interface';
 import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
 import { MouseWheelDirective } from '../core/directives/mouse-wheel.directive';
 import { DagreClusterLayout } from './layouts/dagreCluster';
-import { Observable, first, of, shareReplay } from 'rxjs';
+import { Observable, first, of } from 'rxjs';
 import { select } from 'd3-selection';
 import * as shape from 'd3-shape';
 import * as ease from 'd3-ease';
@@ -13,7 +13,7 @@ import { uid } from '../core/utils/unique-id';
 
 
 /**
- * Interface for a matrix, used by GraphComponent internally.
+ * Interface for a matrix, used by GraphComponent internally to track pan/zoom information.
  */
 interface Matrix {
     a: number, // zoom level
@@ -36,60 +36,83 @@ interface Matrix {
 })
 export class GraphComponent {
     // General Graph Inputs
-    view = input<number[]>();
-    nodes = input.required<Node[]>();
-    edges = input.required<Edge[]>();
-    clusters = input<Cluster[]>([]);
+    public view = input<number[]>();
+    public nodes = input.required<Node[]>();
+    public edges = input.required<Edge[]>();
+    public clusters = input<Cluster[]>([]);
 
-    layout = signal<string | Layout>(new DagreClusterLayout());
-    layoutSettings = signal<any>(DagreClusterLayout.defaultSettings);
-    curve = signal<any>(shape.curveBundle.beta(1));
+    public layout = signal<string | Layout>(new DagreClusterLayout());
+    public layoutSettings = signal<any>(DagreClusterLayout.defaultSettings);
+    public curve = signal<any>(shape.curveBundle.beta(1));
 
     // Animation Inputs
-    animateEnabled = input<boolean>(true);
+    public animateEnabled = input<boolean>(true);
 
     // Drag Node Graph Inputs
-    dragEnabled = input<boolean>(true);
+    public dragEnabled = input<boolean>(true);
 
     // Graph Panning Inputs
-    panEnabled = input<boolean>(true);
-    panOffsetX = input<number>();
-    panOffsetY = input<number>();
-    panningAxis = input<'horizontal' | 'vertical' | 'both'>('both'); // TODO: maybe make enum
-    panToNode = input<string>(); // Accepts Node ID
+    public panEnabled = input<boolean>(true);
+    public panOffsetX = input<number>();
+    public panOffsetY = input<number>();
+    public panningAxis = input<'horizontal' | 'vertical' | 'both'>('both'); // TODO: maybe make enum
+    public panToNode = input<string>(); // Accepts Node ID
 
     // Graph Zoom Inputs
-    zoomEnabled = input<boolean>(true);
-    zoomSpeed = input<number>(0.1);
-    zoomLevel = signal<number>(1);
-    minZoomLevel = input<number>(0.1);
-    maxZoomLevel = input<number>(5);
-    panOnZoom = input<boolean>(true);
+    public zoomEnabled = input<boolean>(true);
+    public zoomSpeed = input<number>(0.1);
+    public zoomLevel = signal<number>(1);
+    public minZoomLevel = input<number>(0.1);
+    public maxZoomLevel = input<number>(5);
+    public panOnZoom = input<boolean>(true);
 
     // Public Properties & Computed Values
-    width = computed(() => {
-        // Try setting width through the input property view()
-        // If that fails then try getting parent
-        // If that fails use a default
-        return Math.floor((this.view() || this.getParentDimensions() || [600, 400])[0]);
-    });
-    height = computed(() => {
-        // Try setting height through the input property view()
-        // If that fails then try getting parent
-        // If that fails use a default
-        return Math.floor((this.view() || this.getParentDimensions() || [600, 400])[1]);
-    });
 
-    initialized: boolean = false;
+    /*
+     * We try setting width/height first through the input view(),
+     * if that fails then we try getting the size via the parent element,
+     * if that fails, we fallback to a default value.
+     */
+    width = computed(() => Math.floor((this.view() || this.getParentDimensions() || [600, 400])[0]));
+    height = computed(() => Math.floor((this.view() || this.getParentDimensions() || [600, 400])[1]));
 
-    // Private Properties
-    private transformationMatrix = signal<Matrix>(identity());
-    public transform = computed(() => toSVG(smoothMatrix(this.transformationMatrix(), 100)));
+    /**
+     * Computed signal to automatically convert the transformation matrix storing pan/zoom information 
+     * from a matrix to a string suitable for use on an SVG.
+     */
+    public readonly transform = computed(() => toSVG(smoothMatrix(this.transformationMatrix(), 100)));
 
+    /**
+     * Ensures the graph isn't displayed before it is ready. Must be made public 
+     * in order to be used within the component template, but should ALMOST NEVER be modified outside of this component.
+     */
+    public initialized: boolean = false;
+
+    /**
+     * Allows the template to display the graph nodes & edges, and is used heavily within
+     * the calculations done to calculate node positions. This should ALMOST NEVER be modified outside of this component.
+     */
     public graph!: Graph; // Initialized within the createGraph() method, which is called in constructor.
 
+    /**
+     * Allows the template to turn on/off the dragging functionality for nodes.
+     * Should ALMOST NEVER be modified outside of this component.
+     */
     public isDragging: boolean = false;
+    /**
+     * Allows the template to turn on/off the panning functionality when the panning rectangle is clicked on.
+     * Should ALMOST NEVER be modified outside of this component.
+     */
     public isPanning: boolean = false;
+
+    // Private Properties
+    /**
+     * Stores the pan/zoom information.
+     */
+    private transformationMatrix = signal<Matrix>(identity());
+
+    private centerNodesOnPositionChange: boolean = true;
+    private _oldEdges: Edge[] = [];
 
     @ContentChild('nodeTemplate') nodeTemplate!: TemplateRef<any>;
     @ContentChild('edgeTemplate') edgeTemplate!: TemplateRef<any>;
@@ -99,8 +122,6 @@ export class GraphComponent {
     @ViewChildren('nodeElement') nodeElements!: QueryList<ElementRef>;
     @ViewChildren('edgeElement') edgeElements!: QueryList<ElementRef>;
 
-    private centerNodesOnPositionChange: boolean = true;
-    private _oldEdges: Edge[] = [];
 
     /**
      * Creates the GraphComponent.
@@ -108,13 +129,19 @@ export class GraphComponent {
      * @param { ElementRef } el a reference to itself in the HTML DOM, injected by Angular.
      */
     constructor(private el: ElementRef) {
+        /**
+         * I'm using 'untracked' in the below in order to be able to call functions/update the 
+         * value of Angular signals within an 'effect' function (as that's typically problematic).
+         * This hack probably isn't the best, but it isn't causing issues right now.
+         */
+
         // Setup the effect to reset the graph when layout or its settings change
         effect(() => {
             this.initialized = false;
             const layout = this.layout();
             const settings = this.layoutSettings();
             if (layout == 'dagreCluser') {
-                // TODO: We should refactor this to work for more layout options. This is fine for now
+                // TODO: We should refactor this to work for more layout options. This is fine for now.
                 untracked(() => {
                     const newLayout = new DagreClusterLayout();
                     newLayout.settings = settings;
@@ -126,6 +153,7 @@ export class GraphComponent {
 
         // Setup the effect to reset the graph when the graph updates
         effect(() => {
+            // Call these just to get Angular to call update() when dependencies change
             this.view();
             this.nodes();
             this.clusters();
@@ -156,6 +184,9 @@ export class GraphComponent {
         });
     }
 
+    /**
+     * Initialized the graph component and calls the first render for the component.
+     */
     ngOnInit(): void {
         this.createGraph();
         this.initialized = true;
@@ -283,9 +314,7 @@ export class GraphComponent {
      * Call whatever layout is in use to actually draw the graph.
      */
     private draw(): void {
-        if (!this.layout || typeof this.layout === 'string') {
-            return;
-        }
+        if (!this.layout || typeof this.layout === 'string') { return; }
 
         // this.applyNodeDimensions();
         const result = (this.layout() as Layout).run(this.graph);
@@ -296,9 +325,7 @@ export class GraphComponent {
             this.tick();
         });
 
-        if (this.graph.nodes.length === 0 && this.graph.clusters?.length === 0) {
-            return;
-        }
+        if (this.graph.nodes.length === 0 && this.graph.clusters?.length === 0) { return; }
 
         result$.pipe(first()).subscribe(() => this.applyNodeDimensions());
     }
@@ -307,9 +334,7 @@ export class GraphComponent {
      * Sets the node dimensions so we can display them correctly
      */
     private applyNodeDimensions(): void {
-        if (!this.nodeElements || !this.nodeElements.length) {
-            return;
-        }
+        if (!this.nodeElements || !this.nodeElements.length) { return; }
 
         this.nodeElements.map((element: ElementRef<any>) => {
             const nativeElement = element.nativeElement;
@@ -411,7 +436,6 @@ export class GraphComponent {
             // Set the new line, keep track of previous one for some animations.
             oldEdge!.oldLine = oldEdge!.line;
             const points = edgeLabel.points;
-            console.log(points);
             const line = this.generateLine(points);
 
             const newEdge = Object.assign({}, oldEdge);
@@ -444,7 +468,7 @@ export class GraphComponent {
             });
         }
 
-        // Check for auto zoom and auto center
+        // TODO: Check for auto zoom and auto center
 
 
         requestAnimationFrame(() => this.redrawLines());
@@ -460,8 +484,7 @@ export class GraphComponent {
             const edge = this.graph.edges.find((e: Edge) => e.id == element.nativeElement.id);
             if (!edge) { return; }
 
-            const edgeSelection = select(element.nativeElement).select('.line');
-            edgeSelection
+            select(element.nativeElement).select('.line')
                 .attr('d', edge.oldLine)
                 .transition()
                 .ease(ease.easeSinInOut)
@@ -469,8 +492,7 @@ export class GraphComponent {
                 .attr('d', edge.line);
 
 
-            const textPathSelection = select(element.nativeElement).select(`${edge.id}`);
-            textPathSelection
+            select(element.nativeElement).select(`${edge.id}`)
                 .attr('d', edge.oldTextPath as any)
                 .transition()
                 .ease(ease.easeSinInOut)
@@ -487,9 +509,7 @@ export class GraphComponent {
 
     private onDrag(event: MouseEvent): void {
         // Check that drag is enabled
-        if (!this.dragEnabled()) {
-            return;
-        }
+        if (!this.dragEnabled()) { return; }
 
 
     }
@@ -505,9 +525,7 @@ export class GraphComponent {
      */
     private onPan(event: MouseEvent): void {
         // Check that pan is enabled
-        if (!this.panEnabled()) {
-            return;
-        }
+        if (!this.panEnabled()) { return; }
 
         // Pan with the appropriate axes enabled.
         switch (this.panningAxis()) {
@@ -542,11 +560,9 @@ export class GraphComponent {
      */
     private panTo(x: number, y: number): void {
         // Ensure proper input
-        if (isNaN(x) || isNaN(y)) {
-            return;
-        }
+        if (isNaN(x) || isNaN(y)) { return; }
 
-        const panX = -this.transformationMatrix().e - x * this.zoomLevel() + this.width() / 2; // todo add half dimension width/height here
+        const panX = -this.transformationMatrix().e - x * this.zoomLevel() + this.width() / 2;
         const panY = -this.transformationMatrix().f - y * this.zoomLevel() + this.height() / 2;
 
         this.transformationMatrix.set(transform(
@@ -573,19 +589,21 @@ export class GraphComponent {
 
     //#region Zoom Methods
 
+    /**
+     * 
+     * @param $event 
+     * @param direction 
+     * @returns 
+     */
     public onZoom($event: WheelEvent, direction: any): void {
         // Check that zoom is enabled
-        if (!this.zoomEnabled()) {
-            return;
-        }
+        if (!this.zoomEnabled()) { return; }
 
         const zoomFactor = 1 + (direction === 'in' ? this.zoomSpeed() : -this.zoomSpeed());
 
         // Check we won't go out of bounds
         const newZoomLevel = this.zoomLevel() * zoomFactor;
-        if (newZoomLevel <= this.minZoomLevel() || newZoomLevel >= this.maxZoomLevel()) {
-            return;
-        }
+        if (newZoomLevel <= this.minZoomLevel() || newZoomLevel >= this.maxZoomLevel()) { return; }
 
         // Apply the actual zoom
         if (this.panOnZoom() && $event) {
@@ -617,9 +635,7 @@ export class GraphComponent {
      * 
      * @param {number} factor the factor to zoom by
      */
-    private zoom(factor: number): void {
-        this.transformationMatrix.set(transform(this.transformationMatrix(), scale(factor, factor)));
-    }
+    private zoom = (factor: number): void => this.transformationMatrix.set(transform(this.transformationMatrix(), scale(factor, factor)));
 
     /**
      * Zoom to a specific level.
@@ -645,13 +661,9 @@ export class GraphComponent {
 
     //#region Helpers For Angular Template
 
-    public trackEdgeBy(index: number, edge: Edge): any {
-        return edge.id;
-    }
+    public trackEdgeBy = (index: number, edge: Edge): any => edge.id;
 
-    public trackNodeBy(index: number, node: Node): any {
-        return node.id;
-    }
+    public trackNodeBy = (index: number, node: Node): any => node.id;
 
     //#endregion
 
@@ -663,10 +675,8 @@ export class GraphComponent {
      * @param {any} points the points to generate the line for 
      * @returns 
      */
-    private generateLine = (points: any) => {
-        const lineFunction = shape.line<any>().x((d) => d.x).y((d) => d.y).curve(this.curve());
-        return lineFunction(points);
-    };
+    private generateLine = (points: any) => (shape.line<any>().x((d) => d.x).y((d) => d.y).curve(this.curve()))(points);
+
 
     /**
      * Update an edges midpoint based on the given points.
