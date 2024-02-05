@@ -1,2 +1,53 @@
-<h1>A+chiever Temporary Navigation</h1><p>navbar works!</p>
-
+<html>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <body>
+    <div class="h-screen w-screen max-h-screen relative w-screen overflow-hidden pb-8 bg-slate-100/40">
+<div class="surface-section">
+    <ul class="list-none p-0 m-0 flex align-items-center font-medium mb-3">
+        <li>
+            <a class="text-500 no-underline line-height-3 cursor-pointer">Application</a>
+        </li>
+        <li class="px-2">
+            <i class="pi pi-angle-right text-500 line-height-3"></i>
+        </li>
+        <li>
+            <span class="text-900 line-height-3">Analytics</span>
+        </li>
+    </ul>
+    <div class="flex align-items-start flex-column lg:justify-content-between lg:flex-row">
+        <div>
+            <div class="font-medium text-3xl text-900">Customers</div>
+            <div class="flex align-items-center text-700 flex-wrap">
+                <div class="mr-5 flex align-items-center mt-3">
+                    <i class="pi pi-users mr-2"></i>
+                    <span>332 Active Users</span>
+                </div>
+                <div class="mr-5 flex align-items-center mt-3">
+                    <i class="pi pi-globe mr-2"></i>
+                    <span>9402 Sessions</span>
+                </div>
+                <div class="flex align-items-center mt-3">
+                    <i class="pi pi-clock mr-2"></i>
+                    <span>2.32m Avg. Duration</span>
+                </div>
+            </div>
+        </div>
+        <div class="mt-3 lg:mt-0">
+            <button pButton pRipple label="Add" class="p-button-outlined mr-2" icon="pi pi-user-plus"></button>
+            <button pButton pRipple label="Save" icon="pi pi-check"></button>
+        </div>
+    </div>
+</div>
+<div >
+<h1>A+chiever</h1>
+<p-toggleButton (click)="swapTheme()" onLabel="Dark" offLabel="Light"></p-toggleButton>
+<ul>
+    <li><a routerLink="/signup" routerLinkActive="active" ariaCurrentWhenActive="page">Sign Up</a></li>
+    <li><a routerLink="/signin" routerLinkActive="active" ariaCurrentWhenActive="page">Sign In</a></li>
+    <li><a routerLink="/signout" routerLinkActive="active" ariaCurrentWhenActive="page">Sign Out</a></li>
+    <li><a routerLink="/landing" routerLinkActive="active" ariaCurrentWhenActive="page">Landing Page</a></li>
+</ul>
+</div>
+</div>
+</body>
+</html>

@@ -1,13 +1,5 @@
 
-<nav>
-  <ul>
+<div>
     <app-navbar></app-navbar>
-    <li><a routerLink="/signup" routerLinkActive="active" ariaCurrentWhenActive="page">Sign Up</a></li>
-    <li><a routerLink="/signin" routerLinkActive="active" ariaCurrentWhenActive="page">Sign In</a></li>
-    <li><a routerLink="/signout" routerLinkActive="active" ariaCurrentWhenActive="page">Sign Out</a></li>
-    <li><a routerLink="/landing" routerLinkActive="active" ariaCurrentWhenActive="page">Landing Page</a></li>
-  </ul>
-</nav>
-
-
-<p-button (click)="swapTheme()">PrimeNG</p-button>
+    <router-outlet></router-outlet>
+</div>

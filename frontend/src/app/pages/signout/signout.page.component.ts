@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { OAuth2Service } from '../../auth/oauth2.service';
+import { CheckboxModule } from 'primeng/checkbox';
 
 /**
  * The sign out page component
@@ -11,7 +12,7 @@ import { OAuth2Service } from '../../auth/oauth2.service';
 @Component({
     selector: 'signout-page',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, CheckboxModule],
     templateUrl: './signout.page.component.html',
     styleUrl: './signout.page.component.css'
 })

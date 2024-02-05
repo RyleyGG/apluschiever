@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { OAuth2Service } from '../../auth/oauth2.service';
 import { SuccessfulUserAuth } from '../../core/models/auth.interface';
+import { CheckboxModule } from 'primeng/checkbox';
 
 /**
  * The signup page component
@@ -12,7 +13,7 @@ import { SuccessfulUserAuth } from '../../core/models/auth.interface';
 @Component({
     selector: 'signup-page',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, CheckboxModule],
     templateUrl: './signup.page.component.html',
     styleUrl: './signup.page.component.css'
 })
