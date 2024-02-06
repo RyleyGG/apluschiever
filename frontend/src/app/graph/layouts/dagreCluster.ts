@@ -1,3 +1,4 @@
+import { uid } from "../../core/utils/unique-id";
 import { Cluster, Edge, Graph, Layout, Node } from "../graph.interface";
 import * as dagre from 'dagre';
 
@@ -33,8 +34,8 @@ export interface DagreSettings {
 export class DagreClusterLayout implements Layout {
     static defaultSettings: DagreSettings = {
         orientation: Orientation.LEFT_TO_RIGHT,
-        marginX: 30,
-        marginY: 30,
+        marginX: 20,
+        marginY: 20,
         edgePadding: 100,
         rankPadding: 100,
         nodePadding: 50,
@@ -136,7 +137,7 @@ export class DagreClusterLayout implements Layout {
         this.dagreEdges = graph.edges.map(l => {
             const newLink: any = Object.assign({}, l);
             if (!newLink.id) {
-                newLink.id = 'id'; // need a way to generate a unique ID.
+                newLink.id = uid(); // need a way to generate a unique ID.
             }
             return newLink;
         });

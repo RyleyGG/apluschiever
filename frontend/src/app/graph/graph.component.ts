@@ -1,4 +1,4 @@
-import { Component, ContentChild, ElementRef, HostListener, QueryList, TemplateRef, ViewChildren, computed, effect, input, signal, untracked } from '@angular/core';
+import { Component, ContentChild, ElementRef, HostListener, QueryList, TemplateRef, ViewChildren, ViewEncapsulation, computed, effect, input, signal, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Node, Edge, Cluster, Graph, Layout } from './graph.interface';
 import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
@@ -32,6 +32,7 @@ interface Matrix {
     standalone: true,
     imports: [CommonModule, MouseWheelDirective],
     templateUrl: './graph.component.html',
+    encapsulation: ViewEncapsulation.None,
     styleUrl: './graph.component.css'
 })
 export class GraphComponent {
@@ -492,7 +493,7 @@ export class GraphComponent {
                 .attr('d', edge.line);
 
 
-            select(element.nativeElement).select(`${edge.id}`)
+            select(element.nativeElement).select(`#${edge.id}`)
                 .attr('d', edge.oldTextPath as any)
                 .transition()
                 .ease(ease.easeSinInOut)
@@ -623,10 +624,10 @@ export class GraphComponent {
 
             // Pan around SVG, zoom, then unpan
             this.pan(svgPoint.x, svgPoint.y, true);
-            this.zoomLevel.update((value) => value * zoomFactor);
+            this.zoom(zoomFactor);
             this.pan(-svgPoint.x, -svgPoint.y, true);
         } else {
-            this.zoomLevel.update((value) => value * zoomFactor);
+            this.zoom(zoomFactor);
         }
     }
 
