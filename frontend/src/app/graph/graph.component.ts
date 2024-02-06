@@ -262,8 +262,8 @@ export class GraphComponent {
             }
             if (!n.dimension) {
                 n.dimension = {
-                    width: 30,
-                    height: 30
+                    width: 20,
+                    height: 20
                 };
                 n.meta.forceDimensions = false;
             } else {

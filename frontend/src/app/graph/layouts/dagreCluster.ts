@@ -137,7 +137,7 @@ export class DagreClusterLayout implements Layout {
         this.dagreEdges = graph.edges.map(l => {
             const newLink: any = Object.assign({}, l);
             if (!newLink.id) {
-                newLink.id = uid(); // need a way to generate a unique ID.
+                newLink.id = uid();
             }
             return newLink;
         });
