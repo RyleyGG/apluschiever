@@ -13,11 +13,6 @@
                 <ng-container *ngIf="defsTemplate" [ngTemplateOutlet]="defsTemplate"></ng-container>
                 <svg:path class="text-path" *ngFor="let edge of graph.edges" [attr.d]="edge.textPath"
                     [attr.id]="edge.id"></svg:path>
-
-                <svg:marker class="arrow" id="arrow" viewBox="0 -10 20 20" refX="8" refY="0" markerWidth="10"
-                    markerHeight="10" orient="auto">
-                    <svg:path d="M 0 -10 L 10 0 L 0 10" />
-                </svg:marker>
             </defs>
 
             <ng-content></ng-content>
@@ -45,7 +40,17 @@
                     [id]="edge.id">
                     <ng-container *ngIf="edgeTemplate" [ngTemplateOutlet]="edgeTemplate"
                         [ngTemplateOutletContext]="{ $implicit: edge }"></ng-container>
-                    <svg:path *ngIf="!edgeTemplate" class="edge" marker-end="url(#arrow)" [attr.d]="edge.line" />
+
+                    <!-- Define marker for each edge -->
+                    <svg:defs *ngIf="!edgeTemplate">
+                        <svg:marker [attr.id]="'arrow-' + edge.id" [attr.viewBox]="'0 -10 20 20'" refX="8" refY="0"
+                            markerWidth="10" markerHeight="10" orient="auto">
+                            <svg:path [attr.fill]="edge.color" d="M 0 -10 L 10 0 L 0 10" />
+                        </svg:marker>
+                    </svg:defs>
+
+                    <svg:path *ngIf="!edgeTemplate" class="edge" [attr.stroke]="edge.color"
+                        [attr.marker-end]="'url(#arrow-' + edge.id + ')'" [attr.d]="edge.line" />
                 </svg:g>
             </svg:g>
 

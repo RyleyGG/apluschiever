@@ -67,6 +67,8 @@ export interface Edge {
      */
     target: string;
 
+    color?: string; // Hex string for a color.
+
     points?: any;
     line?: any;
     oldLine?: any;

@@ -277,6 +277,7 @@ export class GraphComponent {
         const initEdge = (e: Edge): Edge => {
             // Set default settings for the edges here.
             e.id ??= uid();
+            e.color ??= '#000000';
             return e;
         };
 
