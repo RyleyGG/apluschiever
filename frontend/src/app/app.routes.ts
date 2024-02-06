@@ -6,6 +6,7 @@ import { SignInPageComponent } from './pages/signin/signin.page.component';
 import { LandingPageComponent } from './pages/landing/landing.page.component';
 import { SignUpPageComponent } from './pages/signup/signup.page.component';
 import { SignOutPageComponent } from './pages/signout/signout.page.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
 export const routes: Routes = [
@@ -13,6 +14,7 @@ export const routes: Routes = [
     { path: "signup", component: SignUpPageComponent, canActivate: [signupGuard] },
     { path: "signin", component: SignInPageComponent, canActivate: [signinGuard] },
     { path: "signout", component: SignOutPageComponent, canActivate: [signoutGuard] },
+    { path: "dashboard", component: DashboardComponent, canActivate: [signoutGuard] },
     // General routes
     { path: "landing", component: LandingPageComponent },
     { path: '', redirectTo: '/landing', pathMatch: 'full' },

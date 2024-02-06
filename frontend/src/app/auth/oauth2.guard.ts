@@ -15,7 +15,7 @@ export const signupGuard: CanActivateFn = async () => {
     const isUserAuthenticated = await firstValueFrom(authService.validate_token());
 
     if (isUserAuthenticated) {
-        router.navigate(['/landing']);
+        router.navigate(['/dashboard']);
         return false;
     }
 
@@ -33,7 +33,7 @@ export const signinGuard: CanActivateFn = async () => {
     const isUserAuthenticated = await firstValueFrom(authService.validate_token())
 
     if (isUserAuthenticated) {
-        router.navigate(['/landing']);
+        router.navigate(['/dashboard']);
         return false;
     }
 
