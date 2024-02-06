@@ -204,9 +204,9 @@ export class GraphComponent {
      */
     @HostListener('document:mousemove', ['$event'])
     private onMouseMove($event: MouseEvent): void {
-        if (this.isPanning && this.panEnabled()) {
+        if (this.isPanning) {
             this.onPan($event);
-        } else if (this.isDragging && this.dragEnabled()) {
+        } else if (this.isDragging) {
             this.onDrag($event);
         }
     }
