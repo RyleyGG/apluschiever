@@ -20,7 +20,7 @@
             <!--Handles all the node clusters-->
             <svg:g class="clusters">
                 <svg:g #clusterElement *ngFor="let node of graph.clusters; trackBy: trackNodeBy" [id]="node.id"
-                    [attr.transform]="node.transform">
+                    [attr.transform]="node.transform" (click)="onNodeClick($event, node)">
                     <ng-container *ngIf="clusterTemplate && !node.hidden" [ngTemplateOutlet]="clusterTemplate"
                         [ngTemplateOutletContext]="{ $implicit: node }">
                     </ng-container>
@@ -57,7 +57,8 @@
             <!--Handles all the nodes-->
             <svg:g class="nodes">
                 <svg:g class="node-group" #nodeElement *ngFor="let node of graph.nodes; trackBy: trackNodeBy"
-                    [id]="node.id" [attr.transform]="node.transform">
+                    [id]="node.id" [attr.transform]="node.transform" (click)="onNodeClick($event, node)"
+                    (mousedown)="onNodeMouseDown($event, node)">
                     <ng-container *ngIf="nodeTemplate && !node.hidden" [ngTemplateOutlet]="nodeTemplate"
                         [ngTemplateOutletContext]="{ $implicit: node }"></ng-container>
                     <svg:circle *ngIf="!nodeTemplate" r="10" [attr.cx]="node?.dimension?.width! / 2"

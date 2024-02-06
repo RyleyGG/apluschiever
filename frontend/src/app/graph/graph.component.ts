@@ -101,6 +101,8 @@ export class GraphComponent {
      * Should ALMOST NEVER be modified outside of this component.
      */
     public isDragging: boolean = false;
+
+    public draggedNode: any;
     /**
      * Allows the template to turn on/off the panning functionality when the panning rectangle is clicked on.
      * Should ALMOST NEVER be modified outside of this component.
@@ -659,6 +661,35 @@ export class GraphComponent {
     public trackEdgeBy = (index: number, edge: Edge): any => edge.id;
 
     public trackNodeBy = (index: number, node: Node): any => node.id;
+
+    /**
+     * Triggers when a node is clicked.
+     * 
+     * @param event 
+     * @param node 
+     */
+    public onNodeClick = (event: MouseEvent, node: Node): any => {
+        console.log(event);
+        console.log(node);
+        // TODO: Send this event to the outside world
+    }
+
+    /**
+     * Triggers when the mouse goes down over a node.
+     * @param event 
+     * @param node 
+     * @returns 
+     */
+    public onNodeMouseDown = (event: MouseEvent, node: Node): any => {
+        if (!this.dragEnabled()) { return; }
+        this.isDragging = true;
+        this.draggedNode = event;
+
+        const layout = this.layout();
+        if (typeof layout !== 'string' && layout.onDragStart) {
+            layout.onDragStart(node, event);
+        }
+    }
 
     //#endregion
 
