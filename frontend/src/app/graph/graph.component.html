@@ -31,7 +31,7 @@
                     </ng-container>
                     <svg:g *ngIf="!clusterTemplate" class="node cluster">
                         <svg:rect [attr.width]="node?.dimension?.width!" [attr.height]="node?.dimension?.height!"
-                            [attr.fill]="node.data?.color" />
+                            [attr.fill]="node.color" />
                         <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node?.dimension?.height! / 2">
                             {{ node.label }}
                         </svg:text>
@@ -56,7 +56,7 @@
                     <ng-container *ngIf="nodeTemplate && !node.hidden" [ngTemplateOutlet]="nodeTemplate"
                         [ngTemplateOutletContext]="{ $implicit: node }"></ng-container>
                     <svg:circle *ngIf="!nodeTemplate" r="10" [attr.cx]="node?.dimension?.width! / 2"
-                        [attr.cy]="node?.dimension?.height! / 2" [attr.fill]="node.data?.color" />
+                        [attr.cy]="node?.dimension?.height! / 2" [attr.fill]="node.color" />
                 </svg:g>
             </svg:g>
 

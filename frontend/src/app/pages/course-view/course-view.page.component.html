@@ -21,35 +21,42 @@
   id: 'e',
   source: '4',
   target: '5'
-}, {
+},
+{
   id: 'f',
   source: '2',
-  target: '6'
+  target: '1'
+},
+{
+  id: 'g',
+  source: '2',
+  target: '5'
 }
 ]" [nodes]="[
 {
   id: '1',
-  label: 'Node A'
+  label: 'Node A',
+  color: '#FF0000'
 }, {
   id: '2',
-  label: 'Node B'
+  label: 'Node B',
+  color: '#00FFFF'
 }, {
   id: '3',
-  label: 'Node C'
+  label: 'Node C',
+  color: '#00F900'
 }, {
   id: '4',
   label: 'Node D'
 }, {
   id: '5',
   label: 'Node E'
-}, {
-  id: '6',
-  label: 'Node F'
 }
 ]" [clusters]="[
 {
   id: 'cluster0',
-      label: 'Background',
-      childNodeIds: ['1', '2', '3']
-    }
-  ]" (select)=" onNodeSelect($event)"></graph>
+  label: 'Background',
+  color: '#00FFFF55',
+  childNodeIds: ['1', '2', '3']
+}
+]" (select)=" onNodeSelect($event)"></graph>

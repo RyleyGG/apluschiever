@@ -255,12 +255,8 @@ export class GraphComponent {
     private createGraph(): void {
         const initNode = (n: Node): Node => {
             // Set default settings for the nodes here.
-            if (!n.meta) {
-                n.meta = {};
-            }
-            if (!n.id) {
-                n.id = uid();
-            }
+            n.meta ??= {};
+            n.id ??= uid();
             if (!n.dimension) {
                 n.dimension = {
                     width: 20,
@@ -268,22 +264,19 @@ export class GraphComponent {
                 };
                 n.meta.forceDimensions = false;
             } else {
-                n.meta.forceDimensions = n.meta.forceDimensions === undefined ? true : n.meta.forceDimensions;
+                n.meta.forceDimensions ??= true;
             }
-            if (!n.position) {
-                n.position = {
-                    x: 0,
-                    y: 0
-                };
+            n.position ??= {
+                x: 0,
+                y: 0
             };
+            n.color ??= '#000000';
             return n;
         }
 
         const initEdge = (e: Edge): Edge => {
             // Set default settings for the edges here.
-            if (!e.id) {
-                e.id = uid();
-            }
+            e.id ??= uid();
             return e;
         };
 
@@ -306,6 +299,7 @@ export class GraphComponent {
         }
 
         // Set colors??
+
 
         // Create Graph
         this.createGraph();
@@ -387,18 +381,14 @@ export class GraphComponent {
         // Set view options for the nodes & clusters
         this.graph.nodes.map((n: Node) => {
             n.transform = `translate(${n.position!.x - (this.centerNodesOnPositionChange ? n.dimension!.width / 2 : 0) || 0}, ${n.position!.y - (this.centerNodesOnPositionChange ? n.dimension!.height / 2 : 0) || 0})`;
-            if (!n.data) {
-                n.data = {};
-            }
-            // Handle colors here
+            n.data ??= {};
+            n.color ??= '#000000';
         });
 
         (this.graph.clusters || []).map((c: Cluster) => {
             c.transform = `translate(${c.position!.x - (this.centerNodesOnPositionChange ? c.dimension!.width / 2 : 0) || 0}, ${c.position!.y - (this.centerNodesOnPositionChange ? c.dimension!.height / 2 : 0) || 0})`;
-            if (!c.data) {
-                c.data = {};
-            }
-            // Handle colors here
+            c.data ??= {};
+            c.color ??= '#000000';
         });
 
         // Prevent animations for the new nodes
@@ -452,9 +442,7 @@ export class GraphComponent {
             }
 
             newEdge.textAngle = 0;
-            if (!newEdge.oldLine) {
-                newEdge.oldLine = newEdge.line;
-            }
+            newEdge.oldLine ??= newEdge.line;
 
             this.setDominantBaseline(newEdge);
             newEdges.push(newEdge);
@@ -580,9 +568,7 @@ export class GraphComponent {
      */
     private panToNodeId(id: string): void {
         const node = this.graph.nodes.find((node: Node) => node.id === id);
-        if (!node || !node.position) {
-            return;
-        }
+        if (!node || !node.position) { return; }
 
         this.panTo(node.position?.x, node.position?.y);
     }

@@ -45,8 +45,10 @@ export interface Node {
     dimension?: NodeDimension;
     transform?: string;
 
+    color?: string; // Hex string for a color.
+
     meta?: any;
-    data?: any;
+    data?: any; // catch all object.
 
     hidden?: boolean;
 };
@@ -72,7 +74,7 @@ export interface Edge {
     textPath?: any;
     oldTextPath?: string;
 
-    data?: Edge | undefined; // TODO: the type here seems a little off. Must investigate further.
+    data?: any | undefined; // TODO: the type here seems a little off. Must investigate further.
 
     midPoint?: NodePosition;
     dominantBaseline?: string;
