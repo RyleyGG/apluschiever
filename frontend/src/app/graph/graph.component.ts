@@ -25,7 +25,8 @@ interface Matrix {
 };
 
 /**
- * The graph component.
+ * The graph component. Its implementation was inspired by https://github.com/lars-berger/graphy-ng and https://github.com/swimlane/ngx-graph, but 
+ * has been updated to angular 17, the signal workflow, and to be a standalone component.
  */
 @Component({
     selector: 'graph',
@@ -165,10 +166,10 @@ export class GraphComponent {
         });
 
         // Setup the effect for zoom functionality
-        effect(() => {
-            const level = this.zoomLevel();
-            untracked(() => this.zoomTo(level));
-        });
+        // effect(() => {
+        //     const level = this.zoomLevel();
+        //     untracked(() => this.zoomTo(level));
+        // });
 
         // Setup the effect for pan offset functionality
         effect(() => {
@@ -603,8 +604,9 @@ export class GraphComponent {
         const zoomFactor = 1 + (direction === 'in' ? this.zoomSpeed() : -this.zoomSpeed());
 
         // Check we won't go out of bounds
-        const newZoomLevel = this.zoomLevel() * zoomFactor;
-        if (newZoomLevel <= this.minZoomLevel() || newZoomLevel >= this.maxZoomLevel()) { return; }
+        let newZoomLevel = (this.zoomLevel() * zoomFactor);
+        newZoomLevel = newZoomLevel <= this.minZoomLevel() ? this.minZoomLevel() : newZoomLevel;
+        newZoomLevel = newZoomLevel >= this.maxZoomLevel() ? this.maxZoomLevel() : newZoomLevel;
 
         // Apply the actual zoom
         if (this.panOnZoom() && $event) {
@@ -625,9 +627,11 @@ export class GraphComponent {
             // Pan around SVG, zoom, then unpan
             this.pan(svgPoint.x, svgPoint.y, true);
             this.zoom(zoomFactor);
+            this.zoomTo(newZoomLevel); // needed in order to enforce min and max zoom constraints
             this.pan(-svgPoint.x, -svgPoint.y, true);
         } else {
             this.zoom(zoomFactor);
+            this.zoomTo(newZoomLevel);
         }
     }
 
@@ -636,7 +640,10 @@ export class GraphComponent {
      * 
      * @param {number} factor the factor to zoom by
      */
-    private zoom = (factor: number): void => this.transformationMatrix.set(transform(this.transformationMatrix(), scale(factor, factor)));
+    private zoom = (factor: number): void => {
+        this.transformationMatrix.update((value) => transform(this.transformationMatrix(), scale(factor, factor)));
+        this.zoomLevel.set(this.transformationMatrix().a);
+    }
 
     /**
      * Zoom to a specific level.
