@@ -293,7 +293,7 @@ export class GraphComponent {
     }
 
     /**
-     * Called whenever the 
+     * Called whenever the graph updates
      */
     private update(): void {
         // Recalculate dimensions??
@@ -302,9 +302,6 @@ export class GraphComponent {
         if (!this.curve()) {
             this.curve.set(shape.curveBundle.beta(1));
         }
-
-        // Set colors??
-
 
         // Create Graph
         this.createGraph();
@@ -317,9 +314,10 @@ export class GraphComponent {
     private draw(): void {
         if (!this.layout || typeof this.layout === 'string') { return; }
 
-        // this.applyNodeDimensions();
         const result = (this.layout() as Layout).run(this.graph);
         const result$ = result instanceof Observable ? result : of(result);
+
+        // TODO: LOOK INTO SHIFTING FROM OBSERVABLE TO SIGNAL WITH EFFECT!
         // Dynamic graph will tick many times, static will tick only once
         result$.subscribe((graph: Graph) => {
             this.graph = graph;
@@ -332,7 +330,7 @@ export class GraphComponent {
     }
 
     /**
-     * Sets the node dimensions so we can display them correctly
+     * Sets the node dimensions so we can display them correctly.
      */
     private applyNodeDimensions(): void {
         if (!this.nodeElements || !this.nodeElements.length) { return; }
@@ -380,9 +378,10 @@ export class GraphComponent {
         });
     }
 
+    /**
+     * Updates the graph frame by frame if the layout is dynamic, otherwise, this sets the graph render settings once. 
+     */
     private tick(): void {
-        // TODO: for dynamically updating graph layouts, we need this method to handle frame by frame calculations
-
         // Set view options for the nodes & clusters
         this.graph.nodes.map((n: Node) => {
             n.transform = `translate(${n.position!.x - (this.centerNodesOnPositionChange ? n.dimension!.width / 2 : 0) || 0}, ${n.position!.y - (this.centerNodesOnPositionChange ? n.dimension!.height / 2 : 0) || 0})`;
@@ -418,7 +417,6 @@ export class GraphComponent {
                 : this.graph.edges.find((e: Edge) => `${e.source}${e.target}` === normKey);
 
             // compare old edge to new edge and update if not same
-
             if (!oldEdge) {
                 oldEdge = graphEdge || edgeLabel;
             } else if (
@@ -646,13 +644,22 @@ export class GraphComponent {
             value.d = isNaN(level) ? value.d : Number(level);
             return value;
         });
+        this.zoomLevel.set(this.transformationMatrix().a);
     }
 
     /**
      * Zoom to center the graph in the view.
      */
     private zoomToFit(): void {
+        // TODO: Need to get ratio of graph element width and height to the graph width and height
+        // lookup the g.graph vs the svg.graph and take ratio of widths and heights
+        const heightZoom = 0;
+        const widthZoom = 0;
+        let newZoomlevel = Math.min(heightZoom, widthZoom, 1);
 
+        newZoomlevel = this.constrain(this.minZoomLevel(), newZoomlevel, this.maxZoomLevel());
+
+        this.zoomTo(newZoomlevel);
     }
 
     //#endregion Zoom Methods
@@ -761,6 +768,16 @@ export class GraphComponent {
 
         return null;
     }
+
+    /**
+     * Constrain a value to be within min and max bounds
+     * 
+     * @param min the minimum value
+     * @param value the value to constrain
+     * @param max the maximum value
+     * @returns the value constrained to [min, max]
+     */
+    private constrain = (min: number, value: number, max: number): number => ((value <= min) ? min : (value >= max) ? max : value);
 
     //#endregion Miscellaneous Helpers
 
