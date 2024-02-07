@@ -17,6 +17,14 @@
     cursor: move;
 }
 
+.graph .node.cluster {
+    cursor: pointer;
+}
+
+.graph .node-group {
+    cursor: pointer;
+}
+
 .graph .node-group .old-node {
     transition: transform 0.5s ease-in-out;
 }

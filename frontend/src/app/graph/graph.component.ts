@@ -1,4 +1,4 @@
-import { Component, ContentChild, ElementRef, HostListener, QueryList, TemplateRef, ViewChildren, ViewEncapsulation, computed, effect, input, signal, untracked } from '@angular/core';
+import { Component, ContentChild, ElementRef, EventEmitter, HostListener, Output, QueryList, TemplateRef, ViewChildren, ViewEncapsulation, computed, effect, input, signal, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Node, Edge, Cluster, Graph, Layout } from './graph.interface';
 import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
@@ -67,6 +67,11 @@ export class GraphComponent {
     public minZoomLevel = input<number>(0.1);
     public maxZoomLevel = input<number>(5);
     public panOnZoom = input<boolean>(true);
+
+    // Graph Outputs
+    @Output() zoomLevelUpdated = new EventEmitter<number>();    // Emits when the zoom level is changed. 
+    @Output() nodeClicked = new EventEmitter<Node>();           // Emits when a node is clicked.
+    @Output() clickHandler = new EventEmitter<MouseEvent>();    // Emits whenever the graph is clicked.
 
     // Public Properties & Computed Values
 
@@ -167,11 +172,8 @@ export class GraphComponent {
             untracked(() => this.update());
         });
 
-        // Setup the effect for zoom functionality
-        // effect(() => {
-        //     const level = this.zoomLevel();
-        //     untracked(() => this.zoomTo(level));
-        // });
+        // Setup the effect to automatically send an emit when zoom level changes
+        effect(() => this.zoomLevelUpdated.emit(this.zoomLevel()));
 
         // Setup the effect for pan offset functionality
         effect(() => {
@@ -230,7 +232,7 @@ export class GraphComponent {
      */
     @HostListener('document:mouseclick', ['$event'])
     private onMouseClick($event: MouseEvent): void {
-
+        this.clickHandler.emit($event);
     }
 
     /**
@@ -592,11 +594,6 @@ export class GraphComponent {
 
         const zoomFactor = 1 + (direction === 'in' ? this.zoomSpeed() : -this.zoomSpeed());
 
-        // Check we won't go out of bounds
-        let newZoomLevel = (this.zoomLevel() * zoomFactor);
-        newZoomLevel = newZoomLevel <= this.minZoomLevel() ? this.minZoomLevel() : newZoomLevel;
-        newZoomLevel = newZoomLevel >= this.maxZoomLevel() ? this.maxZoomLevel() : newZoomLevel;
-
         // Apply the actual zoom
         if (this.panOnZoom() && $event) {
             // Absolute mouse X/Y on the screen
@@ -616,11 +613,9 @@ export class GraphComponent {
             // Pan around SVG, zoom, then unpan
             this.pan(svgPoint.x, svgPoint.y, true);
             this.zoom(zoomFactor);
-            this.zoomTo(newZoomLevel); // needed in order to enforce min and max zoom constraints
             this.pan(-svgPoint.x, -svgPoint.y, true);
         } else {
             this.zoom(zoomFactor);
-            this.zoomTo(newZoomLevel);
         }
     }
 
@@ -630,7 +625,13 @@ export class GraphComponent {
      * @param {number} factor the factor to zoom by
      */
     private zoom = (factor: number): void => {
-        this.transformationMatrix.update((value) => transform(this.transformationMatrix(), scale(factor, factor)));
+        const tempMatrix = transform(this.transformationMatrix(), scale(factor, factor));
+
+        // Constrain to max and min zoom levels.
+        if (tempMatrix.a >= this.maxZoomLevel()) { this.zoomTo(this.maxZoomLevel()); }
+        else if (tempMatrix.a <= this.minZoomLevel()) { this.zoomTo(this.minZoomLevel()); }
+        else { this.transformationMatrix.update((value) => tempMatrix); }
+
         this.zoomLevel.set(this.transformationMatrix().a);
     }
 
@@ -665,13 +666,13 @@ export class GraphComponent {
     /**
      * Triggers when a node is clicked.
      * 
-     * @param event 
-     * @param node 
+     * @param event the mouse event which triggered this function call.
+     * @param node the node that was clicked.
      */
     public onNodeClick = (event: MouseEvent, node: Node): any => {
         console.log(event);
         console.log(node);
-        // TODO: Send this event to the outside world
+        this.nodeClicked.emit(node);
     }
 
     /**
