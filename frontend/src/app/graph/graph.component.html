@@ -59,10 +59,19 @@
                 <svg:g class="node-group" #nodeElement *ngFor="let node of graph.nodes; trackBy: trackNodeBy"
                     [id]="node.id" [attr.transform]="node.transform" (click)="onNodeClick($event, node)"
                     (mousedown)="onNodeMouseDown($event, node)">
+                    <!--If user has overridden the node display settings, use those-->
                     <ng-container *ngIf="nodeTemplate && !node.hidden" [ngTemplateOutlet]="nodeTemplate"
                         [ngTemplateOutletContext]="{ $implicit: node }"></ng-container>
+
+                    <!--Show Nodes as Circles In Default Template-->
                     <svg:circle *ngIf="!nodeTemplate" r="10" [attr.cx]="node?.dimension?.width! / 2"
                         [attr.cy]="node?.dimension?.height! / 2" [attr.fill]="node.color" />
+
+                    <!--Show Node Labels In Default Template-->
+                    <svg:text *ngIf="!nodeTemplate" alignment-baseline="central" [attr.x]="-node?.dimension?.width!"
+                        [attr.y]="node?.dimension?.height!">
+                        {{ node.label }}
+                    </svg:text>
                 </svg:g>
             </svg:g>
 

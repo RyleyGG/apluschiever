@@ -68,6 +68,8 @@ export class GraphComponent {
     public maxZoomLevel = input<number>(5);
     public panOnZoom = input<boolean>(true);
 
+    public zoomToFitTrigger = input<void>(); // TODO: test this because I don't think it'll work.
+
     // Graph Outputs
     @Output() zoomLevelUpdated = new EventEmitter<number>();    // Emits when the zoom level is changed. 
     @Output() nodeClicked = new EventEmitter<Node>();           // Emits when a node is clicked.
@@ -131,7 +133,6 @@ export class GraphComponent {
     @ViewChildren('nodeElement') nodeElements!: QueryList<ElementRef>;
     @ViewChildren('edgeElement') edgeElements!: QueryList<ElementRef>;
 
-
     /**
      * Creates the GraphComponent.
      * 
@@ -174,6 +175,12 @@ export class GraphComponent {
 
         // Setup the effect to automatically send an emit when zoom level changes
         effect(() => this.zoomLevelUpdated.emit(this.zoomLevel()));
+
+        // Setup the effect to automatically zoom the graph to fit viewport when zoomToFitTrigger is called
+        effect(() => {
+            this.zoomToFitTrigger();
+            this.zoomToFit();
+        });
 
         // Setup the effect for pan offset functionality
         effect(() => {
@@ -261,15 +268,11 @@ export class GraphComponent {
             // Set default settings for the nodes here.
             n.meta ??= {};
             n.id ??= uid();
-            if (!n.dimension) {
-                n.dimension = {
-                    width: 20,
-                    height: 20
-                };
-                n.meta.forceDimensions = false;
-            } else {
-                n.meta.forceDimensions ??= true;
-            }
+            n.meta.forceDimensions = (!n.dimension) ? false : (n.meta.forceDimensions || true);
+            n.dimension ??= {
+                width: 20,
+                height: 20
+            };
             n.position ??= {
                 x: 0,
                 y: 0
@@ -651,10 +654,11 @@ export class GraphComponent {
      * Zoom to center the graph in the view.
      */
     private zoomToFit(): void {
-        // TODO: Need to get ratio of graph element width and height to the graph width and height
-        // lookup the g.graph vs the svg.graph and take ratio of widths and heights
-        const heightZoom = 0;
-        const widthZoom = 0;
+        const svg = this.el.nativeElement.querySelector('svg');
+        const graphGroup = svg.querySelector('g.graph');
+
+        const heightZoom = svg.nativeElement.getBoundingClientRect().height / graphGroup.nativeElement.getBoundingClientRect().height;
+        const widthZoom = svg.nativeElement.getBoundingClientRect().width / graphGroup.nativeElement.getBoundingClientRect().width;
         let newZoomlevel = Math.min(heightZoom, widthZoom, 1);
 
         newZoomlevel = this.constrain(this.minZoomLevel(), newZoomlevel, this.maxZoomLevel());
