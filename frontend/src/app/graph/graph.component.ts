@@ -1,10 +1,9 @@
-import { Component, ContentChild, ElementRef, EventEmitter, HostListener, Output, QueryList, TemplateRef, ViewChildren, ViewEncapsulation, computed, effect, input, signal, untracked } from '@angular/core';
+import { Component, ContentChild, ElementRef, EventEmitter, HostListener, Output, QueryList, TemplateRef, ViewChildren, ViewEncapsulation, computed, effect, input, isSignal, signal, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Node, Edge, Cluster, Graph, Layout } from './graph.interface';
 import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
 import { MouseWheelDirective } from '../core/directives/mouse-wheel.directive';
 import { DagreClusterLayout } from './layouts/dagreCluster';
-import { Observable, first, of } from 'rxjs';
 import { select } from 'd3-selection';
 import * as shape from 'd3-shape';
 import * as ease from 'd3-ease';
@@ -115,6 +114,8 @@ export class GraphComponent {
     private centerNodesOnPositionChange: boolean = true;
     private _oldEdges: Edge[] = [];
 
+    private graphUpdate = signal<Graph>(this.graph);
+
     @ContentChild('nodeTemplate') nodeTemplate!: TemplateRef<any>;
     @ContentChild('edgeTemplate') edgeTemplate!: TemplateRef<any>;
     @ContentChild('clusterTemplate') clusterTemplate!: TemplateRef<any>;
@@ -184,6 +185,15 @@ export class GraphComponent {
             const nodeId = this.panToNode();
             if (!nodeId) { return; }
             untracked(() => this.panToNodeId(nodeId));
+        });
+
+        // Dynamic graph will tick many times, static will tick only once
+        effect(() => {
+            const newGraph = this.graphUpdate();
+            if (!newGraph) { return; }
+            this.graph = this.graphUpdate();
+            console.log(this.graph);
+            this.tick();
         });
     }
 
@@ -303,19 +313,17 @@ export class GraphComponent {
     private draw(): void {
         if (!this.layout || typeof this.layout === 'string') { return; }
 
+        // We run the layout, then set the signal according to the return type.
         const result = (this.layout() as Layout).run(this.graph);
-        const result$ = result instanceof Observable ? result : of(result);
+        if (isSignal(result)) {
+            this.graphUpdate = result;
+        } else {
+            this.graphUpdate.update((value: Graph) => value = result);
+        }
 
-        // TODO: LOOK INTO SHIFTING FROM OBSERVABLE TO SIGNAL WITH EFFECT!
-        // Dynamic graph will tick many times, static will tick only once
-        result$.subscribe((graph: Graph) => {
-            this.graph = graph;
-            this.tick();
-        });
-
+        // We apply the node dimensions if applicable.
         if (this.graph.nodes.length === 0 && this.graph.clusters?.length === 0) { return; }
-
-        result$.pipe(first()).subscribe(() => this.applyNodeDimensions());
+        this.applyNodeDimensions();
     }
 
     /**

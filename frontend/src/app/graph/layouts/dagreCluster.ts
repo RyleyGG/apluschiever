@@ -2,6 +2,9 @@ import { uid } from "../../core/utils/unique-id";
 import { Cluster, Edge, Graph, Layout, Node } from "../graph.interface";
 import * as dagre from 'dagre';
 
+/**
+ * The orientation the graph should go in. 
+ */
 export enum Orientation {
     LEFT_TO_RIGHT = 'LR',
     RIGHT_TO_LEFT = 'RL',
@@ -9,6 +12,9 @@ export enum Orientation {
     BOTTOM_TO_TOM = 'BT'
 };
 
+/**
+ * 
+ */
 export enum Alignment {
     CENTER = 'C',
     UP_LEFT = 'UL',
@@ -17,6 +23,9 @@ export enum Alignment {
     DOWN_RIGHT = 'DR'
 };
 
+/**
+ * The settings for this layout.
+ */
 export interface DagreSettings {
     orientation?: Orientation;
     marginX?: number;
@@ -31,7 +40,13 @@ export interface DagreSettings {
     compound?: boolean;
 };
 
+/**
+ * The DagreClusterLayout which is used by default.
+ */
 export class DagreClusterLayout implements Layout {
+    /**
+     * Default settings are used when no other ones are provided.
+     */
     static defaultSettings: DagreSettings = {
         orientation: Orientation.LEFT_TO_RIGHT,
         marginX: 20,
@@ -44,20 +59,14 @@ export class DagreClusterLayout implements Layout {
     };
 
     settings: DagreSettings = {};
-
     dagreGraph: any;
     dagreNodes!: Node[];
     dagreClusters!: Cluster[];
     dagreEdges: any;
 
-
-
     run(graph: Graph): Graph {
         this.createDagreGraph(graph);
-        console.log("DAGRE GRAPH MADE");
-
         dagre.layout(this.dagreGraph);
-
         graph.edgeLabels = this.dagreGraph._edgeLabels;
 
         const dagreToOutput = (node: any) => {
@@ -77,7 +86,6 @@ export class DagreClusterLayout implements Layout {
 
         graph.clusters = (graph.clusters || []).map(dagreToOutput);
         graph.nodes = graph.nodes.map(dagreToOutput);
-
         return graph;
     }
 
@@ -100,6 +108,10 @@ export class DagreClusterLayout implements Layout {
         return graph;
     }
 
+    /**
+     * Helper function to create the dagre representation for a graph.
+     * @param graph the graph to create a dagre graph for
+     */
     private createDagreGraph(graph: Graph): void {
         const settings = Object.assign({}, DagreClusterLayout.defaultSettings, this.settings);
         this.dagreGraph = new dagre.graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });

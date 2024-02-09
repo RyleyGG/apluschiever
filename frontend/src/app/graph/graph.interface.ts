@@ -1,5 +1,4 @@
-import { signal } from "@angular/core";
-import { Observable } from "rxjs";
+import { WritableSignal } from "@angular/core";
 
 /**
  * Represents the position of a node
@@ -129,11 +128,11 @@ export interface Layout {
      * 
      * @param graph 
      */
-    run(graph: Graph): Graph | Observable<Graph>;
+    run(graph: Graph): Graph | WritableSignal<Graph>;
     /**
      * 
      * @param graph 
      * @param edge 
      */
-    updateEdge(graph: Graph, edge: Edge): Graph | Observable<Graph>;
+    updateEdge(graph: Graph, edge: Edge): Graph | WritableSignal<Graph>;
 };
