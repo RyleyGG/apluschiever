@@ -6,9 +6,9 @@ import { Node, Edge, Cluster } from '../../graph/graph.interface';
 
 
 /**
- * The sign in page component
+ * The course view page component
  * 
- * Right now it has a single button for signing in, and prints the SuccessfulUserAuth result to the console.
+ * Right now it has a graph of dummy data being displayed.
  */
 @Component({
     selector: 'course-view-page',
