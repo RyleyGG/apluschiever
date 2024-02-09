@@ -170,7 +170,7 @@ export class GraphComponent {
         // Setup the effect to automatically zoom the graph to fit viewport when zoomToFitTrigger is called
         effect(() => {
             this.zoomToFitTrigger();
-            this.zoomToFit();
+            untracked(() => this.zoomToFit());
         });
 
         // Setup the effect for pan offset functionality
@@ -187,12 +187,12 @@ export class GraphComponent {
             untracked(() => this.panToNodeId(nodeId));
         });
 
-        // Dynamic graph will tick many times, static will tick only once
+        // This is the main effect of the component. This causes the graph to update visually.
+        // Dynamic graph layouts will tick many times, static will tick only once.
         effect(() => {
             const newGraph = this.graphUpdate();
             if (!newGraph) { return; }
-            this.graph = this.graphUpdate();
-            console.log(this.graph);
+            this.graph = newGraph;
             this.tick();
         });
     }
@@ -640,8 +640,8 @@ export class GraphComponent {
         const svg = this.el.nativeElement.querySelector('svg');
         const graphGroup = svg.querySelector('g.graph');
 
-        const heightZoom = svg.nativeElement.getBoundingClientRect().height / graphGroup.nativeElement.getBoundingClientRect().height;
-        const widthZoom = svg.nativeElement.getBoundingClientRect().width / graphGroup.nativeElement.getBoundingClientRect().width;
+        const heightZoom = svg.getBoundingClientRect().height / graphGroup.getBoundingClientRect().height;
+        const widthZoom = svg.getBoundingClientRect().width / graphGroup.getBoundingClientRect().width;
         let newZoomlevel = Math.min(heightZoom, widthZoom, 1);
 
         newZoomlevel = this.constrain(this.minZoomLevel(), newZoomlevel, this.maxZoomLevel());
@@ -664,8 +664,6 @@ export class GraphComponent {
      * @param node the node that was clicked.
      */
     public onNodeClick = (event: MouseEvent, node: Node): any => {
-        console.log(event);
-        console.log(node);
         this.nodeClicked.emit(node);
     }
 
