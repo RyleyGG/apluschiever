@@ -1,11 +1,11 @@
 from typing import Optional, List, Dict
 import uuid
 
-from pydantic import field_validator
+from pydantic import field_validator, BaseModel
 from sqlalchemy import JSON, Column
 from sqlmodel import SQLModel, Field, Relationship
 
-from models.pydantic_models import Video, Markdown
+from models.pydantic_models import Video, Markdown, UploadFile, ThirdPartyResource
 from models.dto_models import UserType
 from services.api_utility_service import pydantic_column_type
 
@@ -38,7 +38,15 @@ class Node(SQLModel, table=True):
     # Instead, we supply one attribute per content type we support.
     videos: Optional[List[Video]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[Video]])))
     markdown_files: Optional[List[Markdown]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[Markdown]])))
+    uploaded_files: Optional[List[UploadFile]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[UploadFile]])))
+    third_party_resources: Optional[List[ThirdPartyResource]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[ThirdPartyResource]])))
     courses: List["Course"] = Relationship(back_populates="nodes", link_model=NodeCourseAssociation)
+
+
+# DTO model that has to be defined here because it relies on Node and therefore must init after
+class NodeGraphView(BaseModel):
+    node_id: str
+    parent_nodes: List[Node]
 
 
 class Course(SQLModel, table=True):

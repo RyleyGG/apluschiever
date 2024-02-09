@@ -53,3 +53,7 @@ class UserType(Enum):
 class NodeProgressDetails(BaseModel):
     node_id: str
     completed_content: List[str]
+
+
+class SupportedThirdParties(Enum):
+    YOUTUBE = 'YouTube'
