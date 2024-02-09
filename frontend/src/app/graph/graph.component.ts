@@ -122,6 +122,9 @@ export class GraphComponent {
     private centerNodesOnPositionChange: boolean = true;
     private _oldEdges: Edge[] = [];
 
+    /**
+     * Using this signal to look for when to update the rendered graph. 
+     */
     private graphUpdate = signal<Graph>(this.graph);
 
     @ContentChild('nodeTemplate') nodeTemplate!: TemplateRef<any>;
