@@ -1,6 +1,8 @@
 <h1>Course View Page</h1>
 
-<!--TODO: FILTERS & SEARCH OPTION COMPONENTS WILL GO HERE-->
+<!--TODO: FILTERS & SEARCH OPTION COMPONENTS WILL GO HERE / maybe in a side panel?-->
 
 <graph class="course-view-graph-container" [view]="[1000, 500]" [edges]="this.edges" [nodes]="this.nodes"
   [clusters]="this.clusters" (nodeClicked)="onNodeClick($event)"></graph>
+
+<!--TODO: We can add some PrimeNG buttons overlayed over the graph component to add autoZoom / centering capability-->
