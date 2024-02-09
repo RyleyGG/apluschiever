@@ -1,63 +1,6 @@
 <h1>Course View Page</h1>
 
-<graph style="border: 1px black;" class="course-view-graph-container" [view]="[1000, 500]" [edges]="[
-{
-  id: 'a',
-  source: '1',
-  target: '2',
-  color: '#FF0000'
-}, {
-  id: 'b',
-  source: '1',
-  target: '3'
-}, {
-  id: 'c',
-  source: '3',
-  target: '4'
-}, {
-  id: 'd',
-  source: '3',
-  target: '5'
-}, {
-  id: 'e',
-  source: '4',
-  target: '5'
-},
-{
-  id: 'f',
-  source: '2',
-  target: '1'
-},
-{
-  id: 'g',
-  source: '2',
-  target: '5'
-}
-]" [nodes]="[
-{
-  id: '1',
-  label: 'Node A',
-  color: '#FF0000'
-}, {
-  id: '2',
-  label: 'Node B',
-  color: '#00FFFF'
-}, {
-  id: '3',
-  label: 'Node C',
-  color: '#00F900'
-}, {
-  id: '4',
-  label: 'Node D'
-}, {
-  id: '5',
-  label: 'Node E'
-}
-]" [clusters]="[
-{
-  id: 'cluster0',
-  label: 'Background',
-  color: '#00FFFF55',
-  childNodeIds: ['1', '2', '3']
-}
-]" (select)=" onNodeSelect($event)"></graph>
+<!--TODO: FILTERS & SEARCH OPTION COMPONENTS WILL GO HERE-->
+
+<graph class="course-view-graph-container" [view]="[1000, 500]" [edges]="this.edges" [nodes]="this.nodes"
+  [clusters]="this.clusters" (nodeClicked)="onNodeClick($event)"></graph>

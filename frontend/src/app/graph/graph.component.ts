@@ -77,7 +77,6 @@ export class GraphComponent {
     // Graph Outputs
     @Output() zoomLevelUpdated = new EventEmitter<number>();    // Emits when the zoom level is changed. 
     @Output() nodeClicked = new EventEmitter<Node>();           // Emits when a node is clicked.
-    @Output() clickHandler = new EventEmitter<MouseEvent>();    // Emits whenever the graph is clicked.
 
     // Public Properties & Computed Values
 
@@ -248,7 +247,7 @@ export class GraphComponent {
      */
     @HostListener('document:mouseclick', ['$event'])
     private onMouseClick($event: MouseEvent): void {
-        this.clickHandler.emit($event);
+
     }
 
     /**
