@@ -1,3 +1,4 @@
+import { signal } from "@angular/core";
 import { Observable } from "rxjs";
 
 /**
@@ -135,22 +136,4 @@ export interface Layout {
      * @param edge 
      */
     updateEdge(graph: Graph, edge: Edge): Graph | Observable<Graph>;
-    /**
-     * Handles rendering the graph when a node begins being dragged.
-     * @param draggingNode 
-     * @param $event 
-     */
-    onDragStart?(draggingNode: Node, $event: MouseEvent): void;
-    /**
-     * Handles rendering the graph when a node is being dragged.
-     * @param draggingNode 
-     * @param $event 
-     */
-    onDrag?(draggingNode: Node, $event: MouseEvent): void;
-    /**
-     * Handles rendering the graph when a node has stopped being dragged.
-     * @param draggingNode 
-     * @param $event 
-     */
-    onDragEnd?(draggingNode: Node, $event: MouseEvent): void;
 };

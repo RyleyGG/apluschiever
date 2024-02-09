@@ -57,8 +57,7 @@
             <!--Handles all the nodes-->
             <svg:g class="nodes">
                 <svg:g class="node-group" #nodeElement *ngFor="let node of graph.nodes; trackBy: trackNodeBy"
-                    [id]="node.id" [attr.transform]="node.transform" (click)="onNodeClick($event, node)"
-                    (mousedown)="onNodeMouseDown($event, node)">
+                    [id]="node.id" [attr.transform]="node.transform" (click)="onNodeClick($event, node)">
                     <!--If user has overridden the node display settings, use those-->
                     <ng-container *ngIf="nodeTemplate && !node.hidden" [ngTemplateOutlet]="nodeTemplate"
                         [ngTemplateOutletContext]="{ $implicit: node }"></ng-container>

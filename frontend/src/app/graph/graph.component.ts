@@ -50,9 +50,6 @@ export class GraphComponent {
     // Animation Inputs
     public animateEnabled = input<boolean>(true);
 
-    // Drag Node Graph Inputs
-    public dragEnabled = input<boolean>(true);
-
     // Graph Panning Inputs
     public panEnabled = input<boolean>(true);
     public panOffsetX = input<number>();
@@ -103,13 +100,6 @@ export class GraphComponent {
      */
     public graph!: Graph; // Initialized within the createGraph() method, which is called in constructor.
 
-    /**
-     * Allows the template to turn on/off the dragging functionality for nodes.
-     * Should ALMOST NEVER be modified outside of this component.
-     */
-    public isDragging: boolean = false;
-
-    public draggedNode: any;
     /**
      * Allows the template to turn on/off the panning functionality when the panning rectangle is clicked on.
      * Should ALMOST NEVER be modified outside of this component.
@@ -209,7 +199,7 @@ export class GraphComponent {
     //#region Host Listener Functions
 
     /**
-     * A function which fires on each mouse movement. Needed to allow panning and dragging of nodes.
+     * A function which fires on each mouse movement. Needed to allow panning.
      * 
      * @param {MouseEvent} $event the event which triggered this function call
      */
@@ -217,13 +207,11 @@ export class GraphComponent {
     private onMouseMove($event: MouseEvent): void {
         if (this.isPanning) {
             this.onPan($event);
-        } else if (this.isDragging) {
-            this.onDrag($event);
         }
     }
 
     /**
-     * A function which fires on each mouse down event. Needed to allow panning and dragging of nodes.
+     * A function which fires on each mouse down event.
      * 
      * @param { MouseEvent } $event the event which triggered this function call 
      */
@@ -243,15 +231,13 @@ export class GraphComponent {
     }
 
     /**
-     * A function which fires on each mouse up event. Needed to allow panning and dragging of nodes.
+     * A function which fires on each mouse up event. Needed to allow panning.
      * 
      * @param { MouseEvent } $event the event which triggered this function call 
      */
     @HostListener('document:mouseup', ['$event'])
     private onMouseUp($event: MouseEvent): void {
-        this.isDragging = false;
         this.isPanning = false;
-        // Call on drag end for whatever drawing software is put in place.
     }
 
     //#endregion Host Listener Functions
@@ -501,17 +487,6 @@ export class GraphComponent {
 
     //#endregion Graph Drawing Methods
 
-    //#region Drag Node Methods
-
-    private onDrag(event: MouseEvent): void {
-        // Check that drag is enabled
-        if (!this.dragEnabled()) { return; }
-
-
-    }
-
-    //#endregion Drag Node Methods
-
     //#region Pan Methods
 
     /**
@@ -686,23 +661,6 @@ export class GraphComponent {
         this.nodeClicked.emit(node);
     }
 
-    /**
-     * Triggers when the mouse goes down over a node.
-     * @param event 
-     * @param node 
-     * @returns 
-     */
-    public onNodeMouseDown = (event: MouseEvent, node: Node): any => {
-        if (!this.dragEnabled()) { return; }
-        this.isDragging = true;
-        this.draggedNode = event;
-
-        const layout = this.layout();
-        if (typeof layout !== 'string' && layout.onDragStart) {
-            layout.onDragStart(node, event);
-        }
-    }
-
     //#endregion
 
     //#region Miscellaneous Helpers
@@ -723,7 +681,7 @@ export class GraphComponent {
      * @param points 
      * @returns 
      */
-    private updateMidpointOnEdge(edge: Edge, points: any) {
+    private updateMidpointOnEdge(edge: Edge, points: any): void {
         if (!edge || !points) { return; }
 
         if (points.length % 2 === 1) {
@@ -743,7 +701,7 @@ export class GraphComponent {
      * 
      * @param {Edge} edge the edge to set the baseline for. 
      */
-    private setDominantBaseline(edge: Edge) {
+    private setDominantBaseline(edge: Edge): void {
         const firstPoint = edge.points[0];
         const lastPoint = edge.points[edge.points.length - 1];
         edge.oldTextPath = edge.textPath;
