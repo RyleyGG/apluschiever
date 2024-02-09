@@ -6,6 +6,8 @@ from sqlalchemy import JSON, Column
 from sqlmodel import SQLModel, Field, Relationship
 
 from models.pydantic_models import Video, Markdown
+from models.dto_models import UserType
+from models.pydantic_models import Node
 from services.api_utility_service import pydantic_column_type
 
 
@@ -16,6 +18,8 @@ class User(SQLModel, table=True):
     last_name: str
     email_address: str
     password: str
+    courses: Optional[List["Course"]] = Relationship(back_populates='course_owner')
+    user_type: UserType
     owned_courses: Optional[List["Course"]] = Relationship(back_populates='course_owner')
     node_progress: Dict[uuid.UUID, List[uuid.UUID]] = Field(sa_column=Column(JSON), default={})  # Key-value of {Node ID: [Completed Content IDs]}
 

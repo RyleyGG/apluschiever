@@ -3,6 +3,8 @@ from sqlalchemy import delete
 from sqlmodel import Session, select
 
 from models.db_models import User, Course
+from models.dto_models import UserType
+from models.pydantic_models import Node
 from services.config_service import logger, config
 
 
@@ -18,7 +20,9 @@ def test_sign_up(db: Session, client: TestClient):
     )
 
     assert res.status_code == 200
-    assert type(db.exec(select(User).where(User.email_address == 'test@test.com')).first()) == User
+    db_user = db.exec(select(User).where(User.email_address == 'test@test.com')).first()
+    assert isinstance(db_user, User)
+    assert db_user.user_type == UserType.STUDENT
 
 
 def test_sign_in(db: Session, client: TestClient):

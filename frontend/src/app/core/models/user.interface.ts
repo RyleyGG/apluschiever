@@ -18,4 +18,13 @@ export interface User {
 export interface UserFilters {
     ids: string[],
     emails: string[],
+    user_types: string[]
+}
+
+export enum UserType {
+    STUDENT = 'Student',
+    ADMIN = 'Administrator',
+    TEACHER = 'Teacher',
+    ids: string[],
+    emails: string[],
 }
