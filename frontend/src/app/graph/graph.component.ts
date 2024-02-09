@@ -1,15 +1,18 @@
 import { Component, ContentChild, ElementRef, EventEmitter, HostListener, Output, QueryList, TemplateRef, ViewChildren, ViewEncapsulation, computed, effect, input, isSignal, signal, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Node, Edge, Cluster, Graph, Layout } from './graph.interface';
-import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
-import { MouseWheelDirective } from '../core/directives/mouse-wheel.directive';
-import { DagreClusterLayout } from './layouts/dagreCluster';
-import { select } from 'd3-selection';
+import { animate, style, transition as ngTransition, trigger } from '@angular/animations';
+
 import * as shape from 'd3-shape';
 import * as ease from 'd3-ease';
 import 'd3-transition';
-import { uid } from '../core/utils/unique-id';
+import { select } from 'd3-selection';
 
+import { identity, scale, smoothMatrix, toSVG, transform, translate } from 'transformation-matrix';
+
+import { Node, Edge, Cluster, Graph, Layout } from './graph.interface';
+import { MouseWheelDirective } from '../core/directives/mouse-wheel.directive';
+import { DagreClusterLayout } from './layouts/dagreCluster';
+import { uid } from '../core/utils/unique-id';
 
 /**
  * Interface for a matrix, used by GraphComponent internally to track pan/zoom information.
@@ -19,8 +22,8 @@ interface Matrix {
     b: number,
     c: number,
     d: number,
-    e: number, // x position
-    f: number  // y position
+    e: number,
+    f: number
 };
 
 /**
@@ -33,7 +36,12 @@ interface Matrix {
     imports: [CommonModule, MouseWheelDirective],
     templateUrl: './graph.component.html',
     encapsulation: ViewEncapsulation.None,
-    styleUrl: './graph.component.css'
+    styleUrl: './graph.component.css',
+    animations: [
+        trigger('animationState', [
+            ngTransition(':enter', [style({ opacity: 0 }), animate('500ms 100ms', style({ opacity: 1 }))])
+        ])
+    ]
 })
 export class GraphComponent {
     // General Graph Inputs
