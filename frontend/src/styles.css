@@ -155,12 +155,11 @@
     .content p {
         margin-top: 1.5rem;
     }
-    .green-navbar {
+    .p-menubar {
         height: 40px; /* Adjust the height as needed */
         width: 100%; /* Make the navbar full width */
         border: none;
         background-color: transparent;
-        color: rgb(235, 235, 229);
         font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
             Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
             "Segoe UI Symbol";
@@ -168,6 +167,11 @@
       }
       .p-icon {
         font-weight: bold;
+      }
+      .navbarItem {
+        border-radius: 30px;
+        color: white;
+        background-color: transparent;
       }
       
   

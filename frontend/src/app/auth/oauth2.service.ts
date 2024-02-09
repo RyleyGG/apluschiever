@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map, of, take, throwError } from 'rxjs';
+import { Observable, BehaviorSubject, catchError, map, of, take, throwError } from 'rxjs';
 
 import { SignInInfo, SignUpInfo, SuccessfulUserAuth } from '../core/models/auth.interface';
 import { LocalStorageService } from '../core/services/local-storage/local-storage.service';
@@ -12,6 +12,10 @@ import { LocalStorageService } from '../core/services/local-storage/local-storag
     providedIn: 'root'
 })
 export class OAuth2Service {
+    private signedin = new BehaviorSubject<boolean>(false);
+    get isSignedIn() {
+        return this.signedin.asObservable();
+      }
     /**
      * The authentication server to hit
      */
@@ -36,6 +40,7 @@ export class OAuth2Service {
             take(1),
             map((res: any) => {
                 console.log(res);
+                this.signedin.next(true);
                 return res;
             }),
             catchError((error: HttpErrorResponse) => {
@@ -60,6 +65,7 @@ export class OAuth2Service {
         return this.httpClient.post<SuccessfulUserAuth>(this.REST_API_SERVER + "auth/sign_in", signInInfo).pipe(
             take(1),
             map((res: SuccessfulUserAuth) => {
+                this.signedin.next(true);
                 this.localStorageService.set('access_token', res.access_token);
                 this.localStorageService.set('refresh_token', res.refresh_token);
                 return res;
@@ -79,6 +85,7 @@ export class OAuth2Service {
     public sign_out(): void {
         this.localStorageService.delete('access_token');
         this.localStorageService.delete('refresh_token');
+        this.signedin.next(false);
         // navigate the router to the login or main landing page??
     }
 
@@ -100,12 +107,14 @@ export class OAuth2Service {
             map((res: SuccessfulUserAuth) => {
                 this.localStorageService.set('access_token', res.access_token);
                 this.localStorageService.set('refresh_token', res.refresh_token);
+                this.signedin.next(true);
                 return res;
             }),
             catchError((error: HttpErrorResponse) => {
                 // Token is invalid or user is unauthorized.
                 this.localStorageService.delete('access_token');
                 this.localStorageService.delete('refresh_token');
+                this.signedin.next(false);
                 return throwError(() => error);
             })
         );

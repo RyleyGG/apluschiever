@@ -1,8 +1,9 @@
-import { CanActivateFn, Router } from "@angular/router";
+import { ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateFn, Router } from "@angular/router";
 import { inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
-
+import { map, take } from 'rxjs/operators';
 import { OAuth2Service } from "./oauth2.service";
+import { Observable } from 'rxjs';
 
 /**
  * Guard to prevent access to the sign up page for authenticated users.

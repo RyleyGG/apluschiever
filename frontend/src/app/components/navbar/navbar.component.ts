@@ -26,7 +26,7 @@ export class NavbarComponent {
   darkTheme = false;
   buttonLabel = 'Light Mode'; // Initial button label
   items = [
-    { label: 'Home', icon: 'pi pi-home', routerLink: '/dashboard' },
+    { label: 'Home', icon: 'pi pi-home', routerLink: '/dashboard'},
     { label: 'Sign-In', icon: 'pi pi-sign-in', routerLink: '/signin'},
     { label: 'Sign-Out', icon: 'pi pi-sign-out', routerLink: '/signout' },
     { label: 'Sign-Up', icon: 'pi pi-user', routerLink: '/signup' },
