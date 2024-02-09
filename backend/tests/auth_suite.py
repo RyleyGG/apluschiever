@@ -2,10 +2,9 @@ from fastapi.testclient import TestClient
 from sqlalchemy import delete
 from sqlmodel import Session, select
 
-from models.db_models import User, Course
+from models.db_models import User
 from models.dto_models import UserType
-from models.pydantic_models import Node
-from services.config_service import logger, config
+from services.config_service import config
 
 
 def test_sign_up(db: Session, client: TestClient):

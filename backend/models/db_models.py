@@ -7,7 +7,6 @@ from sqlmodel import SQLModel, Field, Relationship
 
 from models.pydantic_models import Video, Markdown
 from models.dto_models import UserType
-from models.pydantic_models import Node
 from services.api_utility_service import pydantic_column_type
 
 
