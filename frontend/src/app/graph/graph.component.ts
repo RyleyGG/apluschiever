@@ -148,7 +148,7 @@ export class GraphComponent {
      * 
      * @param { ElementRef } el a reference to itself in the HTML DOM, injected by Angular.
      */
-    constructor(private el: ElementRef, private cdr: ChangeDetectorRef) {
+    constructor(private el: ElementRef) {
         /**
          * I'm using 'untracked' in the below in order to be able to call functions/update the 
          * value of Angular signals within an 'effect' function (as that's typically problematic).
@@ -323,8 +323,6 @@ export class GraphComponent {
      * Called whenever the graph updates
      */
     private update(): void {
-        this.cdr.markForCheck();
-
         // Set line type
         if (!this.curve()) {
             this.curve.set(shape.curveBundle.beta(1));
@@ -500,7 +498,6 @@ export class GraphComponent {
 
 
         requestAnimationFrame(() => this.redrawLines());
-        this.cdr.markForCheck();
     }
 
     /**

@@ -59,7 +59,7 @@
             <svg:g class="nodes">
                 <svg:g class="node-group" #nodeElement *ngFor="let node of graph.nodes; trackBy: trackNodeBy"
                     [id]="node.id" [class.old-node]="animateEnabled() && oldNodes.has(node.id)"
-                    [attr.transform]="node.transform" [@svgGraphAnimation]="enableAnimations() ? 'active' : 'inactive'"
+                    [attr.transform]="node.transform" [@svgGraphAnimation]="animateEnabled() ? 'active' : 'inactive'"
                     (click)="onNodeClick($event, node)">
                     <!--If user has overridden the node display settings, use those-->
                     <ng-container *ngIf="nodeTemplate && !node.hidden" [ngTemplateOutlet]="nodeTemplate"
