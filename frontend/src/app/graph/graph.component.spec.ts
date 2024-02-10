@@ -3,6 +3,7 @@ import * as shape from 'd3-shape';
 
 import { GraphComponent } from './graph.component';
 import { Node } from './graph.interface';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 const testNodes: Node[] = [
     {
@@ -25,7 +26,10 @@ describe('GraphComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [GraphComponent]
+            imports: [GraphComponent],
+            providers: [
+                provideAnimationsAsync()
+            ]
         }).compileComponents();
     });
 
