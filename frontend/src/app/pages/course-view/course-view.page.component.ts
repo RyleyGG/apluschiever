@@ -94,7 +94,18 @@ export class CourseViewPageComponent {
 
 
     constructor() {
+        setTimeout(() => {
+            this.nodes = [...this.nodes, { id: '6', label: 'Node F' }];
+        }, 5000);
 
+        setTimeout(() => {
+            this.edges = [...this.edges, {
+                id: 'h',
+                source: '5',
+                target: '6',
+                color: '#FF00FF'
+            }];
+        }, 7000);
     }
 
     /**

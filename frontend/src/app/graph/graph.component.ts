@@ -1,4 +1,4 @@
-import { Component, ContentChild, ElementRef, EventEmitter, HostListener, Output, QueryList, TemplateRef, ViewChildren, ViewEncapsulation, computed, effect, input, isSignal, signal, untracked } from '@angular/core';
+import { ChangeDetectorRef, Component, ContentChild, ElementRef, EventEmitter, HostListener, Output, QueryList, TemplateRef, ViewChildren, ViewEncapsulation, computed, effect, input, isSignal, signal, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { animate, style, transition as ngTransition, trigger } from '@angular/animations';
 
@@ -38,8 +38,14 @@ interface Matrix {
     encapsulation: ViewEncapsulation.None,
     styleUrl: './graph.component.css',
     animations: [
-        trigger('animationState', [
-            ngTransition(':enter', [style({ opacity: 0 }), animate('500ms 100ms', style({ opacity: 1 }))])
+        trigger('svgGraphAnimation', [
+            ngTransition(':enter', [
+                style({ opacity: 0 }),
+                animate('500ms', style({ opacity: 1 }))
+            ]),
+            ngTransition(':leave', [
+                animate('500ms', style({ opacity: 0 }))
+            ])
         ])
     ]
 })
@@ -119,6 +125,9 @@ export class GraphComponent {
     private transformationMatrix = signal<Matrix>(identity());
 
     private centerNodesOnPositionChange: boolean = true;
+
+    public oldNodes: Set<string> = new Set();
+    private oldClusters: Set<string> = new Set();
     private _oldEdges: Edge[] = [];
 
     /**
@@ -139,7 +148,7 @@ export class GraphComponent {
      * 
      * @param { ElementRef } el a reference to itself in the HTML DOM, injected by Angular.
      */
-    constructor(private el: ElementRef) {
+    constructor(private el: ElementRef, private cdr: ChangeDetectorRef) {
         /**
          * I'm using 'untracked' in the below in order to be able to call functions/update the 
          * value of Angular signals within an 'effect' function (as that's typically problematic).
@@ -171,7 +180,13 @@ export class GraphComponent {
             this.edges();
             this.curve();
 
-            untracked(() => this.update());
+            untracked(() => {
+                this.initialized = false;
+                this.createGraph();
+                this.initialized = true;
+                requestAnimationFrame(() => this.draw());
+                this.update()
+            });
         });
 
         // Setup the effect to automatically send an zoom/emit when zoom level changes
@@ -308,7 +323,7 @@ export class GraphComponent {
      * Called whenever the graph updates
      */
     private update(): void {
-        // Recalculate dimensions??
+        this.cdr.markForCheck();
 
         // Set line type
         if (!this.curve()) {
@@ -392,20 +407,30 @@ export class GraphComponent {
      * Updates the graph frame by frame if the layout is dynamic, otherwise, this sets the graph render settings once. 
      */
     private tick(): void {
-        // Set view options for the nodes & clusters
+        // Set view options for the nodes & clusters (for animations to work)
+        const oldNodes: Set<string> = new Set();
+        const oldClusters: Set<string> = new Set();
+
         this.graph.nodes.map((n: Node) => {
             n.transform = `translate(${n.position!.x - (this.centerNodesOnPositionChange ? n.dimension!.width / 2 : 0) || 0}, ${n.position!.y - (this.centerNodesOnPositionChange ? n.dimension!.height / 2 : 0) || 0})`;
             n.data ??= {};
             n.color ??= '#000000';
+            oldNodes.add(n.id);
         });
 
         (this.graph.clusters || []).map((c: Cluster) => {
             c.transform = `translate(${c.position!.x - (this.centerNodesOnPositionChange ? c.dimension!.width / 2 : 0) || 0}, ${c.position!.y - (this.centerNodesOnPositionChange ? c.dimension!.height / 2 : 0) || 0})`;
             c.data ??= {};
             c.color ??= '#000000';
+            oldClusters.add(c.id);
         });
 
-        // Prevent animations for the new nodes
+        // Prevent animations for the old nodes
+        setTimeout(() => {
+            this.oldNodes = oldNodes;
+            this.oldClusters = oldClusters;
+            console.log(this.oldNodes);
+        }, 500);
 
         // Update edges
         const newEdges: Edge[] = [];
@@ -475,6 +500,7 @@ export class GraphComponent {
 
 
         requestAnimationFrame(() => this.redrawLines());
+        this.cdr.markForCheck();
     }
 
     /**
