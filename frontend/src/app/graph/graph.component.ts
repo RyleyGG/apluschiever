@@ -78,7 +78,11 @@ export class GraphComponent {
     public maxZoomLevel = input<number>(5);
     public panOnZoom = input<boolean>(true);
 
-    public zoomToFitTrigger = input<any>(); // TODO: test this because I don't think it'll work.
+    /**
+     * Send a value to this in order to cause the graph to zoom to fit. 
+     * Note, the value must be a new value, different from the current one.
+     */
+    public zoomToFitTrigger = input<any>();
 
     // Graph Outputs
     @Output() zoomLevelUpdated = new EventEmitter<number>();    // Emits when the zoom level is changed. 
@@ -495,7 +499,6 @@ export class GraphComponent {
         }
 
         // TODO: Check for auto zoom and auto center
-
 
         requestAnimationFrame(() => this.redrawLines());
     }

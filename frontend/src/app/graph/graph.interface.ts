@@ -76,7 +76,7 @@ export interface Edge {
     textPath?: any;
     oldTextPath?: string;
 
-    data?: any | undefined; // TODO: the type here seems a little off. Must investigate further.
+    data?: any | undefined;
 
     midPoint?: NodePosition;
     dominantBaseline?: string;
