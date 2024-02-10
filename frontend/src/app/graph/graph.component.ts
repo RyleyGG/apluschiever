@@ -72,7 +72,7 @@ export class GraphComponent {
     public maxZoomLevel = input<number>(5);
     public panOnZoom = input<boolean>(true);
 
-    public zoomToFitTrigger = input<void>(); // TODO: test this because I don't think it'll work.
+    public zoomToFitTrigger = input<any>(); // TODO: test this because I don't think it'll work.
 
     // Graph Outputs
     @Output() zoomLevelUpdated = new EventEmitter<number>();    // Emits when the zoom level is changed. 
@@ -151,7 +151,7 @@ export class GraphComponent {
             this.initialized = false;
             const layout = this.layout();
             const settings = this.layoutSettings();
-            if (layout == 'dagreCluser') {
+            if (layout == 'dagreCluster') {
                 // TODO: We should refactor this to work for more layout options. This is fine for now.
                 untracked(() => {
                     const newLayout = new DagreClusterLayout();
@@ -174,8 +174,11 @@ export class GraphComponent {
             untracked(() => this.update());
         });
 
-        // Setup the effect to automatically send an emit when zoom level changes
-        effect(() => this.zoomLevelUpdated.emit(this.zoomLevel()));
+        // Setup the effect to automatically send an zoom/emit when zoom level changes
+        effect(() => {
+            this.zoomLevelUpdated.emit(this.zoomLevel());
+            untracked(() => this.zoomTo(this.zoomLevel()));
+        });
 
         // Setup the effect to automatically zoom the graph to fit viewport when zoomToFitTrigger is called
         effect(() => {
@@ -635,9 +638,10 @@ export class GraphComponent {
      * @param {number} level the level to zoom to
      */
     private zoomTo(level: number): void {
+        const constrainedLevel = this.constrain(this.minZoomLevel(), level, this.maxZoomLevel());
         this.transformationMatrix.update((value) => {
-            value.a = isNaN(level) ? value.a : Number(level);
-            value.d = isNaN(level) ? value.d : Number(level);
+            value.a = isNaN(level) ? value.a : Number(constrainedLevel);
+            value.d = isNaN(level) ? value.d : Number(constrainedLevel);
             return value;
         });
         this.zoomLevel.set(this.transformationMatrix().a);
