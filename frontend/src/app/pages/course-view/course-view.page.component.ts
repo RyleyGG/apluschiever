@@ -98,7 +98,30 @@ export class CourseViewPageComponent {
         // on page load get the course information
         // will need to be a URL parameter probably
         courseService.getNodes("").subscribe((data) => {
-            // Process the data to be in the form of Node[], Edges[], Clusters[]
+            this.nodes = [];
+            this.edges = [];
+            this.clusters = [];
+
+            // Pass to create the nodes
+            data.forEach((element: any) => {
+                const newNode = {
+                    id: element.id,
+                    label: element.label
+                }
+                this.nodes = [...this.nodes, newNode];
+            });
+
+            // Pass to create the edges
+            data.forEach((element: any) => {
+                const newEdges: Edge[] = [];
+                element.parentIds.forEach((id: string) => {
+                    newEdges.push({
+                        source: id,
+                        target: element.id
+                    });
+                });
+                this.edges = [...this.edges, ...newEdges];
+            });
         });
 
         setTimeout(() => {
