@@ -49,10 +49,10 @@ export interface Node {
     transform?: string;
 
     label?: string;
-    shortDescription: string;
+    shortDescription?: string;
     videos?: Video[];
     markdownFiles?: Markdown[];
-    courses: Course[];
+    courses?: Course[];
 
     color?: string; // Hex string for a color.
 
