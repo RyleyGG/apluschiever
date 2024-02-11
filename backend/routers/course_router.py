@@ -43,5 +43,5 @@ async def get_node_overview(course_id: str, db: Session = Depends(get_session)):
     course_node_ids = [str(node.id) for node in cur_course.nodes]
     course_nodes = db.exec(select(Node).where(Node.id.in_(course_node_ids))).all()
 
-    node_overview = [NodeOverview(id=node.id, title=node.title, parent_nodes=node.parent_nodes) for node in course_nodes]
+    node_overview = [NodeOverview(id=node.id, title=node.title) for node in course_nodes]
     return node_overview

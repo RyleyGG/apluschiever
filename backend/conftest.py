@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel, Session, select
 
 from api import app
-from models.db_models import User, Course
+from models.db_models import User, Course, Node
 from services.api_utility_service import get_session, dbUrl
 
 
@@ -17,6 +17,7 @@ def session_fixture():
     transaction = connection.begin()
     session = Session(bind=connection)
     session.exec(delete(Course))
+    session.exec(delete(Node))
     session.exec(delete(User))
     yield session
 
