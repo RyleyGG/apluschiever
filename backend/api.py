@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel
 
 from services import auth_service
-from routers import auth_router, user_router, course_router
+from routers import auth_router, user_router, course_router, node_router
 from models.db_models import User, Course
 from services.api_utility_service import engine
 
@@ -20,6 +20,7 @@ app = FastAPI(lifespan=on_startup)
 app.include_router(auth_router.router, prefix='/auth')
 app.include_router(user_router.router, prefix='/user', dependencies=[Depends(auth_service.validate_token)])
 app.include_router(course_router.router, prefix='/course', dependencies=[Depends(auth_service.validate_token)])
+app.include_router(node_router.router, prefix='/node', dependencies=[Depends(auth_service.validate_token)])
 
 origins = ["*"]
 app.add_middleware(

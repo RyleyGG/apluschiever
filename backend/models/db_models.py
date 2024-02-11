@@ -41,12 +41,19 @@ class Node(SQLModel, table=True):
     uploaded_files: Optional[List[UploadFile]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[UploadFile]])))
     third_party_resources: Optional[List[ThirdPartyResource]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[ThirdPartyResource]])))
     courses: List["Course"] = Relationship(back_populates="nodes", link_model=NodeCourseAssociation)
+    parent_nodes: Optional[List["Node"]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List["Node"]])))
 
 
-# DTO model that has to be defined here because it relies on Node and therefore must init after
+# DTO models that have to be defined here because it relies on Node and therefore must init after
 class NodeGraphView(BaseModel):
     node_id: str
     parent_nodes: List[Node]
+
+
+class NodeOverview(BaseModel):
+    id: str
+    title: str
+    parent_nodes: List["Node"]
 
 
 class Course(SQLModel, table=True):
