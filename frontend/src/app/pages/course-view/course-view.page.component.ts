@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { GraphComponent } from '../../graph/graph.component';
 import { Node, Edge, Cluster } from '../../graph/graph.interface';
+import { CourseService } from '../../core/services/course/course.service';
 
 
 /**
@@ -93,7 +94,13 @@ export class CourseViewPageComponent {
 
 
 
-    constructor() {
+    constructor(private courseService: CourseService) {
+        // on page load get the course information
+        // will need to be a URL parameter probably
+        courseService.getNodes("").subscribe((data) => {
+            // Process the data to be in the form of Node[], Edges[], Clusters[]
+        });
+
         setTimeout(() => {
             this.nodes = [...this.nodes, { id: '6', label: 'Node F' }];
         }, 5000);
