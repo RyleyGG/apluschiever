@@ -38,6 +38,11 @@ class CourseFilters(BaseModel):
     course_title: Optional[str] = None
 
 
+class NodeFilters(BaseModel):
+    ids: Optional[List[UUID4]] = None
+    course_ids: Optional[List[UUID4]] = None
+
+
 class NewCourse(BaseModel):
     title: str
     short_description: Optional[str] = None
