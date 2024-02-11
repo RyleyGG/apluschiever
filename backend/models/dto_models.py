@@ -48,3 +48,12 @@ class UserType(Enum):
     STUDENT = 'Student'
     ADMIN = 'Administrator'
     TEACHER = 'Teacher'
+
+
+class NodeProgressDetails(BaseModel):
+    node_id: str
+    completed_content: List[str]
+
+
+class SupportedThirdParties(Enum):
+    YOUTUBE = 'YouTube'

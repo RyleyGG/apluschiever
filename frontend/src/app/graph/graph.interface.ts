@@ -1,4 +1,6 @@
 import { WritableSignal } from "@angular/core";
+import {Markdown, Video} from "../core/models/node-content.interface";
+import {Course} from "../core/models/course.interface";
 
 /**
  * Represents the position of a node
@@ -34,16 +36,23 @@ export interface NodeDimension {
 export interface Node {
     /**
      * The id for the node.
-     * 
+     *
      * If not set explicitly, then the GraphComponent will create a unique ID for it based on the date, time, and a large random number
      */
+
+
     id: string;
     parentId?: string;
 
-    label?: string;
     position?: NodePosition;
     dimension?: NodeDimension;
     transform?: string;
+
+    label?: string;
+    shortDescription?: string;
+    videos?: Video[];
+    markdownFiles?: Markdown[];
+    courses?: Course[];
 
     color?: string; // Hex string for a color.
 
@@ -87,7 +96,7 @@ export interface Edge {
 
 /**
  * Represents a cluster of nodes in the graph.
- * 
+ *
  * A cluster is really just a special kind of node, which contains multiple children in it.
  */
 export interface Cluster extends Node {
@@ -95,7 +104,7 @@ export interface Cluster extends Node {
 };
 
 /**
- * Represents a graph comprised of nodes, edges, and clusters. 
+ * Represents a graph comprised of nodes, edges, and clusters.
  */
 export interface Graph {
     /**
@@ -125,14 +134,14 @@ export interface Layout {
      */
     settings?: any;
     /**
-     * 
-     * @param graph 
+     *
+     * @param graph
      */
     run(graph: Graph): Graph | WritableSignal<Graph>;
     /**
-     * 
-     * @param graph 
-     * @param edge 
+     *
+     * @param graph
+     * @param edge
      */
     updateEdge(graph: Graph, edge: Edge): Graph | WritableSignal<Graph>;
 };

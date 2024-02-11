@@ -1,12 +1,12 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 import uuid
 
-from pydantic import field_validator
+from pydantic import field_validator, BaseModel
 from sqlalchemy import JSON, Column
 from sqlmodel import SQLModel, Field, Relationship
 
+from models.pydantic_models import Video, Markdown, UploadFile, ThirdPartyResource
 from models.dto_models import UserType
-from models.pydantic_models import Node
 from services.api_utility_service import pydantic_column_type
 
 
@@ -19,6 +19,34 @@ class User(SQLModel, table=True):
     password: str
     courses: Optional[List["Course"]] = Relationship(back_populates='course_owner')
     user_type: UserType
+    owned_courses: Optional[List["Course"]] = Relationship(back_populates='course_owner')
+    node_progress: Dict[uuid.UUID, List[uuid.UUID]] = Field(sa_column=Column(JSON), default={})  # Key-value of {Node ID: [Completed Content IDs]}
+
+
+class NodeCourseAssociation(SQLModel, table=True):
+    node_id: uuid.UUID = Field(default=None, foreign_key="Node.id", primary_key=True)
+    course_id: uuid.UUID = Field(default=None, foreign_key="Course.id", primary_key=True)
+
+
+class Node(SQLModel, table=True):
+    __tablename__ = 'Node'
+    id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
+    title: str
+    short_description: str
+    # SQLModel doesn't currently support polymorphism within attributes, meaning we can't have a generic abstract
+    # Content class from which we actually use Video, Markdown, etc. classes when storing data.
+    # Instead, we supply one attribute per content type we support.
+    videos: Optional[List[Video]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[Video]])))
+    markdown_files: Optional[List[Markdown]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[Markdown]])))
+    uploaded_files: Optional[List[UploadFile]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[UploadFile]])))
+    third_party_resources: Optional[List[ThirdPartyResource]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[ThirdPartyResource]])))
+    courses: List["Course"] = Relationship(back_populates="nodes", link_model=NodeCourseAssociation)
+
+
+# DTO model that has to be defined here because it relies on Node and therefore must init after
+class NodeGraphView(BaseModel):
+    node_id: str
+    parent_nodes: List[Node]
 
 
 class Course(SQLModel, table=True):
@@ -27,5 +55,5 @@ class Course(SQLModel, table=True):
     title: str = Field(nullable=False)
     short_description: Optional[str]
     course_owner_id: uuid.UUID = Field(foreign_key='User.id')
-    course_owner: User = Relationship(back_populates='courses')
-    nodes: Optional[List[Node]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[Node]])))
+    course_owner: User = Relationship(back_populates='owned_courses')
+    nodes: List[Node] = Relationship(back_populates="courses", link_model=NodeCourseAssociation)

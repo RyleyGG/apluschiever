@@ -1,3 +1,6 @@
+import {Course} from "./course.interface";
+
+
 /**
  * Information representing a user
  */
@@ -5,7 +8,9 @@ export interface User {
     id: string,
     first_name: string,
     last_name: string,
-    email_address: string
+    email_address: string,
+    user_type: string,
+    owned_courses?: Course[];
 }
 
 /**
@@ -20,5 +25,5 @@ export interface UserFilters {
 export enum UserType {
     STUDENT = 'Student',
     ADMIN = 'Administrator',
-    TEACHER = 'Teacher'
+    TEACHER = 'Teacher',
 }
