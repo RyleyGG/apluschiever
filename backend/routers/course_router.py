@@ -6,12 +6,11 @@ from typing import List
 from sqlmodel import select, Session
 from starlette import status
 
-from models.db_models import Course, User, Node
+from models.db_models import Course, User, Node, NodeOverview
 from models.dto_models import CourseFilters, NodeProgressDetails
 from services import auth_service
 from services.api_utility_service import get_session
 
-from backend.models.dto_models import NodeOverview
 
 router = APIRouter()
 

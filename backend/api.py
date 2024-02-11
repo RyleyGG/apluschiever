@@ -4,9 +4,8 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import SQLModel
 
-from backend.routers import node_router
 from services import auth_service
-from routers import auth_router, user_router, course_router
+from routers import auth_router, user_router, course_router, node_router
 from models.db_models import User, Course
 from services.api_utility_service import engine
 
