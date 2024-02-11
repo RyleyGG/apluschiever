@@ -31,7 +31,7 @@ export class CourseService {
      * @returns
      */
     getNodes(course_id: string) {
-        return this.httpClient.post<any>(this.REST_API_SERVER + "node/search", { 'course_id': [course_id] }).pipe(
+        return this.httpClient.get<any>(this.REST_API_SERVER + `course/nodes/${course_id}`).pipe(
             take(1),
             map((res: any) => {
                 console.log(res);

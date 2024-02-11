@@ -31,7 +31,7 @@ async def search_courses(filters: CourseFilters, db: Session = Depends(get_sessi
     return return_obj
 
 
-@router.post('/nodes/{course_id}', response_model=List[NodeOverview], response_model_by_alias=False)
+@router.get('/nodes/{course_id}', response_model=List[NodeOverview], response_model_by_alias=False)
 async def get_node_overview(course_id: str, db: Session = Depends(get_session)):
     cur_course = db.exec(select(Course).where(Course.id == course_id)).first()
 
