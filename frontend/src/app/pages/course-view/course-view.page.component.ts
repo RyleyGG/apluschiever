@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
+import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
 
 import { GraphComponent } from '../../graph/graph.component';
 import { Node, Edge, Cluster } from '../../graph/graph.interface';
@@ -14,11 +17,16 @@ import { CourseService } from '../../core/services/course/course.service';
 @Component({
     selector: 'course-view-page',
     standalone: true,
-    imports: [CommonModule, GraphComponent],
+    imports: [CommonModule, GraphComponent, DialogModule, AvatarModule, ButtonModule],
     templateUrl: './course-view.page.component.html',
     styleUrl: './course-view.page.component.css'
 })
 export class CourseViewPageComponent {
+
+    @ViewChild('graphComponent') graphComponent!: GraphComponent;
+    selectedNode!: Node;
+
+    panelVisible: boolean = false;
 
     // TODO: Once we have the backend setup for this, we will query for nodes/clusters and calculate the graph edges.
 
@@ -92,8 +100,6 @@ export class CourseViewPageComponent {
         }
     ];
 
-
-
     constructor(private courseService: CourseService) {
         // on page load get the course information
         // will need to be a URL parameter probably
@@ -138,12 +144,19 @@ export class CourseViewPageComponent {
         }, 7000);
     }
 
+    ngAfterViewInit(): void {
+        console.log(this.graphComponent.nodeElements);
+    }
+
     /**
      * This function fires whenever a node (or cluster) is clicked.
      * 
      * @param node The node that was clicked in the graph component.
      */
     onNodeClick(node: Node) {
-        console.log(node);
+        this.selectedNode = node;
+        let n = this.graphComponent.nodeElements.find((item) => item.nativeElement.id == node.id);
+        console.log(n);
+        this.panelVisible = true;
     }
 }

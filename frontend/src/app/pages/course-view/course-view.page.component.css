@@ -1,0 +1,11 @@
+.dialog-header {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+}
+
+.dialog-header .dialog-header-text {
+    font-weight: 900;
+    white-space: nowrap;
+}

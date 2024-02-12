@@ -2,7 +2,28 @@
 
 <!--TODO: FILTERS & SEARCH OPTION COMPONENTS WILL GO HERE / maybe in a side panel?-->
 
-<graph class="course-view-graph-container" [view]="[1000, 500]" [edges]="this.edges" [nodes]="this.nodes"
-  [clusters]="this.clusters" (nodeClicked)="onNodeClick($event)"></graph>
+<!--This displays the graph of the course.-->
+<graph #graphComponent class="course-view-graph-container" [view]="[1000, 500]" [edges]="this.edges"
+  [nodes]="this.nodes" [clusters]="this.clusters" (nodeClicked)="onNodeClick($event)"></graph>
+
+<!--This is a dialog component to display whenever a node is clicked.-->
+<p-dialog header="Header" [draggable]="false" [(visible)]="panelVisible" [position]="'bottomright'"
+  [style]="{ width: '33vw' }">
+  <ng-template pTemplate="header">
+    <div class="dialog-header">
+      <p-avatar image="https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png" shape="circle" />
+      <span class="dialog-header-text">{{selectedNode.label}}</span>
+    </div>
+  </ng-template>
+  <p class="m-0">
+    <!--TODO: ADD PROPER DESCRIPTION TEXT HERE!-->
+    DESCRIPTION!
+  </p>
+  <ng-template pTemplate="footer">
+    <p-button icon="pi pi-book" (click)="panelVisible = false" label="View Lesson" pAutoFocus
+      [autofocus]="true"></p-button>
+  </ng-template>
+</p-dialog>
+
 
 <!--TODO: We can add some PrimeNG buttons overlayed over the graph component to add autoZoom / centering capability-->
