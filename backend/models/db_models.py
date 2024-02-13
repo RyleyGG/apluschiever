@@ -22,12 +22,6 @@ class User(SQLModel, table=True):
     node_progress: Dict[uuid.UUID, List[uuid.UUID]] = Field(sa_column=Column(JSON), default={})  # Key-value of {Node ID: [Completed Content IDs]}
 
 
-# class NodeCourseAssociation(SQLModel, table=True):
-#     __tablename__ = 'NodeCourseAssociation'
-#     node_id: uuid.UUID = Field(default=None, foreign_key="Node.id", primary_key=True)
-#     course_id: uuid.UUID = Field(default=None, foreign_key="Course.id", primary_key=True)
-
-
 class NodeParentLink(SQLModel, table=True):
     __tablename__ = 'NodeParentLink'
     parent_id: uuid.UUID = Field(foreign_key="Node.id", primary_key=True)

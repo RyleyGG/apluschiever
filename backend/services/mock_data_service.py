@@ -68,7 +68,6 @@ def generate_mock_nodes(db: Session, client: TestClient):
                 new_node.markdown_files.append(Markdown(title='wasd', content='###wasd'))
                 if random.choice([True, False]):
                     break
-            # print(f'Node {y} has parent node {node_list[-1] if len(node_list) > 0 else "none"}')
             new_node.parents = [node_list[-1]] if len(node_list) > 0 else []
             node_list.append(new_node)
             db.add(new_node)
