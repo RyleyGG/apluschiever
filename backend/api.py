@@ -6,7 +6,7 @@ from sqlmodel import SQLModel
 
 from services import auth_service
 from routers import auth_router, user_router, course_router, node_router
-from models.db_models import User, Course
+from models.db_models import User
 from services.api_utility_service import engine
 
 
@@ -30,6 +30,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.get("/")
 async def root(user: User = Depends(auth_service.validate_token)):

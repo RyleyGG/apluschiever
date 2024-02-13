@@ -53,7 +53,7 @@ class NodeGraphView(BaseModel):
 class NodeOverview(BaseModel):
     id: uuid.UUID
     title: str
-    # parent_nodes: List["Node"]
+    parent_nodes: List["Node"]
 
 
 class Course(SQLModel, table=True):
