@@ -82,7 +82,7 @@ export class GraphComponent {
      * Send a value to this in order to cause the graph to zoom to fit. 
      * Note, the value must be a new value, different from the current one.
      */
-    public zoomToFitTrigger = input<any>();
+    public zoomToFitTrigger = signal<any>(null);
 
     // Graph Outputs
     @Output() zoomLevelUpdated = new EventEmitter<number>();    // Emits when the zoom level is changed. 
@@ -601,6 +601,13 @@ export class GraphComponent {
         this.panTo(node.position?.x, node.position?.y);
     }
 
+    public panToCenter(): void {
+        const svg = this.el.nativeElement.querySelector('svg');
+        const graphGroup = svg.querySelector('g.graph');
+
+        this.panTo(this.width() / 2, this.height() / 2);
+    }
+
     //#endregion Pan Methods
 
     //#region Zoom Methods
@@ -676,17 +683,17 @@ export class GraphComponent {
     /**
      * Zoom to center the graph in the view.
      */
-    private zoomToFit(): void {
+    public zoomToFit(): void {
         const svg = this.el.nativeElement.querySelector('svg');
         const graphGroup = svg.querySelector('g.graph');
 
-        const heightZoom = svg.getBoundingClientRect().height / graphGroup.getBoundingClientRect().height;
-        const widthZoom = svg.getBoundingClientRect().width / graphGroup.getBoundingClientRect().width;
+        const heightZoom = this.height() / graphGroup.getBoundingClientRect().height;
+        const widthZoom = this.width() / graphGroup.getBoundingClientRect().width;
         let newZoomlevel = Math.min(heightZoom, widthZoom, 1);
 
         newZoomlevel = this.constrain(this.minZoomLevel(), newZoomlevel, this.maxZoomLevel());
 
-        this.zoomTo(newZoomlevel);
+        this.zoomLevel.set(newZoomlevel);
     }
 
     //#endregion Zoom Methods
