@@ -1,11 +1,14 @@
+import random
+
 from fastapi import HTTPException
 from sqlalchemy import create_engine, delete
-from sqlmodel import SQLModel, Session
+from sqlmodel import SQLModel, Session, select
 from fastapi.testclient import TestClient
 from starlette import status
 
 from api import app
 from models.db_models import Course, Node, User
+from models.pydantic_models import Video, Markdown
 from services.api_utility_service import dbUrl, get_session
 from services.config_service import config
 
@@ -40,10 +43,35 @@ def generate_mock_users(db: Session, client: TestClient):
 
 
 def generate_mock_courses(db: Session, client: TestClient):
-    test_course_1 = Course(title='Test 1', course_owner_id=config._tests_user_id)
-    db.add(test_course_1)
-    new_node = Node(title=f'TEST', short_description=f'TEST', courses=[test_course_1])
-    db.add(new_node)
+    for i in range(25):
+        mock_course = Course(title=f'Course #{i + 1}', course_owner_id=config._tests_user_id)
+        db.add(mock_course)
+    db.commit()
+
+
+def generate_mock_nodes(db: Session, client: TestClient):
+    mock_courses = db.exec(select(Course)).all()
+    for x in range(len(mock_courses)):
+        cur_course = mock_courses[x]
+        node_list = []
+        for y in range(0, 100):
+            new_node = Node(title=f'Node {y}', short_description=f'Node {y}', course=cur_course)
+
+            new_node.videos = []
+            new_node.markdown_files = []
+            for n in range(10):
+                new_node.videos.append(Video(title='wasd', embed_link='wasd', video_source='wasd'))
+                if random.choice([True, False]):
+                    break
+
+            for n in range(10):
+                new_node.markdown_files.append(Markdown(title='wasd', content='###wasd'))
+                if random.choice([True, False]):
+                    break
+            # print(f'Node {y} has parent node {node_list[-1] if len(node_list) > 0 else "none"}')
+            new_node.parents = [node_list[-1]] if len(node_list) > 0 else []
+            node_list.append(new_node)
+            db.add(new_node)
     db.commit()
 
 
@@ -68,6 +96,7 @@ def main():
     # Generate mock data
     generate_mock_users(session, client)
     generate_mock_courses(session, client)
+    generate_mock_nodes(session, client)
 
     # Close conn
     app.dependency_overrides.clear()

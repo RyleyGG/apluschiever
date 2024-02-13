@@ -17,15 +17,21 @@ class User(SQLModel, table=True):
     last_name: str
     email_address: str
     password: str
-    courses: Optional[List["Course"]] = Relationship(back_populates='course_owner')
     user_type: UserType
     owned_courses: Optional[List["Course"]] = Relationship(back_populates='course_owner')
     node_progress: Dict[uuid.UUID, List[uuid.UUID]] = Field(sa_column=Column(JSON), default={})  # Key-value of {Node ID: [Completed Content IDs]}
 
 
-class NodeCourseAssociation(SQLModel, table=True):
-    node_id: uuid.UUID = Field(default=None, foreign_key="Node.id", primary_key=True)
-    course_id: uuid.UUID = Field(default=None, foreign_key="Course.id", primary_key=True)
+# class NodeCourseAssociation(SQLModel, table=True):
+#     __tablename__ = 'NodeCourseAssociation'
+#     node_id: uuid.UUID = Field(default=None, foreign_key="Node.id", primary_key=True)
+#     course_id: uuid.UUID = Field(default=None, foreign_key="Course.id", primary_key=True)
+
+
+class NodeParentLink(SQLModel, table=True):
+    __tablename__ = 'NodeParentLink'
+    parent_id: uuid.UUID = Field(foreign_key="Node.id", primary_key=True)
+    child_id: uuid.UUID = Field(foreign_key="Node.id", primary_key=True)
 
 
 class Node(SQLModel, table=True):
@@ -40,14 +46,30 @@ class Node(SQLModel, table=True):
     markdown_files: Optional[List[Markdown]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[Markdown]])))
     uploaded_files: Optional[List[UploadFile]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[UploadFile]])))
     third_party_resources: Optional[List[ThirdPartyResource]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[ThirdPartyResource]])))
-    courses: List["Course"] = Relationship(back_populates="nodes", link_model=NodeCourseAssociation)
-    parent_nodes: Optional[List["Node"]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List["Node"]])))
+    course_id: uuid.UUID = Field(foreign_key='Course.id')
+    course: "Course" = Relationship(back_populates="nodes")
+    parents: List["Node"] = Relationship(
+        back_populates="children",
+        link_model=NodeParentLink,
+        sa_relationship_kwargs=dict(
+            primaryjoin="Node.id==NodeParentLink.child_id",
+            secondaryjoin="Node.id==NodeParentLink.parent_id",
+        ),
+    )
+    children: List["Node"] = Relationship(
+        back_populates="parents",
+        link_model=NodeParentLink,
+        sa_relationship_kwargs=dict(
+            primaryjoin="Node.id==NodeParentLink.parent_id",
+            secondaryjoin="Node.id==NodeParentLink.child_id",
+        ),
+    )
 
 
-# DTO models that have to be defined here because it relies on Node and therefore must init after
+# DTO models that have to be defined here because they rely on Node and therefore must init after
 class NodeGraphView(BaseModel):
     node_id: str
-    parent_nodes: List[Node]
+    parent_nodes: Optional[List[Node]] = []
 
 
 class NodeOverview(BaseModel):
@@ -63,4 +85,4 @@ class Course(SQLModel, table=True):
     short_description: Optional[str]
     course_owner_id: uuid.UUID = Field(foreign_key='User.id')
     course_owner: User = Relationship(back_populates='owned_courses')
-    nodes: List[Node] = Relationship(back_populates="courses", link_model=NodeCourseAssociation)
+    nodes: List[Node] = Relationship(back_populates="course")
