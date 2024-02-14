@@ -40,6 +40,7 @@
         font-weight: 500;
         line-height: 100%;
         letter-spacing: -0.125rem;
+        color:#75a97a;
         margin: 0;
         font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
             Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
@@ -75,6 +76,20 @@
         background-color: #a2c6a5; /* Set a background color as needed */
         
     }
+    .navbarTitle {
+        position: fixed; /* Fixed position to keep it on top of the viewport */
+        top: 0; /* Distance from the top of the viewport */
+        margin-top: 30px;
+        left: 50%; /* Center horizontally */
+        transform: translateX(-50%); /* Center horizontally */
+        z-index: 9999;
+        font-weight: 500;
+        color: white;
+        font-size: 2.225rem;
+        background-color: #8cbc90;
+        border-radius: 28px;
+        border: 10px solid #8cbc90;
+    }
   
     .content {
         display: flex;
@@ -92,21 +107,7 @@
         align-items: center;
         justify-content: center;
     }
-    button {
-        display: inline-block;
-        padding: 10px 20px;
-        font-size: 17px;
-        text-align: center;
-        text-decoration: none;
-        cursor: pointer;
-        border-radius: 20px; /* Adjust the value based on your preference */
-        border-color:#a2c6a5;
-        background-color: #a2c6a5;
-        font-weight: 600;
-    }
-    button:hover {
-        background-color:#8cbc90; /* Set the hover background color */
-      }
+    
     .field {
         display: grid;
         gap: 1rem;
@@ -155,24 +156,26 @@
     .content p {
         margin-top: 1.5rem;
     }
-    .p-menubar {
-        height: 40px; /* Adjust the height as needed */
-        width: 100%; /* Make the navbar full width */
-        border: none;
-        background-color: transparent;
-        font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-            Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-            "Segoe UI Symbol";
+    button{
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 17px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        border-radius: 20px; /* Adjust the value based on your preference */
+        border-color:#a2c6a5;
+        background-color: #a2c6a5;
         font-weight: 600;
-      }
-      .p-icon {
-        font-weight: bold;
-      }
-      .navbarItem {
-        border-radius: 30px;
-        color: white;
-        background-color: transparent;
-      }
+    }
+    button:hover {
+        background-color:#8cbc90; /* Set the hover background color */
+    }
+    
+    .p-button:focus {
+        border: 3px solid #75a97a; /* Set your desired border color on focus */
+        outline-offset: 2px; 
+    }
       
   
     .divider {

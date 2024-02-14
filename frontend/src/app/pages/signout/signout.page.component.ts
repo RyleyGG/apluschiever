@@ -24,7 +24,7 @@ import { Router } from '@angular/router';
     styleUrl: './signout.page.component.css'
 })
 export class SignOutPageComponent {
-    title = 'apluschiever'
+    title = 'Sign-Out Page'
 
     constructor(private router: Router, private oauthService: OAuth2Service) { }
 
@@ -32,5 +32,6 @@ export class SignOutPageComponent {
         // Sample of how to sign out
         this.oauthService.sign_out();
         this.router.navigate(['/landing']);
+        window.location.reload();
     }
 }

@@ -11,6 +11,7 @@ import { passwordMatchValidator } from '../../password-match.directive';
 import { CardModule } from 'primeng/card';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SignUpInfo } from '../../core/models/auth.interface';
+import { Router } from '@angular/router';
 /**
  * The signup page component
  * 
@@ -24,7 +25,7 @@ import { SignUpInfo } from '../../core/models/auth.interface';
     styleUrl: './signup.page.component.css'
 })
 export class SignUpPageComponent {
-    title = 'apluschiever'
+    title = 'Sign-Up Page'
 
     registerForm = this.fb.group({
         email_address: ['', [Validators.required, Validators.email]],
@@ -36,7 +37,7 @@ export class SignUpPageComponent {
         validators: passwordMatchValidator
       })
 
-    constructor(private fb: FormBuilder, private oauthService: OAuth2Service) { }
+    constructor(private router: Router, private fb: FormBuilder, private oauthService: OAuth2Service) { }
     get first_name() {
         return this.registerForm.controls['first_name'];
       }
@@ -60,6 +61,8 @@ export class SignUpPageComponent {
         const postData = { ...this.registerForm.value };
         this.oauthService.sign_up(postData as SignUpInfo).subscribe((res: SuccessfulUserAuth) => {
             console.log(res);
+            this.router.navigate(['/dashboard']);
+            window.location.reload();
         });
     }
 }

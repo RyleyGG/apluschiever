@@ -30,7 +30,7 @@ export class SignInPageComponent {
         email_address: ['', [Validators.required, Validators.email]],
         password: ['', Validators.required]
       })
-    title = 'apluschiever'
+    title = 'Sign-In Page'
 
     constructor(private router: Router, private fb: FormBuilder, private oauthService: OAuth2Service) { }
 
@@ -45,6 +45,7 @@ export class SignInPageComponent {
         this.oauthService.sign_in( data as SignInInfo ).subscribe((res: SuccessfulUserAuth) => {
             console.log(res);
             this.router.navigate(['/dashboard']);
+            window.location.reload();
         }
         );
     }

@@ -3,7 +3,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <div class="flex-container">
     <h1 [routerLink]="['/dashboard']">A+chiever</h1> 
-    <p-menubar [model]="items"></p-menubar>
+    <div *ngIf="loggedIn">
+        <p-toolbar>
+            <p-button label="Dashboard" icon='pi pi-home' [routerLink]="['/dashboard']"></p-button>
+            <p-button label="Sign-Out" icon='pi pi-sign-out' [routerLink]="['/signout']"></p-button>
+            <p-button label="Light" icon='pi pi-bolt' (click)="swapTheme()" onLabel="Dark" offLabel="Light"></p-button>
+        </p-toolbar>
+    </div>
+    <div *ngIf="!loggedIn">
+        <p-toolbar>
+            <p-button label="Sign-Up" icon='pi pi-user' [routerLink]="['/signup']"></p-button>
+            <p-button label="Sign-In" icon='pi pi-sign-in' [routerLink]="['/signin']"></p-button>
+            <p-button label="Light" icon='pi pi-bolt' (click)="swapTheme()" onLabel="Dark" offLabel="Light"></p-button>
+            <!--<p-toggleButton onIcon='pi pi-circle-fill' offIcon='pi pi-bolt' (click)="swapTheme()" onLabel="Dark" offLabel="Light"></p-toggleButton>-->
+        </p-toolbar>
+    </div>
   </div>
   <body>
   
