@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlmodel import select, Session
 
 from models.db_models import User
-from models.dto_models import SignUpInfo, SignInInfo, SuccessfulUserAuth, RefreshToken
+from models.dto_models import SignUpInfo, SignInInfo, SuccessfulUserAuth, RefreshToken, UserType
 
 from services.config_service import config
 from services import auth_service
@@ -43,7 +43,8 @@ async def attempt_sign_up(signup_obj: SignUpInfo, db: Session = Depends(get_sess
         email_address=signup_obj.email_address,
         password=hashed_password,
         first_name=signup_obj.first_name,
-        last_name=signup_obj.last_name
+        last_name=signup_obj.last_name,
+        user_type=UserType.STUDENT
     )
     db.add(new_user)
     db.commit()
