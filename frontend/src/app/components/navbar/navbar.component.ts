@@ -7,7 +7,6 @@ import { InternetConnectionService } from '../../core/services/internet-connecti
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToolbarModule } from 'primeng/toolbar';
 import { MenubarModule } from 'primeng/menubar';
-import { PrimeNGConfig, MenuItem } from "primeng/api"; 
 import { OAuth2Service } from "../../auth/oauth2.service";
 import { firstValueFrom } from 'rxjs';
 
