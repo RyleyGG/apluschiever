@@ -1,24 +1,21 @@
-
-
-  :host ::ng-deep  .p-toolbar {
+:host ::ng-deep  .p-toolbar {
     border: none;
     background-color: transparent;
     font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
         Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
         "Segoe UI Symbol";
-  }
-
-  .p-icon {
+}
+.p-icon {
     font-weight: bold;
-  }
-  :host ::ng-deep button{
+}
+:host ::ng-deep button{
     display: inline-block;
     padding: 10px 20px;
     font-size: 17px;
     text-align: center;
     text-decoration: none;
     cursor: pointer;
-    border-radius: 20px; /* Adjust the value based on your preference */
+    border-radius: 20px; 
     border-color:#a2c6a5;
     background-color: #a2c6a5;
     font-weight: 600;
@@ -30,18 +27,18 @@
     text-align: center;
     text-decoration: none;
     cursor: pointer;
-    border-radius: 20px; /* Adjust the value based on your preference */
+    border-radius: 20px; 
     border-color:#a2c6a5;
     background-color: #a2c6a5;
     font-weight: 600;
 }
 :host ::ng-deep p-toggleButton:hover .p-element {
-    background-color:#8cbc90; /* Set the hover background color */
-  }
+    background-color:#8cbc90; 
+}
 :host ::ng-deep button:hover, p-toggleButton:hover .p-element {
-    background-color:#8cbc90; /* Set the hover background color */
-  }
+    background-color:#8cbc90; 
+}
 
-  :host ::ng-deep .p-button:focus, .p-togglebutton:focus {
-    border: 3px solid #75a97a; /* Set your desired border color on focus */
-  }
+:host ::ng-deep .p-button:focus, .p-togglebutton:focus {
+    border: 3px solid #75a97a;
+}

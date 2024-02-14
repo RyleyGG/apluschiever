@@ -40,7 +40,6 @@ export class SignInPageComponent {
       get password() { return this.signinForm.controls['password']; }
 
     public signin(): void {
-        // Sample of how to sign in
         const data = this.signinForm.value;
         this.oauthService.sign_in( data as SignInInfo ).subscribe((res: SuccessfulUserAuth) => {
             console.log(res);

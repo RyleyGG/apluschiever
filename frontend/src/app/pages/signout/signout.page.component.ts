@@ -29,7 +29,6 @@ export class SignOutPageComponent {
     constructor(private router: Router, private oauthService: OAuth2Service) { }
 
     public signout(): void {
-        // Sample of how to sign out
         this.oauthService.sign_out();
         this.router.navigate(['/landing']);
         window.location.reload();

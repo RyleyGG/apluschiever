@@ -25,11 +25,9 @@ export class NavbarComponent implements OnInit {
     try {
       const isUserAuthenticated = await firstValueFrom(this.oauthService.validate_token());
       if (isUserAuthenticated) {
-        console.log('User authenticated');
         this.loggedIn = true;
       }
       else {
-        console.log('User not authenticated');
         this.loggedIn = false;
       }
     } catch (error) {
@@ -38,43 +36,8 @@ export class NavbarComponent implements OnInit {
   }
   constructor(private oauthService: OAuth2Service, private themeService: ThemeService, private internetConnection: InternetConnectionService) {
     console.log(this.internetConnection.isOnline());
-
   }
-  /*darkTheme = false;
-  buttonLabel = 'Light Mode'; // Initial button label
-  loggedInItems = [
-    { label: 'Home', icon: 'pi pi-home', routerLink: '/dashboard'},
-    //{ label: 'Sign-In', icon: 'pi pi-sign-in', routerLink: '/signin'},
-    { label: 'Sign-Out', icon: 'pi pi-sign-out', routerLink: '/signout'},
-    //{ label: 'Sign-Up', icon: 'pi pi-user', routerLink: '/signup'},
-    {
-      label: 'Light',
-      icon: 'pi pi-bolt',
-      command: () => this.swapTheme(),
-      template: '<p-toggleButton (click)="swapTheme()" onLabel="Dark" offLabel="Light"></p-toggleButton>  '
-    }
-    // Add more menu items as needed
-  ];
-  loggedOutItems = [
-    //{ label: 'Home', icon: 'pi pi-home', routerLink: '/dashboard'},
-    { label: 'Sign-In', icon: 'pi pi-sign-in', routerLink: '/signin'},
-    //{ label: 'Sign-Out', icon: 'pi pi-sign-out', routerLink: '/signout'},
-    { label: 'Sign-Up', icon: 'pi pi-user', routerLink: '/signup'},
-    {
-      label: 'Light',
-      icon: 'pi pi-bolt',
-      command: () => this.swapTheme(),
-      template: '<p-toggleButton (click)="swapTheme()" onLabel="Dark" offLabel="Light"></p-toggleButton>  '
-    }
-    // Add more menu items as needed
-  ];
-  /**
-   * Sample method for testing. Shows how to use the theme service to read the theme, and update 
-   * the theme to a new one.
-   */
   swapTheme(): void {
-    //this.darkTheme = !this.darkTheme;
-    //this.buttonLabel = this.darkTheme ? 'Dark Mode' : 'Light Mode';
     const newTheme = this.themeService.theme() == 'arya-blue' ? 'saga-blue' : 'arya-blue';
     this.themeService.setTheme(newTheme);
   }
