@@ -1,0 +1,83 @@
+<div class="graph-outer" (mouseWheelUp)="onZoom($any($event), 'in')" (mouseWheelDown)="onZoom($any($event), 'out')"
+    mouseWheel>
+    <svg:svg class="graph" [attr.width]="width()" [attr.height]="height()">
+        <!--This rect is just for user interaction via panning-->
+        <svg:g *ngIf="initialized && graph">
+            <svg:rect class="panning-rect" [attr.width]="width()" [attr.height]="height()"
+                (mousedown)="isPanning = true" />
+        </svg:g>
+
+        <!--This group displays the actual graph and content-->
+        <svg:g class="graph" *ngIf="initialized && graph" [attr.transform]="transform()">
+            <defs>
+                <ng-container *ngIf="defsTemplate" [ngTemplateOutlet]="defsTemplate"></ng-container>
+                <svg:path class="text-path" *ngFor="let edge of graph.edges" [attr.d]="edge.textPath"
+                    [attr.id]="edge.id"></svg:path>
+            </defs>
+
+            <ng-content></ng-content>
+
+            <!--Handles all the node clusters-->
+            <svg:g class="clusters">
+                <svg:g #clusterElement *ngFor="let node of graph.clusters; trackBy: trackNodeBy" [id]="node.id"
+                    [attr.transform]="node.transform" [@svgGraphAnimation]="animateEnabled() ? 'active' : 'inactive'"
+                    (click)="onNodeClick($event, node)">
+                    <ng-container *ngIf="clusterTemplate && !node.hidden" [ngTemplateOutlet]="clusterTemplate"
+                        [ngTemplateOutletContext]="{ $implicit: node }">
+                    </ng-container>
+                    <svg:g *ngIf="!clusterTemplate" class="node cluster">
+                        <svg:rect [attr.width]="node?.dimension?.width!" [attr.height]="node?.dimension?.height!"
+                            [attr.fill]="node.color" />
+                        <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node?.dimension?.height! / 2">
+                            {{ node.label }}
+                        </svg:text>
+                    </svg:g>
+                </svg:g>
+            </svg:g>
+
+            <!--Handles all the edges between nodes-->
+            <svg:g class="edges">
+                <svg:g #linkElement *ngFor="let edge of graph.edges; trackBy: trackEdgeBy" class="edge-group"
+                    [id]="edge.id" [@svgGraphAnimation]="animateEnabled() ? 'active' : 'inactive'">
+                    <ng-container *ngIf="edgeTemplate" [ngTemplateOutlet]="edgeTemplate"
+                        [ngTemplateOutletContext]="{ $implicit: edge }"></ng-container>
+
+                    <!-- Define marker for each edge -->
+                    <svg:defs *ngIf="!edgeTemplate">
+                        <svg:marker [attr.id]="'arrow-' + edge.id" [attr.viewBox]="'0 -10 20 20'" refX="8" refY="0"
+                            markerWidth="10" markerHeight="10" orient="auto">
+                            <svg:path [attr.fill]="edge.color" d="M 0 -10 L 10 0 L 0 10" />
+                        </svg:marker>
+                    </svg:defs>
+
+                    <svg:path *ngIf="!edgeTemplate" class="edge" [attr.stroke]="edge.color"
+                        [attr.marker-end]="'url(#arrow-' + edge.id + ')'" [attr.d]="edge.line" />
+                </svg:g>
+            </svg:g>
+
+            <!--Handles all the nodes-->
+            <svg:g class="nodes">
+                <svg:g class="node-group" #nodeElement *ngFor="let node of graph.nodes; trackBy: trackNodeBy"
+                    [id]="node.id" [class.old-node]="animateEnabled() && oldNodes.has(node.id)"
+                    [attr.transform]="node.transform" [@svgGraphAnimation]="animateEnabled() ? 'active' : 'inactive'"
+                    (click)="onNodeClick($event, node)">
+                    <!--If user has overridden the node display settings, use those-->
+                    <ng-container *ngIf="nodeTemplate && !node.hidden" [ngTemplateOutlet]="nodeTemplate"
+                        [ngTemplateOutletContext]="{ $implicit: node }"></ng-container>
+
+                    <!--Show Nodes as Circles In Default Template-->
+                    <svg:circle *ngIf="!nodeTemplate" r="10" [attr.cx]="node?.dimension?.width! / 2"
+                        [attr.cy]="node?.dimension?.height! / 2" [attr.fill]="node.color" />
+
+                    <!--Show Node Labels In Default Template-->
+                    <svg:text *ngIf="!nodeTemplate" alignment-baseline="central" dominant-baseline="middle"
+                        [attr.x]="node?.dimension?.width! / 2" [attr.y]="node?.dimension?.height! * (3/2)"
+                        text-anchor="middle">
+                        {{ node.label }}
+                    </svg:text>
+                </svg:g>
+            </svg:g>
+
+        </svg:g>
+    </svg:svg>
+</div>

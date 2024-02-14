@@ -1,3 +1,4 @@
+from enum import Enum
 from pydantic import BaseModel, UUID4
 from typing import Optional, List
 
@@ -28,6 +29,7 @@ class RefreshToken(BaseModel):
 class UserFilters(BaseModel):
     ids: Optional[List[UUID4]] = None
     emails: Optional[List[str]] = None
+    user_types: Optional[List[str]] = None
 
 
 class CourseFilters(BaseModel):
@@ -40,3 +42,18 @@ class NewCourse(BaseModel):
     title: str
     short_description: Optional[str] = None
     course_owner_id: UUID4
+
+
+class UserType(Enum):
+    STUDENT = 'Student'
+    ADMIN = 'Administrator'
+    TEACHER = 'Teacher'
+
+
+class NodeProgressDetails(BaseModel):
+    node_id: str
+    completed_content: List[str]
+
+
+class SupportedThirdParties(Enum):
+    YOUTUBE = 'YouTube'

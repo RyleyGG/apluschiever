@@ -20,6 +20,8 @@ async def search_users(filters: UserFilters, db: Session = Depends(get_session))
         query_statement = query_statement.where(User.id.in_(filters.ids))
     if filters.emails:
         query_statement = query_statement.where(User.email_address.in_(filters.emails))
+    if filters.user_types:
+        query_statement = query_statement.where(User.user_type.in_(filters.user_types))
 
     return_obj = db.exec(query_statement).all()
     return return_obj

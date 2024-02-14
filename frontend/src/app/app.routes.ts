@@ -8,6 +8,7 @@ import { SignUpPageComponent } from './pages/signup/signup.page.component';
 import { SignOutPageComponent } from './pages/signout/signout.page.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { CourseViewPageComponent } from './pages/course-view/course-view.page.component';
 
 export const routes: Routes = [
     // Routes for authentication (TODO: replace component with proper pages, etc)
@@ -15,6 +16,8 @@ export const routes: Routes = [
     { path: "signin", component: SignInPageComponent, canActivate: [signedOutGuard] },
     { path: "signout", component: SignOutPageComponent, canActivate: [signedInGuard] },
     { path: "dashboard", component: DashboardComponent, canActivate: [signedInGuard] },
+  
+    { path: "viewer", component: CourseViewPageComponent },
     // General routes
     { path: "landing", component: LandingPageComponent },
     { path: '', redirectTo: '/landing', pathMatch: 'full' },
