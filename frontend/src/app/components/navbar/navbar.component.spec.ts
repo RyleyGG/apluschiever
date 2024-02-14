@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { NavbarComponent } from './navbar.component';
+import { routes } from './../../app.routes';
+import { provideRouter } from '@angular/router';
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
@@ -12,7 +14,8 @@ describe('NavbarComponent', () => {
       imports: [NavbarComponent],
       providers: [
         provideHttpClient(),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        provideRouter(routes)
     ]
     })
     .compileComponents();
