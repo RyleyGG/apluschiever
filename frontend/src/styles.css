@@ -1,39 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @import "primeng/resources/primeng.css";
 @import 'primeicons/primeicons.css';
-
-    :host {
-        --bright-blue: oklch(51.01% 0.274 263.83);
-        --electric-violet: oklch(53.18% 0.28 296.97);
-        --french-violet: oklch(47.66% 0.246 305.88);
-        --vivid-pink: oklch(69.02% 0.277 332.77);
-        --hot-red: oklch(61.42% 0.238 15.34);
-        --orange-red: oklch(63.32% 0.24 31.68);
-
-        --gray-900: oklch(19.37% 0.006 300.98);
-        --gray-700: oklch(36.98% 0.014 302.71);
-        --gray-400: oklch(70.9% 0.015 304.04);
-
-        --red-to-pink-to-purple-vertical-gradient: linear-gradient(180deg,
-                var(--orange-red) 0%,
-                var(--vivid-pink) 50%,
-                var(--electric-violet) 100%);
-
-        --red-to-pink-to-purple-horizontal-gradient: linear-gradient(90deg,
-                var(--orange-red) 0%,
-                var(--vivid-pink) 50%,
-                var(--electric-violet) 100%);
-
-        --pill-accent: var(--bright-blue);
-
-        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-            Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-            "Segoe UI Symbol";
-        box-sizing: border-box;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
+    html, body  {
+        margin: none;
+        padding: none;
     }
-
     h1 {
         font-size: 3.125rem;
         cursor: pointer;
@@ -46,13 +17,7 @@
             Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
             "Segoe UI Symbol";
     }
-
-    p {
-        margin: 0;
-        color: var(--gray-700);
-    }
-
-    main {
+    .page-content {
         width: 100%;
         min-height: 100%;
         display: flex;
@@ -62,52 +27,11 @@
         box-sizing: inherit;
         position: relative;
     }
-
-    .angular-logo {
-        max-width: 9.2rem;
-    }
-    /* Your component's style file (e.g., app.component.css) */
-    .flex-container { /* Import the PrimeFlex styles */
-        display: flex;
-        justify-content: space-between;
-        flex-direction: row; /* Set the layout to row */
-        align-items: center; /* Adjust as needed, e.g., flex-start, flex-end, center, etc. */
-        padding: 10px; /* Add padding as needed */
-        background-color: #a2c6a5; /* Set a background color as needed */
-        
-    }
-    .navbarTitle {
-        position: fixed; /* Fixed position to keep it on top of the viewport */
-        top: 0; /* Distance from the top of the viewport */
-        margin-top: 30px;
-        left: 50%; /* Center horizontally */
-        transform: translateX(-50%); /* Center horizontally */
-        z-index: 9999;
-        font-weight: 500;
-        color: white;
-        font-size: 2.225rem;
-        background-color: #8cbc90;
-        border-radius: 28px;
-        border: 10px solid #8cbc90;
-    }
-  
-    .content {
-        display: flex;
-        justify-content: space-around;
-        width: 100%;
-        max-width: 700px;
-        margin-bottom: 3rem;
-    }
-
-    .content h1 {
-        margin-top: 1.75rem;
-    }
     .p-card {
         width: 460px;
         align-items: center;
         justify-content: center;
     }
-    
     .field {
         display: grid;
         gap: 1rem;
@@ -124,7 +48,6 @@
         display: block;
         margin-top: -28px;
       }
-  
       input {
         width: 100%;
         padding: 10px;
@@ -133,8 +56,6 @@
         border: 1px solid #ccc;
         border-radius: 4px;
       }
-  
-      /* Styles for form inputs */
       .field input {
         width: 100%;
         padding: 8px;
@@ -142,8 +63,6 @@
         border-radius: 4px;
         box-sizing: border-box;
       }
-  
-      /* Styles for form button */
       .field button {
         width: 100%;
         padding: 10px;
@@ -153,8 +72,19 @@
         border-radius: 4px;
         cursor: pointer;
       }
-    .content p {
-        margin-top: 1.5rem;
+      .navbarTitle {
+        position: fixed; 
+        top: 0;
+        margin-top: 30px;
+        left: 50%; 
+        transform: translateX(-50%);
+        z-index: 9999;
+        font-weight: 500;
+        color: white;
+        font-size: 2.225rem;
+        background-color: #8cbc90;
+        border-radius: 28px;
+        border: 10px solid #8cbc90;
     }
     button{
         display: inline-block;
@@ -163,103 +93,15 @@
         text-align: center;
         text-decoration: none;
         cursor: pointer;
-        border-radius: 20px; /* Adjust the value based on your preference */
+        border-radius: 20px; 
         border-color:#a2c6a5;
         background-color: #a2c6a5;
         font-weight: 600;
     }
     button:hover {
-        background-color:#8cbc90; /* Set the hover background color */
+        background-color:#8cbc90; 
     }
-    
     .p-button:focus {
-        border: 3px solid #75a97a; /* Set your desired border color on focus */
+        border: 3px solid #75a97a; 
         outline-offset: 2px; 
-    }
-      
-  
-    .divider {
-        width: 1px;
-        background: var(--red-to-pink-to-purple-vertical-gradient);
-        margin-inline: 0.5rem;
-    }
-
-    .pill-group {
-        display: flex;
-        flex-direction: column;
-        align-items: start;
-        flex-wrap: wrap;
-        gap: 1.25rem;
-    }
-
-    .pill {
-        display: flex;
-        align-items: center;
-        --pill-accent: var(--bright-blue);
-        background: color-mix(in srgb, var(--pill-accent) 5%, transparent);
-        color: var(--pill-accent);
-        padding-inline: 0.75rem;
-        padding-block: 0.375rem;
-        border-radius: 2.75rem;
-        border: 0;
-        transition: background 0.3s ease;
-        font-family: var(--inter-font);
-        font-size: 0.875rem;
-        font-style: normal;
-        font-weight: 500;
-        line-height: 1.4rem;
-        letter-spacing: -0.00875rem;
-        text-decoration: none;
-    }
-
-    .pill:hover {
-        background: color-mix(in srgb, var(--pill-accent) 15%, transparent);
-    }
-
-    .pill-group .pill:nth-child(6n + 1) {
-        --pill-accent: var(--bright-blue);
-    }
-
-    .pill-group .pill:nth-child(6n + 2) {
-        --pill-accent: var(--french-violet);
-    }
-
-    .pill-group .pill:nth-child(6n + 3),
-    .pill-group .pill:nth-child(6n + 4),
-    .pill-group .pill:nth-child(6n + 5) {
-        --pill-accent: var(--hot-red);
-    }
-
-    .pill-group svg {
-        margin-inline-start: 0.25rem;
-    }
-
-    .social-links {
-        display: flex;
-        align-items: center;
-        gap: 0.73rem;
-        margin-top: 1.5rem;
-    }
-
-    .social-links path {
-        transition: fill 0.3s ease;
-        fill: var(--gray-400);
-    }
-
-    .social-links a:hover svg path {
-        fill: var(--gray-900);
-    }
-
-    @media screen and (max-width: 650px) {
-        .content {
-            flex-direction: column;
-            width: max-content;
-        }
-
-        .divider {
-            height: 1px;
-            width: 100%;
-            background: var(--red-to-pink-to-purple-horizontal-gradient);
-            margin-block: 1.5rem;
-        }
     }

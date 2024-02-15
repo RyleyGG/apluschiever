@@ -1,3 +1,25 @@
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row; 
+    align-items: center; 
+    padding: 10px; 
+    background-color: #a2c6a5; 
+}
+.navbarTitle {
+    position: fixed; /* Fixed position to keep it on top of the viewport */
+    top: 0; /* Distance from the top of the viewport */
+    margin-top: 30px;
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Center horizontally */
+    z-index: 9999;
+    font-weight: 500;
+    color: white;
+    font-size: 2.225rem;
+    background-color: #8cbc90;
+    border-radius: 28px;
+    border: 10px solid #8cbc90;
+}
 :host ::ng-deep  .p-toolbar {
     border: none;
     background-color: transparent;

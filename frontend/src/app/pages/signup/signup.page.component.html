@@ -1,5 +1,5 @@
 <h1 class="navbarTitle">{{title}}</h1>
-<main>
+<div class="page-content">
     <form [formGroup]="registerForm" (ngSubmit)="signup()">
         <p-card>
             <div class="field">
@@ -46,5 +46,5 @@
             <p-button label="Sign-Up" class="w-full" [disabled]="registerForm.invalid" type="submit"></p-button>
         </p-card>
     </form>
-</main>
+</div>
   

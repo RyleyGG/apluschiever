@@ -20,16 +20,7 @@ import { MenubarModule } from 'primeng/menubar';
 export class AppComponent {
   title = 'apluschiever';
 
-  constructor(private themeService: ThemeService, private internetConnection: InternetConnectionService) {
+  constructor(private internetConnection: InternetConnectionService) {
     console.log(this.internetConnection.isOnline());
-  }
-
-  /**
-   * Sample method for testing. Shows how to use the theme service to read the theme, and update 
-   * the theme to a new one.
-   */
-  swapTheme(): void {
-    const newTheme = this.themeService.theme() == 'arya-blue' ? 'saga-blue' : 'arya-blue';
-    this.themeService.setTheme(newTheme);
   }
 }

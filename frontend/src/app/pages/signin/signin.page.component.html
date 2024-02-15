@@ -1,31 +1,31 @@
 <!-- Add the PrimeNG CSS link -->
 <h1 class="navbarTitle">{{title}}</h1>
-<main>
-    <form [formGroup]="signinForm" (ngSubmit)="signin()">
-        <p-card>
-            <div class="field">
-                <label for="email_address">Email</label>
-                <input
-                    type="text"
-                    pInputText
-                    formControlName="email_address"
-                    class="w-full"
-                    name="email_address"
-                    placeholder="Enter your email..."
-                    />
-                <small *ngIf="email_address.invalid && (email_address.dirty || email_address.touched)" class="block p-error">
-                    <div *ngIf="email_address.errors?.['required']">An email is required.</div>
-                    <div *ngIf="email_address.errors?.['email']">Please enter a valid email</div>
-                </small>
-            </div>
-            <div class="field">
-                <label for="password">Password</label>
-                <input type="password" pInputText formControlName="password" class="w-full" name="password" placeholder="Enter your password..."/>
-                <small *ngIf="password.invalid && (password.dirty || password.touched)" class="block p-error">
-                    <div *ngIf="password.errors?.['required']">A password is required.</div>
-                </small>
-            </div>
-            <p-button label="Sign-In" class="w-full" [disabled]="signinForm.invalid" type="submit"></p-button>
-        </p-card>
-    </form>
-</main>
+<div class="page-content">
+<form [formGroup]="signinForm" (ngSubmit)="signin()">
+    <p-card>
+        <div class="field">
+            <label for="email_address">Email</label>
+            <input
+                type="text"
+                pInputText
+                formControlName="email_address"
+                class="w-full"
+                name="email_address"
+                placeholder="Enter your email..."
+                />
+            <small *ngIf="email_address.invalid && (email_address.dirty || email_address.touched)" class="block p-error">
+                <div *ngIf="email_address.errors?.['required']">An email is required.</div>
+                <div *ngIf="email_address.errors?.['email']">Please enter a valid email</div>
+            </small>
+        </div>
+        <div class="field">
+            <label for="password">Password</label>
+            <input type="password" pInputText formControlName="password" class="w-full" name="password" placeholder="Enter your password..."/>
+            <small *ngIf="password.invalid && (password.dirty || password.touched)" class="block p-error">
+                <div *ngIf="password.errors?.['required']">A password is required.</div>
+            </small>
+        </div>
+        <p-button label="Sign-In" class="w-full" [disabled]="signinForm.invalid" type="submit"></p-button>
+    </p-card>
+</form>
+</div>

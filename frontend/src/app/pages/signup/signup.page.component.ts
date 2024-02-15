@@ -7,11 +7,12 @@ import { OAuth2Service } from '../../auth/oauth2.service';
 import { SuccessfulUserAuth } from '../../core/models/auth.interface';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms'; 
-import { passwordMatchValidator } from '../../password-match.directive';
+import { passwordMatchValidator } from '../../core/directives/password-match.directive';
 import { CardModule } from 'primeng/card';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SignUpInfo } from '../../core/models/auth.interface';
 import { Router } from '@angular/router';
+import { SignInInfo } from '../../core/models/auth.interface';
 /**
  * The signup page component
  * 
@@ -61,8 +62,11 @@ export class SignUpPageComponent {
         const postData = { ...this.registerForm.value };
         this.oauthService.sign_up(postData as SignUpInfo).subscribe((res: SuccessfulUserAuth) => {
             console.log(res);
-            this.router.navigate(['/dashboard']);
-            window.location.reload();
+            this.oauthService.sign_in( postData as SignInInfo ).subscribe((res: SuccessfulUserAuth) => {
+                console.log(res);
+                this.router.navigate(['/dashboard']);
+                window.location.reload();
+            })
         });
     }
 }
