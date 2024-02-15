@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from starlette import status
 
 from api import app
-from models.db_models import Course, Node, User
+from models.db_models import Course, Node, User, NodeParentLink
 from models.pydantic_models import Video, Markdown
 from services.api_utility_service import dbUrl, get_session
 from services.config_service import config
@@ -79,11 +79,12 @@ def main():
     engine = create_engine(dbUrl.replace('@db', '@localhost'))
     SQLModel.metadata.create_all(engine)
     connection = engine.connect()
-    #
+
     # Prep session
     session = Session(bind=connection)
-    session.exec(delete(Course))
+    session.exec(delete(NodeParentLink))
     session.exec(delete(Node))
+    session.exec(delete(Course))
     session.exec(delete(User))
 
     # Prep client
