@@ -4,7 +4,7 @@
     flex-direction: row; 
     align-items: center; 
     padding: 10px; 
-    background-color: #a2c6a5; 
+    background-color: var(--primary-color);
 }
 .navbarTitle {
     position: fixed; /* Fixed position to keep it on top of the viewport */
@@ -16,9 +16,9 @@
     font-weight: 500;
     color: white;
     font-size: 2.225rem;
-    background-color: #8cbc90;
+    background-color: var(--hover-color);
     border-radius: 28px;
-    border: 10px solid #8cbc90;
+    border: 10px solid var(--hover-color);
 }
 :host ::ng-deep  .p-toolbar {
     border: none;
@@ -38,8 +38,8 @@
     text-decoration: none;
     cursor: pointer;
     border-radius: 20px; 
-    border-color:#a2c6a5;
-    background-color: #a2c6a5;
+    border-color:var(--primary-color);
+    background-color: var(--primary-color);
     font-weight: 600;
 }
 :host ::ng-deep p-toggleButton .p-element {
@@ -50,15 +50,15 @@
     text-decoration: none;
     cursor: pointer;
     border-radius: 20px; 
-    border-color:#a2c6a5;
-    background-color: #a2c6a5;
+    border-color:var(--primary-color);
+    background-color: var(--primary-color);
     font-weight: 600;
 }
 :host ::ng-deep p-toggleButton:hover .p-element {
-    background-color:#8cbc90; 
+    background-color:var(--hover-color);
 }
 :host ::ng-deep button:hover, p-toggleButton:hover .p-element {
-    background-color:#8cbc90; 
+    background-color:var(--hover-color);
 }
 
 :host ::ng-deep .p-button:focus, .p-togglebutton:focus {
