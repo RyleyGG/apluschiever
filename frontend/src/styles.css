@@ -9,6 +9,9 @@
     html, body  {
         margin: none;
         padding: none;
+        font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+            Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+            "Segoe UI Symbol";
     }
     h1 {
         font-size: 3.125rem;
@@ -18,9 +21,6 @@
         letter-spacing: -0.125rem;
         color:var(--secondary-color);
         margin: 0;
-        font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-            Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-            "Segoe UI Symbol";
     }
     .page-content {
         width: 100%;
@@ -40,17 +40,12 @@
     .field {
         display: grid;
         gap: 1rem;
-        font-family: "Inter Tight", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-            Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-            "Segoe UI Symbol";
         font-size: large;
       }
       label {
-        display: block;
         margin-bottom: -8px;
       }
       small {
-        display: block;
         margin-top: -28px;
       }
       input {
@@ -68,21 +63,11 @@
         border-radius: 4px;
         box-sizing: border-box;
       }
-      .field button {
-        width: 100%;
-        padding: 10px;
-        background-color: #007bff;
-        color: #ffffff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
       .navbarTitle {
         position: fixed; 
         top: 0;
         margin-top: 30px;
-        left: 50%; 
-        transform: translateX(-50%);
+        left: 44%; 
         z-index: 9999;
         font-weight: 500;
         color: white;
@@ -92,12 +77,6 @@
         border: 10px solid var(--hover-color);
     }
     button{
-        display: inline-block;
-        padding: 10px 20px;
-        font-size: 17px;
-        text-align: center;
-        text-decoration: none;
-        cursor: pointer;
         border-radius: 20px; 
         border-color:var(--primary-color);
         background-color: var(--primary-color);
@@ -108,5 +87,4 @@
     }
     .p-button:focus {
         border: 3px solid var(--secondary-color);
-        outline-offset: 2px; 
     }
