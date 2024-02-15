@@ -130,7 +130,8 @@ export class CourseViewPageComponent {
     constructor(private courseService: CourseService) {
         // on page load get the course information
         // will need to be a URL parameter probably
-        courseService.getNodes("").subscribe((data) => {
+        // TODO: Get the Course ID from another source (maybe route param, maybe a service?)
+        courseService.getNodes("ee4a12c5-de2f-4539-aedf-057229c938f1").subscribe((data) => {
             this.nodes = [];
             this.edges = [];
             this.clusters = [];
@@ -139,7 +140,7 @@ export class CourseViewPageComponent {
             data.forEach((element: any) => {
                 const newNode = {
                     id: element.id,
-                    label: element.label
+                    label: element.title
                 }
                 this.nodes = [...this.nodes, newNode];
             });
@@ -147,28 +148,15 @@ export class CourseViewPageComponent {
             // Pass to create the edges
             data.forEach((element: any) => {
                 const newEdges: Edge[] = [];
-                element.parentIds.forEach((id: string) => {
+                element.parent_nodes.forEach((parent: any) => {
                     newEdges.push({
-                        source: id,
+                        source: parent.id,
                         target: element.id
                     });
                 });
                 this.edges = [...this.edges, ...newEdges];
             });
         });
-
-        setTimeout(() => {
-            this.nodes = [...this.nodes, { id: '6', label: 'Node F' }];
-        }, 5000);
-
-        setTimeout(() => {
-            this.edges = [...this.edges, {
-                id: 'h',
-                source: '5',
-                target: '6',
-                color: '#FF00FF'
-            }];
-        }, 7000);
     }
 
     /**
