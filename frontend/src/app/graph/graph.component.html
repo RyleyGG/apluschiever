@@ -72,7 +72,7 @@
                     <!--Show Node Labels In Default Template-->
                     <svg:text *ngIf="!nodeTemplate" alignment-baseline="central" dominant-baseline="middle"
                         [attr.x]="node?.dimension?.width! / 2" [attr.y]="node?.dimension?.height! * (3/2)"
-                        text-anchor="middle">
+                        text-anchor="middle" [attr.fill]="node.color">
                         {{ node.label }}
                     </svg:text>
                 </svg:g>

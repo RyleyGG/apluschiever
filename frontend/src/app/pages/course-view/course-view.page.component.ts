@@ -140,7 +140,8 @@ export class CourseViewPageComponent {
             data.forEach((element: any) => {
                 const newNode = {
                     id: element.id,
-                    label: element.title
+                    label: element.title,
+                    color: "var(--text-color)"
                 }
                 this.nodes = [...this.nodes, newNode];
             });
@@ -151,7 +152,8 @@ export class CourseViewPageComponent {
                 element.parent_nodes.forEach((parent: any) => {
                     newEdges.push({
                         source: parent.id,
-                        target: element.id
+                        target: element.id,
+                        color: "var(--text-color)"
                     });
                 });
                 this.edges = [...this.edges, ...newEdges];
