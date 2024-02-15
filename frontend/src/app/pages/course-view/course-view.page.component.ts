@@ -168,6 +168,7 @@ export class CourseViewPageComponent {
     onNodeClick(node: Node) {
         this.selectedNode = node;
         this.dialogVisible = true;
+        this.graphComponent.panToNodeId(node.id);
     }
 
 
