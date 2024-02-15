@@ -41,7 +41,7 @@ class Node(SQLModel, table=True):
     uploaded_files: Optional[List[UploadFile]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[UploadFile]])))
     third_party_resources: Optional[List[ThirdPartyResource]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[ThirdPartyResource]])))
     course_id: uuid.UUID = Field(foreign_key='Course.id')
-    course: "Course" = Relationship(back_populates="nodes")
+    course: Optional["Course"] = Relationship(back_populates="nodes")
     parents: List["Node"] = Relationship(
         back_populates="children",
         link_model=NodeParentLink,
@@ -79,4 +79,4 @@ class Course(SQLModel, table=True):
     short_description: Optional[str]
     course_owner_id: uuid.UUID = Field(foreign_key='User.id')
     course_owner: User = Relationship(back_populates='owned_courses')
-    nodes: List[Node] = Relationship(back_populates="course")
+    nodes: Optional[List[Node]] = Relationship(back_populates="course")
