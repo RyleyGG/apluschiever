@@ -795,17 +795,15 @@ export class GraphComponent {
 
         for (let i = 0; i < this.graph.nodes.length; i++) {
             const node = this.graph.nodes[i];
+
             minX = node.position!.x < minX ? node.position!.x : minX;
             minY = node.position!.y < minY ? node.position!.y : minY;
             maxX = node.position!.x + node.dimension!.width > maxX ? node.position!.x + node.dimension!.width : maxX;
             maxY = node.position!.y + node.dimension!.height > maxY ? node.position!.y + node.dimension!.height : maxY;
         }
-        // minX -= 100;
-        // minY -= 100;
-        // maxX += 100;
-        // maxY += 100;
-        this.graphDims.width = maxX - minX;
-        this.graphDims.height = maxY - minY;
+
+        this.graphDims.width = (maxX - minX) + 100;
+        this.graphDims.height = (maxY - minY) + 100;
     }
 
     /**
