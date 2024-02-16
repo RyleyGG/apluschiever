@@ -1,3 +1,4 @@
+import math
 import random
 
 from fastapi import HTTPException
@@ -51,26 +52,36 @@ def generate_mock_courses(db: Session, client: TestClient):
 
 def generate_mock_nodes(db: Session, client: TestClient):
     mock_courses = db.exec(select(Course)).all()
-    for x in range(len(mock_courses)):
-        cur_course = mock_courses[x]
-        node_list = []
-        for y in range(0, 100):
-            new_node = Node(title=f'Node {y}', short_description=f'Node {y}', course=cur_course)
+    for i in range(len(mock_courses)):
+        cur_course = mock_courses[i]
+        node_layers = {}
+        node_cnt = 0
+        for x in range(0, 5):
+            layer_node_cnt = random.randint(1, 10)
+            node_layers[x] = []
+            for y in range(0, layer_node_cnt):
+                new_node = Node(title=f'Node {node_cnt}', short_description=f'Node {node_cnt}', course=cur_course)
 
-            new_node.videos = []
-            new_node.markdown_files = []
-            for n in range(10):
-                new_node.videos.append(Video(title='wasd', embed_link='wasd', video_source='wasd'))
-                if random.choice([True, False]):
-                    break
+                new_node.videos = []
+                new_node.markdown_files = []
+                for n in range(10):
+                    new_node.videos.append(Video(title='wasd', embed_link='wasd', video_source='wasd'))
+                    if random.choice([True, False]):
+                        break
 
-            for n in range(10):
-                new_node.markdown_files.append(Markdown(title='wasd', content='###wasd'))
-                if random.choice([True, False]):
-                    break
-            new_node.parents = [node_list[-1]] if len(node_list) > 0 else []
-            node_list.append(new_node)
-            db.add(new_node)
+                for n in range(10):
+                    new_node.markdown_files.append(Markdown(title='wasd', content='###wasd'))
+                    if random.choice([True, False]):
+                        break
+                parent_count = random.randint(1, math.ceil(len(node_layers[x - 1]) / 2)) if x > 0 else 0
+                new_node.parents = []
+                while len(new_node.parents) != parent_count:
+                    rand_node = random.choice(node_layers[x - 1])
+                    if rand_node not in new_node.parents:
+                        new_node.parents.append(rand_node)
+                node_layers[x].append(new_node)
+                db.add(new_node)
+                node_cnt += 1
     db.commit()
 
 
