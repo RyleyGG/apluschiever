@@ -1,7 +1,7 @@
 <h1 class="navbarTitle">{{title}}</h1>
 <div class="page-content">
     <form [formGroup]="registerForm" (ngSubmit)="signup()">
-        <p-card>
+        <p-card [style]="{ width: '460px' }">
             <div class="field">
                 <label for="first_name">First Name</label>
                 <input type="text" pInputText formControlName="first_name" class="w-full" name="first_name" placeholder="Enter your first name..."/>
@@ -43,7 +43,7 @@
                     Password should match
                 </small>
             </div>
-            <p-button label="Sign-Up" class="w-full" [disabled]="registerForm.invalid" type="submit"></p-button>
+            <p-button [rounded]="true" label="Sign-Up" class="w-full" [disabled]="registerForm.invalid" type="submit"></p-button>
         </p-card>
     </form>
 </div>

@@ -2,7 +2,7 @@
 <h1 class="navbarTitle">{{title}}</h1>
 <div class="page-content">
 <form [formGroup]="signinForm" (ngSubmit)="signin()">
-    <p-card>
+    <p-card [style]="{ width: '460px' }">
         <div class="field">
             <label class="font-bold" for="email_address">Email</label>
             <input
@@ -25,7 +25,7 @@
                 <div *ngIf="password.errors?.['required']">A password is required.</div>
             </small>
         </div>
-        <p-button label="Sign-In" class="w-full" [disabled]="signinForm.invalid" type="submit"></p-button>
+        <p-button [rounded]="true" label="Sign-In" class="w-full" [disabled]="signinForm.invalid" type="submit"></p-button>
     </p-card>
 </form>
 </div>
