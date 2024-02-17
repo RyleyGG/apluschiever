@@ -27,14 +27,22 @@ import { uid } from '../../core/utils/unique-id';
     styleUrl: './course-view.page.component.css'
 })
 export class CourseViewPageComponent {
-
     @ViewChild('graphComponent') graphComponent!: GraphComponent;
     selectedNode!: Node;
 
-    // Variables to control visibility of side panel and dialog
+    /**
+     * Controls visibility of the node information dialog
+     */
     dialogVisible: boolean = false;
+
+    /**
+     * Controls visibility of the filter options sidebar 
+     */
     sidebarVisible: boolean = false;
 
+    /**
+     * Menu options for the '+' button 
+     */
     dial_items: MenuItem[] = [
         {
             tooltipOptions: {
@@ -55,83 +63,16 @@ export class CourseViewPageComponent {
         }
     ];
 
-    // TODO: Once we have the backend setup for this, we will query for nodes/clusters and calculate the graph edges.
 
-    nodes: Node[] = [
-        {
-            id: '1',
-            label: 'Node A',
-            color: '#FF0000'
-        },
-        {
-            id: '2',
-            label: 'Node B',
-            color: '#00FFFF'
-        },
-        {
-            id: '3',
-            label: 'Node C',
-            color: '#00F900'
-        },
-        {
-            id: '4',
-            label: 'Node D'
-        },
-        {
-            id: '5',
-            label: 'Node E'
-        }
-    ];
-
-    edges: Edge[] = [
-        {
-            id: 'a',
-            source: '1',
-            target: '2',
-            color: '#FF0000'
-        }, {
-            id: 'b',
-            source: '1',
-            target: '3'
-        }, {
-            id: 'c',
-            source: '3',
-            target: '4'
-        }, {
-            id: 'd',
-            source: '3',
-            target: '5'
-        }, {
-            id: 'e',
-            source: '4',
-            target: '5'
-        },
-        {
-            id: 'f',
-            source: '2',
-            target: '1'
-        },
-        {
-            id: 'g',
-            source: '2',
-            target: '5'
-        }
-    ];
-
-    clusters: Cluster[] = [
-        {
-            id: 'cluster0',
-            label: 'Background',
-            color: '#00FFFF55',
-            childNodeIds: ['1', '2', '3']
-        }
-    ];
+    nodes: Node[] = [];
+    edges: Edge[] = [];
+    clusters: Cluster[] = [];
 
     constructor(private courseService: CourseService) {
-        // on page load get the course information
+        // On page load get the course information (id)
         // will need to be a URL parameter probably
         // TODO: Get the Course ID from another source (maybe route param, maybe a service?)
-        this.courseService.getNodes("1b04aa47-73bb-468e-98f5-34addcee04a8").subscribe((data) => {
+        this.courseService.getNodes("68782d8a-8072-4d57-95bd-4b34b98bbe16").subscribe((data) => {
             this.nodes = [];
             this.edges = [];
             this.clusters = [];
@@ -163,7 +104,7 @@ export class CourseViewPageComponent {
 
     /**
      * This function fires whenever a node (or cluster) is clicked.
-     * It updates the selected node and opens the dialog component.
+     * It updates the selected node, pans to that node and opens the dialog component.
      * 
      * @param node The node that was clicked in the graph component.
      */
@@ -172,6 +113,4 @@ export class CourseViewPageComponent {
         this.dialogVisible = true;
         this.graphComponent.panToNodeId(node.id);
     }
-
-
 }
