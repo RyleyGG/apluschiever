@@ -1,0 +1,9 @@
+<div class="flex-container">
+    <h1 [routerLink]="['/dashboard']">A+chiever</h1> 
+    <p-toolbar>
+        <p-button [rounded]="true" *ngIf="!loggedIn" label="Sign-Up" icon='pi pi-user' [routerLink]="['/signup']"></p-button>
+        <p-button [rounded]="true" *ngIf="!loggedIn" label="Sign-In" icon='pi pi-sign-in' [routerLink]="['/signin']"></p-button>
+        <p-button [rounded]="true" *ngIf="loggedIn" label="Sign-Out" icon='pi pi-sign-out' [routerLink]="['/signout']"></p-button>
+        <p-button [rounded]="true" label="Light" icon='pi pi-bolt' (click)="swapTheme()" onLabel="Dark" offLabel="Light"></p-button>
+    </p-toolbar>
+</div>

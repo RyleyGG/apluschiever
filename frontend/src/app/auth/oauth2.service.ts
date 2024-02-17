@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map, of, take, throwError } from 'rxjs';
+import { Observable, BehaviorSubject, catchError, map, of, take, throwError } from 'rxjs';
 
 import { SignInInfo, SignUpInfo, SuccessfulUserAuth } from '../core/models/auth.interface';
 import { LocalStorageService } from '../core/services/local-storage/local-storage.service';

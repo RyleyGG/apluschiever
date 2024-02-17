@@ -3,6 +3,15 @@ import { CommonModule } from '@angular/common';
 
 import { OAuth2Service } from '../../auth/oauth2.service';
 import { SuccessfulUserAuth } from '../../core/models/auth.interface';
+import { CheckboxModule } from 'primeng/checkbox';
+import { FormBuilder, Validators } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { SignInInfo } from '../../core/models/auth.interface';
+import { FormsModule } from '@angular/forms'; 
+import { CardModule } from 'primeng/card';
+import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { of } from 'rxjs';
 
 /**
  * The sign in page component
@@ -12,22 +21,31 @@ import { SuccessfulUserAuth } from '../../core/models/auth.interface';
 @Component({
     selector: 'signin-page',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, FormsModule, CardModule, ReactiveFormsModule, ButtonModule, CheckboxModule],
     templateUrl: './signin.page.component.html',
     styleUrl: './signin.page.component.css'
 })
 export class SignInPageComponent {
-    title = 'apluschiever'
+    signinForm = this.fb.group({
+        email_address: ['', [Validators.required, Validators.email]],
+        password: ['', Validators.required]
+      })
+    title = 'Sign-In Page'
 
-    constructor(private oauthService: OAuth2Service) { }
+    constructor(private router: Router, private fb: FormBuilder, private oauthService: OAuth2Service) { }
+
+    get email_address() {
+        return this.signinForm.controls['email_address'];
+      }
+      get password() { return this.signinForm.controls['password']; }
 
     public signin(): void {
-        // Sample of how to sign in
-        this.oauthService.sign_in({
-            email_address: 'hello-world@gmail.com',
-            password: 'SAMPLE'
-        }).subscribe((res: SuccessfulUserAuth) => {
+        const data = this.signinForm.value;
+        this.oauthService.sign_in( data as SignInInfo ).subscribe((res: SuccessfulUserAuth) => {
             console.log(res);
-        });
+            this.router.navigate(['/dashboard']);
+            window.location.reload();
+        }
+        );
     }
 }
