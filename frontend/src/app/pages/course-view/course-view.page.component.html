@@ -1,12 +1,9 @@
-<h1>Course View Page</h1>
-
 <!--This contains the graph control menu options.-->
 <p-speedDial [model]="dial_items" [radius]="75" direction="down-right" type="quarter-circle"></p-speedDial>
 
-
 <!--This displays the graph of the course.-->
-<graph #graphComponent class="course-view-graph-container" [view]="[1000, 500]" [edges]="this.edges"
-  [nodes]="this.nodes" [clusters]="this.clusters" (nodeClicked)="onNodeClick($event)"></graph>
+<graph #graphComponent class="course-view-graph-container" [edges]="this.edges" [nodes]="this.nodes"
+  [clusters]="this.clusters" (nodeClicked)="onNodeClick($event)"></graph>
 
 <!--This is a dialog component to display whenever a node is clicked.-->
 <p-dialog header="Header" [draggable]="false" [(visible)]="dialogVisible" [position]="'bottomright'"

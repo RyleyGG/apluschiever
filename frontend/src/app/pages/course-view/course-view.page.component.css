@@ -9,3 +9,8 @@
     font-weight: 900;
     white-space: nowrap;
 }
+
+/* Add margin to the speeddial element. */
+:host ::ng-deep .p-speeddial {
+    margin: 1em 0 0 1em;
+}
