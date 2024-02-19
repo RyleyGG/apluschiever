@@ -17,10 +17,10 @@ async def on_startup(app: FastAPI):
 
 
 app = FastAPI(lifespan=on_startup)
-app.include_router(auth_router.router, prefix='/auth')
-app.include_router(user_router.router, prefix='/user', dependencies=[Depends(auth_service.validate_token)])
-app.include_router(course_router.router, prefix='/course') #, dependencies=[Depends(auth_service.validate_token)])
-app.include_router(node_router.router, prefix='/node') #, dependencies=[Depends(auth_service.validate_token)])
+app.include_router(auth_router.router, prefix='/auth', tags=["Authentication"])
+app.include_router(user_router.router, prefix='/user', dependencies=[Depends(auth_service.validate_token)], tags=["User"])
+app.include_router(course_router.router, prefix='/course', dependencies=[Depends(auth_service.validate_token)], tags=["Course"])
+app.include_router(node_router.router, prefix='/node', dependencies=[Depends(auth_service.validate_token)], tags=["Node"])
 
 origins = ["*"]
 app.add_middleware(
