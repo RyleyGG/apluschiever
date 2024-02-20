@@ -11,7 +11,7 @@ class SignUpInfo(BaseModel):
 
 
 class SignInInfo(BaseModel):
-    email_address: str
+    username: str
     password: str
 
 

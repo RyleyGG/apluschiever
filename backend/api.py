@@ -16,7 +16,9 @@ async def on_startup(app: FastAPI):
     yield
 
 
-app = FastAPI(lifespan=on_startup)
+app = FastAPI(
+    lifespan=on_startup
+)
 app.include_router(auth_router.router, prefix='/auth', tags=["Authentication"])
 app.include_router(user_router.router, prefix='/user', dependencies=[Depends(auth_service.validate_token)], tags=["User"])
 app.include_router(course_router.router, prefix='/course', dependencies=[Depends(auth_service.validate_token)], tags=["Course"])
