@@ -134,10 +134,6 @@ export class CourseViewPageComponent {
         this.suggestedNodes = Array.from(searcher.search(event.query));
     }
 
-    onNodeSelect(event: any) {
-        console.log(event);
-    }
-
     //#endregion Filtering & Searching Methods
 
 
