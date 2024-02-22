@@ -11,6 +11,8 @@ import { MenuItem } from 'primeng/api';
 
 import { FormsModule } from '@angular/forms';
 
+import FuzzySearch from 'fuzzy-search';
+
 import { GraphComponent } from '../../graph/graph.component';
 import { Node, Edge, Cluster } from '../../graph/graph.interface';
 import { CourseService } from '../../core/services/course/course.service';
@@ -125,12 +127,11 @@ export class CourseViewPageComponent {
     //#region Filtering & Searching Methods
 
     getNodeLabels(event: AutoCompleteCompleteEvent) {
-        console.log(event);
-        console.log(this.nodes);
-        this.suggestedNodes = Array.from(this.nodes);
-
-        // TODO: Implement a fuzzy search here using 
-        // https://www.npmjs.com/package/fuzzy-search
+        // Uses fuzzy searching to provide suggestions of what the user may be looking for
+        const searcher = new FuzzySearch(this.nodes, ['label'], {
+            caseSensitive: true,
+        });
+        this.suggestedNodes = Array.from(searcher.search(event.query));
     }
 
     onNodeSelect(event: any) {
