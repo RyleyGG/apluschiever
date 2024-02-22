@@ -27,7 +27,7 @@ def test_sign_up(db: Session, client: TestClient):
 def test_sign_in(db: Session, client: TestClient):
     res = client.post(
         '/auth/sign_in',
-        json={
+        data={
             'email_address': 'test@test.com',
             'password': '123'
         }
