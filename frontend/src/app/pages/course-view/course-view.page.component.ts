@@ -6,13 +6,15 @@ import { ButtonModule } from 'primeng/button';
 import { SidebarModule } from 'primeng/sidebar';
 import { TooltipModule } from 'primeng/tooltip';
 import { SpeedDialModule } from 'primeng/speeddial';
+import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
 import { MenuItem } from 'primeng/api';
+
+import { FormsModule } from '@angular/forms';
 
 import { GraphComponent } from '../../graph/graph.component';
 import { Node, Edge, Cluster } from '../../graph/graph.interface';
 import { CourseService } from '../../core/services/course/course.service';
-import { uid } from '../../core/utils/unique-id';
-
+import { InputTextModule } from 'primeng/inputtext';
 
 /**
  * The course view page component
@@ -22,7 +24,7 @@ import { uid } from '../../core/utils/unique-id';
 @Component({
     selector: 'course-view-page',
     standalone: true,
-    imports: [CommonModule, GraphComponent, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule],
+    imports: [CommonModule, GraphComponent, FormsModule, InputTextModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule],
     templateUrl: './course-view.page.component.html',
     styleUrl: './course-view.page.component.css'
 })
@@ -62,6 +64,12 @@ export class CourseViewPageComponent {
             }
         }
     ];
+
+    //#region Filtering & Searching Properties
+
+    suggestedNodes: any[] = [];
+
+    //#endregion
 
 
     nodes: Node[] = [];
@@ -113,4 +121,23 @@ export class CourseViewPageComponent {
         this.dialogVisible = true;
         this.graphComponent.panToNodeId(node.id);
     }
+
+    //#region Filtering & Searching Methods
+
+    getNodeLabels(event: AutoCompleteCompleteEvent) {
+        console.log(event);
+        console.log(this.nodes);
+        this.suggestedNodes = Array.from(this.nodes);
+
+        // TODO: Implement a fuzzy search here using 
+        // https://www.npmjs.com/package/fuzzy-search
+    }
+
+    onNodeSelect(event: any) {
+        console.log(event);
+    }
+
+    //#endregion Filtering & Searching Methods
+
+
 }

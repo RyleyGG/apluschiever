@@ -25,8 +25,21 @@
 
 
 <!--This is the side bar to display filtering options.-->
-<p-sidebar [(visible)]="sidebarVisible" [style]="{ width: '33vw' }">
+<p-sidebar [(visible)]="sidebarVisible" [style]="{ width: '33vw' }" [modal]="false">
   <ng-template pTemplate="header">Header Content</ng-template>
-  <ng-template pTemplate="content">Body Content</ng-template>
+  <ng-template pTemplate="content">
+    <h1>Search</h1>
+
+    <!--Need this wrapping span in order for label to animate up-->
+    <span class="p-float-label">
+      <p-autoComplete [(ngModel)]="selectedNode" [dropdown]="true" [forceSelection]="true"
+        [suggestions]="suggestedNodes" (completeMethod)="getNodeLabels($event)" (onSelect)="onNodeClick($event.value)"
+        field="label" inputId="searchNodeNameInput" />
+      <label for="searchNodeNameInput">Search By Name</label>
+    </span>
+
+    <h1>Filter</h1>
+
+  </ng-template>
   <ng-template pTemplate="footer">Footer Content</ng-template>
 </p-sidebar>
