@@ -28,7 +28,7 @@ def test_sign_in(db: Session, client: TestClient):
     res = client.post(
         '/auth/sign_in',
         data={
-            'email_address': 'test@test.com',
+            'username': 'test@test.com',
             'password': '123'
         }
     )
