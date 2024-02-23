@@ -139,5 +139,44 @@ export class CourseViewPageComponent {
 
     //#endregion Filtering & Searching Methods
 
+    //#region Helper Functions
+
+    /**
+     * Set color of all given nodes with matching IDs to the given color string.
+     * 
+     * @param {string[]} nodeIds list of IDs of nodes to update
+     * @param {string} color the new color to use for all these nodes
+     */
+    setNodeColor(nodeIds: string[], color: string) {
+        nodeIds.forEach(nodeId => {
+            let updatedNodeIndex = this.nodes.findIndex(element => element.id === nodeId);
+            if (updatedNodeIndex !== -1) {
+                const newNode = { ...this.nodes[updatedNodeIndex], color: color };
+                this.nodes.splice(updatedNodeIndex, 1, newNode);
+            }
+        });
+        this.nodes = [...this.nodes]; // makes Angular pick up all changes!
+    }
+
+    /**
+     * Set color of all given edges with matching IDs to the given color string.
+     * 
+     * @param {string[]} edgeIds list of IDs of edges to update
+     * @param {string} color the new color to use for all these edges
+     */
+    setEdgeColor(edgeIds: string[], color: string) {
+        edgeIds.forEach(edgeId => {
+            let updatedEdgeIndex = this.edges.findIndex(element => element.id === edgeId);
+            if (updatedEdgeIndex !== -1) {
+                console.log(this.edges[updatedEdgeIndex]);
+                const newEdge = { ...this.edges[updatedEdgeIndex], color: color };
+                this.edges.splice(updatedEdgeIndex, 1, newEdge);
+            }
+        });
+        this.edges = [...this.edges]; // makes Angular pick up all changes!
+    }
+
+    //#endregion Helper Functions
+
 
 }
