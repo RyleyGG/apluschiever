@@ -7,6 +7,7 @@ import { SidebarModule } from 'primeng/sidebar';
 import { TooltipModule } from 'primeng/tooltip';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
+import { InputSwitchModule } from 'primeng/inputswitch';
 import { MenuItem } from 'primeng/api';
 
 import { FormsModule } from '@angular/forms';
@@ -26,7 +27,7 @@ import { InputTextModule } from 'primeng/inputtext';
 @Component({
     selector: 'course-view-page',
     standalone: true,
-    imports: [CommonModule, GraphComponent, FormsModule, InputTextModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule],
+    imports: [CommonModule, GraphComponent, FormsModule, InputTextModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
     templateUrl: './course-view.page.component.html',
     styleUrl: './course-view.page.component.css'
 })
@@ -70,6 +71,8 @@ export class CourseViewPageComponent {
     //#region Filtering & Searching Properties
 
     suggestedNodes: any[] = [];
+
+    showPreReqs: boolean = true;
 
     //#endregion
 

@@ -26,19 +26,27 @@
 
 <!--This is the side bar to display filtering options.-->
 <p-sidebar [(visible)]="sidebarVisible" [style]="{ width: '33vw' }" [modal]="false">
-  <ng-template pTemplate="header">Header Content</ng-template>
+  <ng-template pTemplate="header">
+    <h1 style="margin: 0;">
+      Search & Filter
+    </h1>
+  </ng-template>
   <ng-template pTemplate="content">
-    <h1>Search</h1>
 
     <!--Need this wrapping span in order for label to animate up-->
-    <span class="p-float-label">
+    <span class="p-float-label" style="margin-top: 2em;">
       <p-autoComplete [(ngModel)]="selectedNode" [dropdown]="true" [forceSelection]="true"
         [suggestions]="suggestedNodes" (completeMethod)="getNodeLabels($event)" (onSelect)="onNodeClick($event.value)"
         field="label" inputId="searchNodeNameInput" />
       <label for="searchNodeNameInput">Search By Name</label>
     </span>
 
-    <h1>Filter</h1>
+    <!--Other search/filters, probably based on tags on lessons-->
+
+    <span>
+      <p-inputSwitch [(ngModel)]="showPreReqs" inputId="showPreReqsToggle" />
+      <label for="showPreReqsToggle">Show Pre-requisites</label>
+    </span>
 
   </ng-template>
   <ng-template pTemplate="footer">Footer Content</ng-template>
