@@ -25,6 +25,7 @@
                 <div *ngIf="password.errors?.['required']">A password is required.</div>
             </small>
         </div>
+        <div *ngIf="errorMessage" class="error"> {{ errorMessage }}</div>
         <p-button [rounded]="true" label="Sign-In" class="w-full" [disabled]="signinForm.invalid" type="submit"></p-button>
     </p-card>
 </form>

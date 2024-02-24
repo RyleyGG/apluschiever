@@ -49,3 +49,8 @@
     font-size: 2.225rem;
     color:white;
 }
+.error {
+  color: red;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
