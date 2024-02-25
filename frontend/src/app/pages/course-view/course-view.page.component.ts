@@ -1,8 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
+import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
+import { SidebarModule } from 'primeng/sidebar';
+import { TooltipModule } from 'primeng/tooltip';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { MenuItem } from 'primeng/api';
 
 import { GraphComponent } from '../../graph/graph.component';
 import { Node, Edge, Cluster } from '../../graph/graph.interface';
+import { CourseService } from '../../core/services/course/course.service';
+import { uid } from '../../core/utils/unique-id';
 
 
 /**
@@ -13,107 +22,95 @@ import { Node, Edge, Cluster } from '../../graph/graph.interface';
 @Component({
     selector: 'course-view-page',
     standalone: true,
-    imports: [CommonModule, GraphComponent],
+    imports: [CommonModule, GraphComponent, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule],
     templateUrl: './course-view.page.component.html',
     styleUrl: './course-view.page.component.css'
 })
 export class CourseViewPageComponent {
+    @ViewChild('graphComponent') graphComponent!: GraphComponent;
+    selectedNode!: Node;
 
-    // TODO: Once we have the backend setup for this, we will query for nodes/clusters and calculate the graph edges.
+    /**
+     * Controls visibility of the node information dialog
+     */
+    dialogVisible: boolean = false;
 
-    nodes: Node[] = [
-        {
-            id: '1',
-            label: 'Node A',
-            color: '#FF0000'
-        },
-        {
-            id: '2',
-            label: 'Node B',
-            color: '#00FFFF'
-        },
-        {
-            id: '3',
-            label: 'Node C',
-            color: '#00F900'
-        },
-        {
-            id: '4',
-            label: 'Node D'
-        },
-        {
-            id: '5',
-            label: 'Node E'
-        }
-    ];
+    /**
+     * Controls visibility of the filter options sidebar 
+     */
+    sidebarVisible: boolean = false;
 
-    edges: Edge[] = [
+    /**
+     * Menu options for the '+' button 
+     */
+    dial_items: MenuItem[] = [
         {
-            id: 'a',
-            source: '1',
-            target: '2',
-            color: '#FF0000'
-        }, {
-            id: 'b',
-            source: '1',
-            target: '3'
-        }, {
-            id: 'c',
-            source: '3',
-            target: '4'
-        }, {
-            id: 'd',
-            source: '3',
-            target: '5'
-        }, {
-            id: 'e',
-            source: '4',
-            target: '5'
+            tooltipOptions: {
+                tooltipLabel: 'Add Filters'
+            },
+            icon: 'pi pi-filter-fill',
+            command: () => { this.sidebarVisible = true; }
         },
         {
-            id: 'f',
-            source: '2',
-            target: '1'
-        },
-        {
-            id: 'g',
-            source: '2',
-            target: '5'
-        }
-    ];
-
-    clusters: Cluster[] = [
-        {
-            id: 'cluster0',
-            label: 'Background',
-            color: '#00FFFF55',
-            childNodeIds: ['1', '2', '3']
+            tooltipOptions: {
+                tooltipLabel: 'Zoom to Fit'
+            },
+            icon: 'pi pi-money-bill',
+            command: () => {
+                this.graphComponent.zoomToFit();
+                this.graphComponent.panToCenter();
+            }
         }
     ];
 
 
+    nodes: Node[] = [];
+    edges: Edge[] = [];
+    clusters: Cluster[] = [];
 
-    constructor() {
-        setTimeout(() => {
-            this.nodes = [...this.nodes, { id: '6', label: 'Node F' }];
-        }, 5000);
+    constructor(private courseService: CourseService) {
+        // On page load get the course information (id)
+        // will need to be a URL parameter probably
+        // TODO: Get the Course ID from another source (maybe route param, maybe a service?)
+        this.courseService.getNodes("68782d8a-8072-4d57-95bd-4b34b98bbe16").subscribe((data) => {
+            this.nodes = [];
+            this.edges = [];
+            this.clusters = [];
 
-        setTimeout(() => {
-            this.edges = [...this.edges, {
-                id: 'h',
-                source: '5',
-                target: '6',
-                color: '#FF00FF'
-            }];
-        }, 7000);
+            // Pass to create the nodes
+            data.forEach((element: any) => {
+                const newNode = {
+                    id: element.id,
+                    label: element.title,
+                    color: "var(--text-color)"
+                }
+                this.nodes = [...this.nodes, newNode];
+            });
+
+            // Pass to create the edges
+            data.forEach((element: any) => {
+                const newEdges: Edge[] = [];
+                element.parent_nodes.forEach((parent: any) => {
+                    newEdges.push({
+                        source: parent.id,
+                        target: element.id,
+                        color: "var(--text-color)"
+                    });
+                });
+                this.edges = [...this.edges, ...newEdges];
+            });
+        });
     }
 
     /**
      * This function fires whenever a node (or cluster) is clicked.
+     * It updates the selected node, pans to that node and opens the dialog component.
      * 
      * @param node The node that was clicked in the graph component.
      */
     onNodeClick(node: Node) {
-        console.log(node);
+        this.selectedNode = node;
+        this.dialogVisible = true;
+        this.graphComponent.panToNodeId(node.id);
     }
 }

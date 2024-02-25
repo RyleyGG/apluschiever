@@ -133,7 +133,7 @@ describe('GraphComponent', () => {
     it('Should zoom to fit when told', () => {
         spyOn(component as any, 'zoomToFit');
 
-        fixture.componentRef.setInput('zoomToFitTrigger', null);
+        component.zoomToFitTrigger.set('trigger');
         fixture.detectChanges();
         expect((component as any).zoomToFit).toHaveBeenCalled();
     });

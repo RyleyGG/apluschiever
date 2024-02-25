@@ -12,7 +12,7 @@ export interface SignUpInfo {
  * Information required for a user to sign in
  */
 export interface SignInInfo {
-  email_address: string,
+  username: string,
   password: string,
 }
 

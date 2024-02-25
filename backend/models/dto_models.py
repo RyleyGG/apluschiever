@@ -11,7 +11,7 @@ class SignUpInfo(BaseModel):
 
 
 class SignInInfo(BaseModel):
-    email_address: str
+    username: str
     password: str
 
 
@@ -36,6 +36,11 @@ class CourseFilters(BaseModel):
     ids: Optional[List[UUID4]] = None
     owned_by: Optional[List[UUID4]] = None
     course_title: Optional[str] = None
+
+
+class NodeFilters(BaseModel):
+    ids: Optional[List[UUID4]] = None
+    course_ids: Optional[List[UUID4]] = None
 
 
 class NewCourse(BaseModel):

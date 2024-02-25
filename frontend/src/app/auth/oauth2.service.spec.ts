@@ -16,7 +16,7 @@ const MOCK_SIGN_UP_INFO: SignUpInfo = {
 };
 
 const MOCK_SIGN_IN_INFO: SignInInfo = {
-    email_address: 'testuser@provider.domain',
+    username: 'testuser@provider.domain',
     password: 'notR3al123'
 };
 
