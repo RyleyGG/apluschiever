@@ -27,8 +27,8 @@ def generate_mock_users(db: Session, client: TestClient):
 
     res = client.post(
         '/auth/sign_in',
-        json={
-            'email_address': 'test@test.com',
+        data={
+            'username': 'test@test.com',
             'password': '123'
         }
     )
