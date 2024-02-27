@@ -32,21 +32,30 @@
     </h1>
   </ng-template>
   <ng-template pTemplate="content">
+    <!--Need wrapping spans in order for label to animate up-->
 
-    <!--Need this wrapping span in order for label to animate up-->
     <span class="p-float-label" style="margin-top: 2em;">
       <p-autoComplete [(ngModel)]="selectedNode" [dropdown]="true" [forceSelection]="true"
         [suggestions]="suggestedNodes" (completeMethod)="getNodeLabels($event)" (onSelect)="onNodeClick($event.value)"
-        field="label" inputId="searchNodeNameInput" />
+        field="label" inputId="searchNodeNameInput" [style]="{'width':'100%'}" />
       <label for="searchNodeNameInput">Search By Name</label>
     </span>
 
+    <span class="p-float-label" style="margin-top: 2em;">
+      <p-multiSelect [options]="chips" [(ngModel)]="selectedChips" display="chip" [showClear]="true"
+        inputId="chipsInput" [style]="{'width':'100%'}"></p-multiSelect>
+      <label for="chipsInput">Search By Tags</label>
+    </span>
+
+
+
     <!--Other search/filters, probably based on tags on lessons-->
 
-    <span>
-      <p-inputSwitch [(ngModel)]="showPreReqs" inputId="showPreReqsToggle" />
-      <label for="showPreReqsToggle">Show Pre-requisites</label>
-    </span>
+    <div style="margin-top: 2em; display: flex; align-items: center;">
+      <!--style is a hotfix for centering label-->
+      <p-inputSwitch [(ngModel)]="showPreReqs" inputId="showPreReqsToggle" height="28px" />
+      <label style="margin-left: 0.5em;" for="showPreReqsToggle">Show Pre-requisites</label>
+    </div>
 
   </ng-template>
   <ng-template pTemplate="footer">Footer Content</ng-template>
