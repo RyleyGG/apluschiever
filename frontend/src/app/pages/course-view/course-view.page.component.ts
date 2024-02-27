@@ -140,11 +140,9 @@ export class CourseViewPageComponent {
 
     //#region Filtering & Searching Methods
 
-    getNodeLabels(event: AutoCompleteCompleteEvent) {
+    getNodeLabels = (event: AutoCompleteCompleteEvent) => {
         // Uses fuzzy searching to provide suggestions of what the user may be looking for
-        const searcher = new FuzzySearch(this.nodes, ['label'], {
-            caseSensitive: true,
-        });
+        const searcher = new FuzzySearch(this.nodes, ['label'], { caseSensitive: true });
         this.suggestedNodes = Array.from(searcher.search(event.query));
     }
 
@@ -152,6 +150,11 @@ export class CourseViewPageComponent {
 
 
     //#region Node Highlighting
+
+    resetHighlights = (): void => {
+        this.setNodeColor(this.nodes.map(node => node.id), "var(--text-color)");
+        this.setEdgeColor(this.edges.map(edge => edge.id!), "var(--text-color)");
+    }
 
     highlightCompleted = (): void => {
         //this.nodes.forEach((node)  =>  {
@@ -215,7 +218,7 @@ export class CourseViewPageComponent {
      * @param {string} color the new color to use for all these nodes
      */
     setNodeColor = (nodeIds: string[], color: string): void => {
-        const updatedNodes = this.nodes.map(node => {
+        this.nodes = this.nodes.map(node => {
             if (!node.id) { return node; }
 
             if (nodeIds.includes(node.id)) {
@@ -223,7 +226,6 @@ export class CourseViewPageComponent {
             }
             return node;
         });
-        this.nodes = updatedNodes;
     }
 
     /**
@@ -233,8 +235,7 @@ export class CourseViewPageComponent {
      * @param {string} color the new color to use for all these edges
      */
     setEdgeColor = (edgeIds: string[], color: string): void => {
-        console.log(edgeIds);
-        const updatedEdges = this.edges.map(edge => {
+        this.edges = this.edges.map(edge => {
             if (!edge.id) { return edge; }
 
             if (edgeIds.includes(edge.id)) {
@@ -242,7 +243,6 @@ export class CourseViewPageComponent {
             }
             return edge;
         });
-        this.edges = updatedEdges;
     }
 
     //#endregion Helper Functions
