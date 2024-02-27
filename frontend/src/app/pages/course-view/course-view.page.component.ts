@@ -19,6 +19,8 @@ import { GraphComponent } from '../../graph/graph.component';
 import { Node, Edge, Cluster } from '../../graph/graph.interface';
 import { CourseService } from '../../core/services/course/course.service';
 import { InputTextModule } from 'primeng/inputtext';
+import { filter } from 'd3';
+import { uid } from '../../core/utils/unique-id';
 
 /**
  * The course view page component
@@ -73,7 +75,9 @@ export class CourseViewPageComponent {
 
     suggestedNodes: any[] = [];
 
-    showPreReqs: boolean = true;
+    showPreReqs: boolean = false;
+
+    showComplete: boolean = true;
 
     chips: any[] = ["option1", "option2"];
     selectedChips: any;
@@ -89,7 +93,7 @@ export class CourseViewPageComponent {
         // On page load get the course information (id)
         // will need to be a URL parameter probably
         // TODO: Get the Course ID from another source (maybe route param, maybe a service?)
-        this.courseService.getNodes("68782d8a-8072-4d57-95bd-4b34b98bbe16").subscribe((data) => {
+        this.courseService.getNodes("70a04a98-3ae8-4507-93a0-10ce5e51a61f").subscribe((data) => {
             this.nodes = [];
             this.edges = [];
             this.clusters = [];
@@ -109,6 +113,7 @@ export class CourseViewPageComponent {
                 const newEdges: Edge[] = [];
                 element.parent_nodes.forEach((parent: any) => {
                     newEdges.push({
+                        id: uid(),
                         source: parent.id,
                         target: element.id,
                         color: "var(--text-color)"
@@ -116,6 +121,8 @@ export class CourseViewPageComponent {
                 });
                 this.edges = [...this.edges, ...newEdges];
             });
+
+            this.highlightPreRequisites(this.nodes[18]);
         });
     }
 
@@ -143,7 +150,63 @@ export class CourseViewPageComponent {
 
     //#endregion Filtering & Searching Methods
 
+
+    //#region Node Highlighting
+
+    highlightCompleted = (): void => {
+        //this.nodes.forEach((node)  =>  {
+        //    node.color = node.complete ? "var(--green-700)" : "var(--text-color)";
+        //});
+
+        //this.edges.forEach((edge) =>  {
+        //    const source = this.nodes.find(node => node.id == edge.source);
+        //    if (source == undefined)  { return; }
+        //    edge.color = source.complete ? "var(--green-700)" : "var(--text-color)";
+        //});
+    }
+
+    highlightPreRequisites = (selectedNode: Node): void => {
+        const preReqs: string[] = this.getPreRequisites(selectedNode);
+        this.setNodeColor(preReqs, "var(--yellow-500)");
+
+        // Grab the edges connecting the pre-reqs and the selectedNode, then color them
+        const filteredEdges = this.edges.filter(edge => preReqs.includes(edge.source) && (preReqs.includes(edge.target) || edge.target == selectedNode.id))
+        this.setEdgeColor(filteredEdges.map(edge => edge.id!), "var(--yellow-500)");
+    }
+
+    //#endregion Node Highlighting
+
     //#region Helper Functions
+
+    /**
+     * Gets a list of all pre-requisites of a node (as an array of node ids).
+     * 
+     * @param sourceNode 
+     * @returns 
+     */
+    getPreRequisites = (sourceNode: Node): string[] => {
+        // Does BFS in reverse in order to get all nodes before the source node. 
+        const preReqs: string[] = [];
+        const nodesToCheck: Set<string> = new Set([sourceNode.id]);
+        const checkedNodes: Set<string> = new Set();
+
+        while (nodesToCheck.size > 0) {
+            const currentNodeId = nodesToCheck.values().next().value; // Get the first value in the set
+            nodesToCheck.delete(currentNodeId); // Remove the node from the set
+            checkedNodes.add(currentNodeId); // Mark the node as visited
+
+            const edgesToCheck = this.edges.filter((edge) => edge.target === currentNodeId);
+            for (let i = 0; i < edgesToCheck.length; i++) {
+                const sourceNodeId = edgesToCheck[i].source;
+                if (!checkedNodes.has(sourceNodeId) && !nodesToCheck.has(sourceNodeId)) {
+                    nodesToCheck.add(sourceNodeId);
+                    preReqs.push(sourceNodeId);
+                }
+            }
+        }
+
+        return preReqs;
+    }
 
     /**
      * Set color of all given nodes with matching IDs to the given color string.
@@ -151,15 +214,16 @@ export class CourseViewPageComponent {
      * @param {string[]} nodeIds list of IDs of nodes to update
      * @param {string} color the new color to use for all these nodes
      */
-    setNodeColor(nodeIds: string[], color: string) {
-        nodeIds.forEach(nodeId => {
-            let updatedNodeIndex = this.nodes.findIndex(element => element.id === nodeId);
-            if (updatedNodeIndex !== -1) {
-                const newNode = { ...this.nodes[updatedNodeIndex], color: color };
-                this.nodes.splice(updatedNodeIndex, 1, newNode);
+    setNodeColor = (nodeIds: string[], color: string): void => {
+        const updatedNodes = this.nodes.map(node => {
+            if (!node.id) { return node; }
+
+            if (nodeIds.includes(node.id)) {
+                return { ...node, color: color };
             }
+            return node;
         });
-        this.nodes = [...this.nodes]; // makes Angular pick up all changes!
+        this.nodes = updatedNodes;
     }
 
     /**
@@ -168,16 +232,17 @@ export class CourseViewPageComponent {
      * @param {string[]} edgeIds list of IDs of edges to update
      * @param {string} color the new color to use for all these edges
      */
-    setEdgeColor(edgeIds: string[], color: string) {
-        edgeIds.forEach(edgeId => {
-            let updatedEdgeIndex = this.edges.findIndex(element => element.id === edgeId);
-            if (updatedEdgeIndex !== -1) {
-                console.log(this.edges[updatedEdgeIndex]);
-                const newEdge = { ...this.edges[updatedEdgeIndex], color: color };
-                this.edges.splice(updatedEdgeIndex, 1, newEdge);
+    setEdgeColor = (edgeIds: string[], color: string): void => {
+        console.log(edgeIds);
+        const updatedEdges = this.edges.map(edge => {
+            if (!edge.id) { return edge; }
+
+            if (edgeIds.includes(edge.id)) {
+                return { ...edge, color: color };
             }
+            return edge;
         });
-        this.edges = [...this.edges]; // makes Angular pick up all changes!
+        this.edges = updatedEdges;
     }
 
     //#endregion Helper Functions

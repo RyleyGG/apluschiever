@@ -50,6 +50,7 @@
 
 
     <!--Other search/filters, probably based on tags on lessons-->
+    <h1>View Options</h1>
 
     <div style="margin-top: 2em; display: flex; align-items: center;">
       <!--style is a hotfix for centering label-->
@@ -57,6 +58,11 @@
       <label style="margin-left: 0.5em;" for="showPreReqsToggle">Show Pre-requisites</label>
     </div>
 
+    <div style="margin-top: 2em; display: flex; align-items: center;">
+      <!--style is a hotfix for centering label-->
+      <p-inputSwitch [(ngModel)]="showComplete" inputId="showComplteeToggle" height="28px" />
+      <label style="margin-left: 0.5em;" for="showCompleteToggle">Show Completed</label>
+    </div>
+
   </ng-template>
-  <ng-template pTemplate="footer">Footer Content</ng-template>
 </p-sidebar>

@@ -18,3 +18,8 @@
 :host ::ng-deep p-inputswitch>* {
     display: block;
 }
+
+:host ::ng-deep p-multiselect .p-multiselect-trigger {
+    background: var(--primary-color);
+    color: var(--primary-color-text);
+}
