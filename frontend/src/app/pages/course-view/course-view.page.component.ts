@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { AvatarModule } from 'primeng/avatar';
@@ -7,6 +7,7 @@ import { SidebarModule } from 'primeng/sidebar';
 import { TooltipModule } from 'primeng/tooltip';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { ColorPickerModule } from 'primeng/colorpicker';
 import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { MenuItem } from 'primeng/api';
@@ -19,7 +20,6 @@ import { GraphComponent } from '../../graph/graph.component';
 import { Node, Edge, Cluster } from '../../graph/graph.interface';
 import { CourseService } from '../../core/services/course/course.service';
 import { InputTextModule } from 'primeng/inputtext';
-import { filter } from 'd3';
 import { uid } from '../../core/utils/unique-id';
 
 /**
@@ -30,7 +30,7 @@ import { uid } from '../../core/utils/unique-id';
 @Component({
     selector: 'course-view-page',
     standalone: true,
-    imports: [CommonModule, GraphComponent, FormsModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
+    imports: [CommonModule, GraphComponent, FormsModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
     templateUrl: './course-view.page.component.html',
     styleUrl: './course-view.page.component.css'
 })
@@ -82,6 +82,9 @@ export class CourseViewPageComponent {
     chips: any[] = ["option1", "option2"];
     selectedChips: any;
 
+    completeColor: any;
+    preReqColor: any;
+
     //#endregion
 
 
@@ -89,7 +92,7 @@ export class CourseViewPageComponent {
     edges: Edge[] = [];
     clusters: Cluster[] = [];
 
-    constructor(private courseService: CourseService) {
+    constructor(private courseService: CourseService, private elementRef: ElementRef) {
         // On page load get the course information (id)
         // will need to be a URL parameter probably
         // TODO: Get the Course ID from another source (maybe route param, maybe a service?)
@@ -121,9 +124,13 @@ export class CourseViewPageComponent {
                 });
                 this.edges = [...this.edges, ...newEdges];
             });
-
-            this.highlightPreRequisites(this.nodes[18]);
         });
+    }
+
+    // Set default colors as primeNG ones (todo: have this in local storage maybe)
+    ngOnInit() {
+        this.completeColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--green-700");
+        this.preReqColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--yellow-500");
     }
 
     /**
@@ -136,6 +143,7 @@ export class CourseViewPageComponent {
         this.selectedNode = node;
         this.dialogVisible = true;
         this.graphComponent.panToNodeId(node.id);
+        this.updateHighlights();
     }
 
     //#region Filtering & Searching Methods
@@ -151,30 +159,40 @@ export class CourseViewPageComponent {
 
     //#region Node Highlighting
 
-    resetHighlights = (): void => {
+    updateHighlights = (): void => {
         this.setNodeColor(this.nodes.map(node => node.id), "var(--text-color)");
         this.setEdgeColor(this.edges.map(edge => edge.id!), "var(--text-color)");
+
+        this.highlightPreRequisites(this.selectedNode, this.preReqColor);
+        this.highlightCompleted(this.completeColor);
     }
 
-    highlightCompleted = (): void => {
+    highlightCompleted = (color: string): void => {
         //this.nodes.forEach((node)  =>  {
-        //    node.color = node.complete ? "var(--green-700)" : "var(--text-color)";
+        //    node.color = node.complete ? this.completeColor : "var(--text-color)";
         //});
 
         //this.edges.forEach((edge) =>  {
         //    const source = this.nodes.find(node => node.id == edge.source);
         //    if (source == undefined)  { return; }
-        //    edge.color = source.complete ? "var(--green-700)" : "var(--text-color)";
+        //    edge.color = source.complete ? this.completeColor : "var(--text-color)";
         //});
     }
 
-    highlightPreRequisites = (selectedNode: Node): void => {
+    /**
+     * Highlight all the pre-requisites of a given node with the given color.
+     * 
+     * @param selectedNode 
+     * @param color
+     */
+    highlightPreRequisites = (selectedNode: Node, color: string): void => {
+        if (!selectedNode) { return; }
         const preReqs: string[] = this.getPreRequisites(selectedNode);
-        this.setNodeColor(preReqs, "var(--yellow-500)");
+        this.setNodeColor(preReqs, color);
 
         // Grab the edges connecting the pre-reqs and the selectedNode, then color them
         const filteredEdges = this.edges.filter(edge => preReqs.includes(edge.source) && (preReqs.includes(edge.target) || edge.target == selectedNode.id))
-        this.setEdgeColor(filteredEdges.map(edge => edge.id!), "var(--yellow-500)");
+        this.setEdgeColor(filteredEdges.map(edge => edge.id!), color);
     }
 
     //#endregion Node Highlighting
@@ -246,6 +264,5 @@ export class CourseViewPageComponent {
     }
 
     //#endregion Helper Functions
-
 
 }

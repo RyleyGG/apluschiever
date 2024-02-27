@@ -55,13 +55,25 @@
     <div style="margin-top: 2em; display: flex; align-items: center;">
       <!--style is a hotfix for centering label-->
       <p-inputSwitch [(ngModel)]="showPreReqs" inputId="showPreReqsToggle" height="28px" />
-      <label style="margin-left: 0.5em;" for="showPreReqsToggle">Show Pre-requisites</label>
+      <label style="margin-left: 0.5em;" for="showPreReqsToggle">Show Pre-Requisites</label>
     </div>
 
     <div style="margin-top: 2em; display: flex; align-items: center;">
       <!--style is a hotfix for centering label-->
-      <p-inputSwitch [(ngModel)]="showComplete" inputId="showComplteeToggle" height="28px" />
+      <p-inputSwitch [(ngModel)]="showComplete" inputId="showCompleteToggle" height="28px" />
       <label style="margin-left: 0.5em;" for="showCompleteToggle">Show Completed</label>
+    </div>
+
+    <div style="margin-top: 2em; display: flex; align-items: center;">
+      <p-colorPicker [(ngModel)]="completeColor" (onChange)="updateHighlights()"
+        inputId="completeColorPicker"></p-colorPicker>
+      <label style="margin-left: 0.5em;" for="completedColorPicker">Complete Node Color</label>
+    </div>
+
+    <div style="margin-top: 0.5em; display: flex; align-items: center;">
+      <p-colorPicker [(ngModel)]="preReqColor" (onChange)="updateHighlights()"
+        inputId="preReqColorPicker"></p-colorPicker>
+      <label style="margin-left: 0.5em;" for="preReqColorPicker">Pre-Requisite Node Color</label>
     </div>
 
   </ng-template>
