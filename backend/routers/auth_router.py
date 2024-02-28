@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select, Session
 
 from models.db_models import User
@@ -12,8 +13,8 @@ router = APIRouter()
 
 
 @router.post('/sign_in', response_model=SuccessfulUserAuth, response_model_by_alias=False)
-async def attempt_sign_in(signin_obj: SignInInfo, db: Session = Depends(get_session)):
-    existing_user = db.exec(select(User).where(User.email_address == signin_obj.email_address)).first()
+async def attempt_sign_in(signin_obj: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_session)):
+    existing_user = db.exec(select(User).where(User.email_address == signin_obj.username)).first()
 
     if not existing_user or not auth_service.verify_password(signin_obj.password, existing_user.password):
         raise HTTPException(

@@ -11,7 +11,10 @@ from services.config_service import config
 from services.api_utility_service import get_session
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
-oauth_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth_scheme = OAuth2PasswordBearer(
+    tokenUrl="/auth/sign_in",
+    scheme_name="OAuth2_Scheme"
+)
 
 
 def create_token(data: dict, token_lifetime: int):
