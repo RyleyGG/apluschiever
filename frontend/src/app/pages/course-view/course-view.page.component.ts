@@ -8,6 +8,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ColorPickerModule } from 'primeng/colorpicker';
+import { BlockUIModule } from 'primeng/blockui';
 import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { MenuItem } from 'primeng/api';
@@ -17,10 +18,13 @@ import { FormsModule } from '@angular/forms';
 import FuzzySearch from 'fuzzy-search';
 
 import { GraphComponent } from '../../graph/graph.component';
+import { BlockableDiv } from '../../core/components/blockable-div/blockable-div.component';
 import { Node, Edge, Cluster } from '../../graph/graph.interface';
 import { CourseService } from '../../core/services/course/course.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { uid } from '../../core/utils/unique-id';
+
+import { PanelModule } from 'primeng/panel';
 
 /**
  * The course view page component
@@ -30,7 +34,7 @@ import { uid } from '../../core/utils/unique-id';
 @Component({
     selector: 'course-view-page',
     standalone: true,
-    imports: [CommonModule, GraphComponent, FormsModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
+    imports: [CommonModule, GraphComponent, BlockableDiv, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
     templateUrl: './course-view.page.component.html',
     styleUrl: './course-view.page.component.css'
 })
@@ -75,11 +79,10 @@ export class CourseViewPageComponent {
 
     suggestedNodes: any[] = [];
 
-    showPreReqs: boolean = false;
-
+    showPreReqs: boolean = true;
     showComplete: boolean = true;
 
-    chips: any[] = ["option1", "option2"];
+    chips: any[] = ["chip"];
     selectedChips: any;
 
     completeColor: any;
@@ -163,6 +166,9 @@ export class CourseViewPageComponent {
 
     //#region Node Highlighting
 
+    /**
+     * Updates all highlighting for the graph based on parameters
+     */
     updateHighlights = (): void => {
         this.setNodeColor(this.nodes.map(node => node.id), "var(--text-color)");
         this.setEdgeColor(this.edges.map(edge => edge.id!), "var(--text-color)");
@@ -171,7 +177,13 @@ export class CourseViewPageComponent {
         this.highlightCompleted(this.completeColor);
     }
 
+    /**
+     * Highlight all the completed nodes with the given color.
+     * 
+     * @param color 
+     */
     highlightCompleted = (color: string): void => {
+        if (!this.showComplete) { return; }
         // Use filters and maps to get completed node and edge ids
         const completedNodes = this.nodes.filter((node) => node.data.complete == true).map((node) => node.id);
         const completedEdges = this.edges.filter((edge) => completedNodes.includes(edge.source)).map((edge) => edge.id!);
@@ -187,6 +199,7 @@ export class CourseViewPageComponent {
      * @param color
      */
     highlightPreRequisites = (selectedNode: Node, color: string): void => {
+        if (!this.showPreReqs) { return; }
         if (!selectedNode) { return; }
         const preReqs: string[] = this.getPreRequisites(selectedNode);
         this.setNodeColor(preReqs, color);
@@ -194,40 +207,6 @@ export class CourseViewPageComponent {
         // Grab the edges connecting the pre-reqs and the selectedNode, then color them
         const filteredEdges = this.edges.filter(edge => preReqs.includes(edge.source) && (preReqs.includes(edge.target) || edge.target == selectedNode.id))
         this.setEdgeColor(filteredEdges.map(edge => edge.id!), color);
-    }
-
-    //#endregion Node Highlighting
-
-    //#region Helper Functions
-
-    /**
-     * Gets a list of all pre-requisites of a node (as an array of node ids).
-     * 
-     * @param sourceNode 
-     * @returns 
-     */
-    getPreRequisites = (sourceNode: Node): string[] => {
-        // Does BFS in reverse in order to get all nodes before the source node. 
-        const preReqs: string[] = [];
-        const nodesToCheck: Set<string> = new Set([sourceNode.id]);
-        const checkedNodes: Set<string> = new Set();
-
-        while (nodesToCheck.size > 0) {
-            const currentNodeId = nodesToCheck.values().next().value; // Get the first value in the set
-            nodesToCheck.delete(currentNodeId); // Remove the node from the set
-            checkedNodes.add(currentNodeId); // Mark the node as visited
-
-            const edgesToCheck = this.edges.filter((edge) => edge.target === currentNodeId);
-            for (let i = 0; i < edgesToCheck.length; i++) {
-                const sourceNodeId = edgesToCheck[i].source;
-                if (!checkedNodes.has(sourceNodeId) && !nodesToCheck.has(sourceNodeId)) {
-                    nodesToCheck.add(sourceNodeId);
-                    preReqs.push(sourceNodeId);
-                }
-            }
-        }
-
-        return preReqs;
     }
 
     /**
@@ -262,6 +241,46 @@ export class CourseViewPageComponent {
             }
             return edge;
         });
+    }
+
+    //#endregion Node Highlighting
+
+    //#region Helper Functions
+
+    preRequisitesSatisfied = (sourceNode: Node): boolean => {
+        const preReqs: string[] = this.getPreRequisites(sourceNode);
+        // Filter for all pre-req nodes that are not complete, if we get exactly 0 then we are satisfied.
+        return this.nodes.filter((node) => preReqs.includes(node.id) && !node.data.complete).length == 0;
+    }
+
+    /**
+     * Gets a list of all pre-requisites of a node (as an array of node ids).
+     * 
+     * @param sourceNode 
+     * @returns 
+     */
+    getPreRequisites = (sourceNode: Node): string[] => {
+        // Does BFS in reverse in order to get all nodes before the source node. 
+        const preReqs: string[] = [];
+        const nodesToCheck: Set<string> = new Set([sourceNode.id]);
+        const checkedNodes: Set<string> = new Set();
+
+        while (nodesToCheck.size > 0) {
+            const currentNodeId = nodesToCheck.values().next().value; // Get the first value in the set
+            nodesToCheck.delete(currentNodeId); // Remove the node from the set
+            checkedNodes.add(currentNodeId); // Mark the node as visited
+
+            const edgesToCheck = this.edges.filter((edge) => edge.target === currentNodeId);
+            for (let i = 0; i < edgesToCheck.length; i++) {
+                const sourceNodeId = edgesToCheck[i].source;
+                if (!checkedNodes.has(sourceNodeId) && !nodesToCheck.has(sourceNodeId)) {
+                    nodesToCheck.add(sourceNodeId);
+                    preReqs.push(sourceNodeId);
+                }
+            }
+        }
+
+        return preReqs;
     }
 
     //#endregion Helper Functions

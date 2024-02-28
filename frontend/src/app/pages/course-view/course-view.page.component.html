@@ -15,11 +15,17 @@
     </div>
   </ng-template>
   <p class="m-0">
-    <!--TODO: ADD PROPER DESCRIPTION TEXT HERE!-->
+    <!--TODO: ADD PROPER DESCRIPTION TEXT/tags HERE!-->
   </p>
   <ng-template pTemplate="footer">
-    <p-button icon="pi pi-book" (click)="dialogVisible = false" label="View Lesson" pAutoFocus
-      [autofocus]="true"></p-button>
+    <!--TODO: Have click go to lesson page-->
+    <p-blockUI [target]="lessonButtonWrapper" [blocked]="!preRequisitesSatisfied(selectedNode)">
+      <i class="pi pi-lock" style="font-size: 1.5rem"></i>
+    </p-blockUI>
+    <blockable-div #lessonButtonWrapper [style]="{display: 'inline-block'}">
+      <p-button icon="pi pi-book" (click)="dialogVisible = false" label="View Lesson" pAutoFocus [autofocus]="false"
+        [style]="{margin: '0'}" />
+    </blockable-div>
   </ng-template>
 </p-dialog>
 
@@ -41,7 +47,7 @@
       <label for="searchNodeNameInput">Search By Name</label>
     </span>
 
-    <span class="p-float-label" style="margin-top: 2em;">
+    <span *ngIf="chips.length > 0" class="p-float-label" style="margin-top: 2em;">
       <p-multiSelect [options]="chips" [(ngModel)]="selectedChips" display="chip" [showClear]="true"
         inputId="chipsInput" [style]="{'width':'100%'}"></p-multiSelect>
       <label for="chipsInput">Search By Tags</label>
@@ -54,13 +60,15 @@
 
     <div style="margin-top: 2em; display: flex; align-items: center;">
       <!--style is a hotfix for centering label-->
-      <p-inputSwitch [(ngModel)]="showPreReqs" inputId="showPreReqsToggle" height="28px" />
+      <p-inputSwitch [(ngModel)]="showPreReqs" (onChange)="updateHighlights()" inputId="showPreReqsToggle"
+        height="28px" />
       <label style="margin-left: 0.5em;" for="showPreReqsToggle">Show Pre-Requisites</label>
     </div>
 
     <div style="margin-top: 2em; display: flex; align-items: center;">
       <!--style is a hotfix for centering label-->
-      <p-inputSwitch [(ngModel)]="showComplete" inputId="showCompleteToggle" height="28px" />
+      <p-inputSwitch [(ngModel)]="showComplete" (onChange)="updateHighlights()" inputId="showCompleteToggle"
+        height="28px" />
       <label style="margin-left: 0.5em;" for="showCompleteToggle">Show Completed</label>
     </div>
 
