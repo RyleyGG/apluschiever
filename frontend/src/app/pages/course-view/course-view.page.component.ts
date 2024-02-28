@@ -85,6 +85,10 @@ export class CourseViewPageComponent {
     chips: any[] = ["chip"];
     selectedChips: any;
 
+    contentTypes: any[] = ["video", "text", "quiz"];
+    selectedContentTypes: any;
+
+    searchColor: any;
     completeColor: any;
     preReqColor: any;
 
@@ -137,7 +141,8 @@ export class CourseViewPageComponent {
     // Set default colors as primeNG ones (todo: have this in local storage maybe)
     ngOnInit() {
         this.completeColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--green-700");
-        this.preReqColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--yellow-500");
+        this.preReqColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--yellow-700");
+        this.searchColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--indigo-700");
     }
 
     /**
@@ -175,6 +180,7 @@ export class CourseViewPageComponent {
 
         this.highlightPreRequisites(this.selectedNode, this.preReqColor);
         this.highlightCompleted(this.completeColor);
+        // this.highlightSearchResults(this.searchColor);
     }
 
     /**

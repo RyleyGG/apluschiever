@@ -53,9 +53,13 @@
       <label for="chipsInput">Search By Tags</label>
     </span>
 
+    <span class="p-float-label" style="margin-top: 2em;">
+      <p-multiSelect [options]="contentTypes" [(ngModel)]="selectedContentTypes" display="chip" [showClear]="true"
+        inputId="contentTypeInput" [style]="{'width':'100%'}"></p-multiSelect>
+      <label for="contentTypeInput">Search By Content Type</label>
+    </span>
 
-
-    <!--Other search/filters, probably based on tags on lessons-->
+    <!--Add a search for content type for a lesson-->
     <h1>View Options</h1>
 
     <div style="margin-top: 2em; display: flex; align-items: center;">
@@ -65,23 +69,29 @@
       <label style="margin-left: 0.5em;" for="showPreReqsToggle">Show Pre-Requisites</label>
     </div>
 
-    <div style="margin-top: 2em; display: flex; align-items: center;">
-      <!--style is a hotfix for centering label-->
+    <div style="margin-top: 0.5em; display: flex; align-items: center;">
+      <!--style of below is a hotfix for centering label-->
       <p-inputSwitch [(ngModel)]="showComplete" (onChange)="updateHighlights()" inputId="showCompleteToggle"
         height="28px" />
       <label style="margin-left: 0.5em;" for="showCompleteToggle">Show Completed</label>
     </div>
 
     <div style="margin-top: 2em; display: flex; align-items: center;">
-      <p-colorPicker [(ngModel)]="completeColor" (onChange)="updateHighlights()"
-        inputId="completeColorPicker"></p-colorPicker>
-      <label style="margin-left: 0.5em;" for="completedColorPicker">Complete Node Color</label>
+      <p-colorPicker [(ngModel)]="searchColor" (onChange)="updateHighlights()"
+        inputId="searchColorPicker"></p-colorPicker>
+      <label style="margin-left: 0.5em;" for="searchColorPicker">Search Node Results Color</label>
     </div>
 
     <div style="margin-top: 0.5em; display: flex; align-items: center;">
       <p-colorPicker [(ngModel)]="preReqColor" (onChange)="updateHighlights()"
         inputId="preReqColorPicker"></p-colorPicker>
       <label style="margin-left: 0.5em;" for="preReqColorPicker">Pre-Requisite Node Color</label>
+    </div>
+
+    <div style="margin-top: 0.5em; display: flex; align-items: center;">
+      <p-colorPicker [(ngModel)]="completeColor" (onChange)="updateHighlights()"
+        inputId="completeColorPicker"></p-colorPicker>
+      <label style="margin-left: 0.5em;" for="completeColorPicker">Complete Node Color</label>
     </div>
 
   </ng-template>
