@@ -106,7 +106,10 @@ export class CourseViewPageComponent {
                 const newNode = {
                     id: element.id,
                     label: element.title,
-                    color: "var(--text-color)"
+                    color: "var(--text-color)",
+                    data: {
+                        complete: element.complete
+                    }
                 }
                 this.nodes = [...this.nodes, newNode];
             });
@@ -124,6 +127,7 @@ export class CourseViewPageComponent {
                 });
                 this.edges = [...this.edges, ...newEdges];
             });
+            this.updateHighlights();
         });
     }
 
@@ -168,15 +172,12 @@ export class CourseViewPageComponent {
     }
 
     highlightCompleted = (color: string): void => {
-        //this.nodes.forEach((node)  =>  {
-        //    node.color = node.complete ? this.completeColor : "var(--text-color)";
-        //});
+        // Use filters and maps to get completed node and edge ids
+        const completedNodes = this.nodes.filter((node) => node.data.complete == true).map((node) => node.id);
+        const completedEdges = this.edges.filter((edge) => completedNodes.includes(edge.source)).map((edge) => edge.id!);
 
-        //this.edges.forEach((edge) =>  {
-        //    const source = this.nodes.find(node => node.id == edge.source);
-        //    if (source == undefined)  { return; }
-        //    edge.color = source.complete ? this.completeColor : "var(--text-color)";
-        //});
+        this.setNodeColor(completedNodes, color);
+        this.setEdgeColor(completedEdges, color);
     }
 
     /**

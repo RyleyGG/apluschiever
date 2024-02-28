@@ -61,15 +61,12 @@ class Node(SQLModel, table=True):
 
 
 # DTO models that have to be defined here because they rely on Node and therefore must init after
-class NodeGraphView(BaseModel):
-    node_id: str
-    parent_nodes: Optional[List[Node]] = []
-
-
 class NodeOverview(BaseModel):
     id: uuid.UUID
     title: str
     parent_nodes: List["Node"]
+    complete: bool
+    tags: List[str]
 
 
 class Course(SQLModel, table=True):

@@ -43,5 +43,6 @@ async def get_node_overview(course_id: str, db: Session = Depends(get_session)):
     course_node_ids = [str(node.id) for node in cur_course.nodes]
     course_nodes = db.exec(select(Node).where(Node.id.in_(course_node_ids))).all()
 
-    node_overview = [NodeOverview(id=node.id, title=node.title, parent_nodes=node.parents) for node in course_nodes]
+    # TODO: Add complete and tags arrays properly
+    node_overview = [NodeOverview(id=node.id, title=node.title, parent_nodes=node.parents, complete=True, tags=[]) for node in course_nodes]
     return node_overview
