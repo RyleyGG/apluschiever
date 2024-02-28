@@ -57,7 +57,11 @@ export class OAuth2Service {
         this.localStorageService.delete('access_token');
         this.localStorageService.delete('refresh_token');
 
-        return this.httpClient.post<SuccessfulUserAuth>(this.REST_API_SERVER + "auth/sign_in", signInInfo).pipe(
+        let body = new FormData();
+        body.append('username', signInInfo.username);
+        body.append('password', signInInfo.password);
+
+        return this.httpClient.post<SuccessfulUserAuth>(this.REST_API_SERVER + "auth/sign_in", body).pipe(
             take(1),
             map((res: SuccessfulUserAuth) => {
                 this.localStorageService.set('access_token', res.access_token);

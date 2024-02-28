@@ -1,18 +1,20 @@
 .page-content {
-    width: 100%;
-    min-height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem;
-    box-sizing: inherit;
-    position: relative;
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  box-sizing: inherit;
+  position: relative;
 }
+
 .p-card {
-    width: 560px;
-    align-items: center;
-    justify-content: center;
+  width: 560px;
+  align-items: center;
+  justify-content: center;
 }
+
 .field {
     display: grid;
     gap: 1rem;

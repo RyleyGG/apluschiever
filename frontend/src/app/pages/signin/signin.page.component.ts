@@ -7,7 +7,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { SignInInfo } from '../../core/models/auth.interface';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -30,19 +30,22 @@ export class SignInPageComponent {
     signinForm = this.fb.group({
         email_address: ['', [Validators.required, Validators.email]],
         password: ['', Validators.required]
-      })
+    })
     title = 'Sign-In Page'
 
     constructor(private router: Router, private fb: FormBuilder, private oauthService: OAuth2Service) { }
 
     get email_address() {
         return this.signinForm.controls['email_address'];
-      }
-      get password() { return this.signinForm.controls['password']; }
+    }
+    get password() { return this.signinForm.controls['password']; }
 
     public signin(): void {
-        const data = this.signinForm.value;
-        this.oauthService.sign_in( data as SignInInfo ).subscribe((res: SuccessfulUserAuth) => {
+        const data = {
+            username: this.signinForm.value.email_address,
+            password: this.signinForm.value.password
+        };
+        this.oauthService.sign_in(data as SignInInfo).subscribe((res: SuccessfulUserAuth) => {
             console.log(res);
             this.router.navigate(['/dashboard']);
             window.location.reload();

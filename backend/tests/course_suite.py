@@ -17,7 +17,7 @@ def test_add_courses_and_nodes(db: Session, client: TestClient):
 
     test_nodes = []
     for i in range(0, 5):
-        new_node = Node(title=f'Node {i}', short_description=f'Node {i}')
+        new_node = Node(title=f'Node {i}', short_description=f'Node {i}', course_id=test_course_4.id)
         if i % 2 == 0:
             new_node.videos = [Video(title='wasd', embed_link='wasd', video_source='wasd')]
         else:
@@ -36,37 +36,12 @@ def test_add_courses_and_nodes(db: Session, client: TestClient):
     assert len(db.exec(select(Course)).all()) == 4
     assert len(db.exec(select(User).where(User.id == config._tests_user_id)).first().owned_courses) == 4
 
-    db.delete(test_course_4)
+    db.delete(test_course_3)
     db.commit()
     assert len(db.exec(select(Course)).all()) == 3
     assert len(db.exec(select(User).where(User.id == config._tests_user_id)).first().owned_courses) == 3
 
     assert len(db.exec(select(Node)).all()) == 5
-
-
-def test_node_course_connection(db: Session, client: TestClient):
-    test_course_1 = db.exec(select(Course).where(Course.title == 'Test 1')).first()
-    test_course_2 = db.exec(select(Course).where(Course.title == 'Test 2')).first()
-    assert test_course_1.nodes == []
-
-    test_node_1 = db.exec(select(Node).where(Node.title == 'Node 1')).first()
-    test_node_2 = db.exec(select(Node).where(Node.title == 'Node 2')).first()
-    test_node_3 = db.exec(select(Node).where(Node.title == 'Node 3')).first()
-    assert test_node_1.courses == []
-
-    test_course_1.nodes = [test_node_1]
-    test_course_2.nodes = [test_node_1, test_node_2, test_node_3]
-    db.add(test_course_1)
-    db.add(test_course_2)
-    db.refresh(test_course_1)
-    db.refresh(test_course_2)
-    db.refresh(test_node_1)
-    db.refresh(test_course_2)
-
-    assert len(test_course_1.nodes) == 1
-    assert len(test_course_2.nodes) == 3
-
-    assert len(test_node_1.courses) == 2
 
 
 def test_user_node_progress(db: Session, client: TestClient):
@@ -76,7 +51,7 @@ def test_user_node_progress(db: Session, client: TestClient):
     cur_node_count = len(db.exec(select(Node)).all())
     cur_courses = db.exec(select(Course)).all()
     for i in range(0, cur_node_count + 10000):
-        new_node = Node(title=f'Node {i}', short_description=f'Node {i}', courses=[random.choice(cur_courses)])
+        new_node = Node(title=f'Node {i}', short_description=f'Node {i}', course_id=random.choice(cur_courses).id)
 
         new_node.videos = []
         new_node.markdown_files = []

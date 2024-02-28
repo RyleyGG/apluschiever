@@ -82,7 +82,7 @@ export class GraphComponent {
      * Send a value to this in order to cause the graph to zoom to fit. 
      * Note, the value must be a new value, different from the current one.
      */
-    public zoomToFitTrigger = input<any>();
+    public zoomToFitTrigger = signal<any>(null);
 
     // Graph Outputs
     @Output() zoomLevelUpdated = new EventEmitter<number>();    // Emits when the zoom level is changed. 
@@ -133,6 +133,11 @@ export class GraphComponent {
     public oldNodes: Set<string> = new Set();
     private oldClusters: Set<string> = new Set();
     private _oldEdges: Edge[] = [];
+
+    /**
+     * Used to store the width and height of the graph for zoomToFit purposes since the graph width/height can be way more than the DOM width and height.
+     */
+    private graphDims: any = { width: 0, height: 0 };
 
     /**
      * Using this signal to look for when to update the rendered graph. 
@@ -202,7 +207,9 @@ export class GraphComponent {
         // Setup the effect to automatically zoom the graph to fit viewport when zoomToFitTrigger is called
         effect(() => {
             this.zoomToFitTrigger();
-            untracked(() => this.zoomToFit());
+            untracked(() => {
+                this.zoomToFit();
+            });
         });
 
         // Setup the effect for pan offset functionality
@@ -354,6 +361,7 @@ export class GraphComponent {
         // We apply the node dimensions if applicable.
         if (this.graph.nodes.length === 0 && this.graph.clusters?.length === 0) { return; }
         this.applyNodeDimensions();
+        this.updateGraphDimensions();
     }
 
     /**
@@ -594,11 +602,15 @@ export class GraphComponent {
      * 
      * @param {string} id the id of the node to pan to.
      */
-    private panToNodeId(id: string): void {
+    public panToNodeId(id: string): void {
         const node = this.graph.nodes.find((node: Node) => node.id === id);
         if (!node || !node.position) { return; }
 
         this.panTo(node.position?.x, node.position?.y);
+    }
+
+    public panToCenter(): void {
+        this.panTo(this.graphDims.width / 2, this.graphDims.height / 2);
     }
 
     //#endregion Pan Methods
@@ -676,16 +688,14 @@ export class GraphComponent {
     /**
      * Zoom to center the graph in the view.
      */
-    private zoomToFit(): void {
-        const svg = this.el.nativeElement.querySelector('svg');
-        const graphGroup = svg.querySelector('g.graph');
-
-        const heightZoom = svg.getBoundingClientRect().height / graphGroup.getBoundingClientRect().height;
-        const widthZoom = svg.getBoundingClientRect().width / graphGroup.getBoundingClientRect().width;
+    public zoomToFit(): void {
+        const heightZoom = this.height() / this.graphDims.height;
+        const widthZoom = this.width() / this.graphDims.width;
         let newZoomlevel = Math.min(heightZoom, widthZoom, 1);
 
         newZoomlevel = this.constrain(this.minZoomLevel(), newZoomlevel, this.maxZoomLevel());
 
+        this.zoomLevel.set(newZoomlevel);
         this.zoomTo(newZoomlevel);
     }
 
@@ -775,6 +785,25 @@ export class GraphComponent {
         }
 
         return null;
+    }
+
+    private updateGraphDimensions(): void {
+        let minX = +Infinity;
+        let maxX = -Infinity;
+        let minY = +Infinity;
+        let maxY = -Infinity;
+
+        for (let i = 0; i < this.graph.nodes.length; i++) {
+            const node = this.graph.nodes[i];
+
+            minX = node.position!.x < minX ? node.position!.x : minX;
+            minY = node.position!.y < minY ? node.position!.y : minY;
+            maxX = node.position!.x + node.dimension!.width > maxX ? node.position!.x + node.dimension!.width : maxX;
+            maxY = node.position!.y + node.dimension!.height > maxY ? node.position!.y + node.dimension!.height : maxY;
+        }
+
+        this.graphDims.width = (maxX - minX) + 100;
+        this.graphDims.height = (maxY - minY) + 100;
     }
 
     /**
