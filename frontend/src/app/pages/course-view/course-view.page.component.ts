@@ -40,7 +40,7 @@ import { PanelModule } from 'primeng/panel';
 })
 export class CourseViewPageComponent {
     @ViewChild('graphComponent') graphComponent!: GraphComponent;
-    selectedNode!: Node;
+    selectedNode!: Node; // the node that is in the node dialog popup
 
     /**
      * Controls visibility of the node information dialog
@@ -76,6 +76,9 @@ export class CourseViewPageComponent {
     ];
 
     //#region Filtering & Searching Properties
+
+    selectedNodes: Node[] = [];
+    selectAll: boolean = false;
 
     suggestedNodes: any[] = [];
 
@@ -138,7 +141,7 @@ export class CourseViewPageComponent {
         });
     }
 
-    // Set default colors as primeNG ones (todo: have this in local storage maybe)
+    // Set default colors as primeNG ones (todo: have this set in local storage)
     ngOnInit() {
         this.completeColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--green-700");
         this.preReqColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--yellow-700");
@@ -175,13 +178,17 @@ export class CourseViewPageComponent {
      * Updates all highlighting for the graph based on parameters
      */
     updateHighlights = (): void => {
+        console.log(this.selectedNodes);
         this.setNodeColor(this.nodes.map(node => node.id), "var(--text-color)");
         this.setEdgeColor(this.edges.map(edge => edge.id!), "var(--text-color)");
 
         this.highlightPreRequisites(this.selectedNode, this.preReqColor);
         this.highlightCompleted(this.completeColor);
-        // this.highlightSearchResults(this.searchColor);
+        this.highlightSearched(this.searchColor);
     }
+
+    highlightSearched = (color: string): void => this.setNodeColor(this.selectedNodes.map((node) => node.id), color);
+
 
     /**
      * Highlight all the completed nodes with the given color.
@@ -253,6 +260,12 @@ export class CourseViewPageComponent {
 
     //#region Helper Functions
 
+    /**
+     * Determine if the pre-requisites for a node are satisfied or not.
+     * 
+     * @param sourceNode 
+     * @returns 
+     */
     preRequisitesSatisfied = (sourceNode: Node): boolean => {
         const preReqs: string[] = this.getPreRequisites(sourceNode);
         // Filter for all pre-req nodes that are not complete, if we get exactly 0 then we are satisfied.
@@ -263,7 +276,7 @@ export class CourseViewPageComponent {
      * Gets a list of all pre-requisites of a node (as an array of node ids).
      * 
      * @param sourceNode 
-     * @returns 
+     * @returns the node ids for the pre-requisites of the node.
      */
     getPreRequisites = (sourceNode: Node): string[] => {
         // Does BFS in reverse in order to get all nodes before the source node. 
