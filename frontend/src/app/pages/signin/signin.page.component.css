@@ -16,7 +16,6 @@
 }
 
 .field {
-<<<<<<< HEAD
     display: grid;
     gap: 1rem;
     font-size: large;
@@ -56,45 +55,4 @@
   color: red;
   font-weight: 500;
   margin-bottom: 10px;
-=======
-  display: grid;
-  gap: 1rem;
-  font-size: large;
-}
-
-label {
-  margin-bottom: -8px;
-}
-
-small {
-  margin-top: -28px;
-}
-
-input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 16px;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.field input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-.navbarTitle {
-  position: fixed;
-  top: 0;
-  margin-top: 24px;
-  left: 44%;
-  z-index: 9999;
-  font-weight: 500;
-  font-size: 2.225rem;
-  color: var(--primary-color-text);
->>>>>>> c5681053f79f1539e80a71f0a574fc0a6f276646
 }

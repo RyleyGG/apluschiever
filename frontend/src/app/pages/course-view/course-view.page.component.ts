@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { AvatarModule } from 'primeng/avatar';
@@ -7,6 +7,7 @@ import { SidebarModule } from 'primeng/sidebar';
 import { TooltipModule } from 'primeng/tooltip';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { MenuItem } from 'primeng/api';
+import { ActivatedRoute } from '@angular/router';
 
 import { GraphComponent } from '../../graph/graph.component';
 import { Node, Edge, Cluster } from '../../graph/graph.interface';
@@ -68,11 +69,14 @@ export class CourseViewPageComponent {
     edges: Edge[] = [];
     clusters: Cluster[] = [];
 
-    constructor(private courseService: CourseService) {
+    courseid: string | any;
+    constructor(private courseService: CourseService, private route : ActivatedRoute) {
+        this.courseid = this.route.snapshot.paramMap.get('id');
+        //this.courseid = this.route.snapshot.paramMap.get('ID');
         // On page load get the course information (id)
         // will need to be a URL parameter probably
         // TODO: Get the Course ID from another source (maybe route param, maybe a service?)
-        this.courseService.getNodes("68782d8a-8072-4d57-95bd-4b34b98bbe16").subscribe((data) => {
+        this.courseService.getNodes(this.courseid).subscribe((data) => {
             this.nodes = [];
             this.edges = [];
             this.clusters = [];

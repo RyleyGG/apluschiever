@@ -44,4 +44,22 @@ export class CourseService {
         );
     }
 
+    /**
+     * Get all courses
+     * @returns
+     */
+    getCourses() {
+        return this.httpClient.post<any>(this.REST_API_SERVER + `course/search`, {}).pipe(
+            take(1),
+            map((res: any) => {
+                console.log(res);
+                return res;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                // Something went really wrong
+                return throwError(() => error);
+            })
+        );
+    }
+
 }

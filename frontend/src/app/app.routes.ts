@@ -17,7 +17,7 @@ export const routes: Routes = [
 
     // Routes for viewing content
     { path: "dashboard", component: DashboardComponent, canActivate: [signedInGuard] },
-    { path: "viewer", component: CourseViewPageComponent, canActivate: [signedInGuard] },
+    { path: "viewer/:id", component: CourseViewPageComponent, canActivate: [signedInGuard] },
 
     // General
     { path: "landing", component: LandingPageComponent },
