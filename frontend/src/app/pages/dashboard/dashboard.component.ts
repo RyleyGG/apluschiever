@@ -57,6 +57,10 @@ export class DashboardComponent {
       });
     });
   }
-  
+  addCourse(courseid: string) {
+    this.userService.addCourse(courseid).subscribe((data) => {
+      window.location.reload();
+    });
+  }
   
 }
