@@ -26,6 +26,7 @@ import { of } from 'rxjs';
     styleUrl: './signin.page.component.css'
 })
 export class SignInPageComponent {
+    errorMessage = ""
     signinForm = this.fb.group({
         email_address: ['', [Validators.required, Validators.email]],
         password: ['', Validators.required]
@@ -48,7 +49,11 @@ export class SignInPageComponent {
             console.log(res);
             this.router.navigate(['/dashboard']);
             window.location.reload();
-        }
+        },
+        (error) => {
+            //errors to account for -> wrong email or password
+            this.errorMessage = 'Please check that your email and password are correct.';
+          }
         );
     }
 }

@@ -27,7 +27,7 @@ import { SignInInfo } from '../../core/models/auth.interface';
 })
 export class SignUpPageComponent {
     title = 'Sign-Up Page'
-
+    errorMessage = ""
     registerForm = this.fb.group({
         email_address: ['', [Validators.required, Validators.email]],
         first_name: ['', [Validators.required, Validators.pattern(/^[a-zA-Z]+(?: [a-zA-Z]+)*$/)]],
@@ -67,6 +67,14 @@ export class SignUpPageComponent {
                 this.router.navigate(['/dashboard']);
                 window.location.reload();
             })
+        },
+        (error) => {
+          //errors to account for -> email already exists
+          if (error.status === 400) {
+            this.errorMessage = 'This email address is already in use.';
+          } else {
+            console.error('Other error:', error);
+          }
         });
     }
 }
