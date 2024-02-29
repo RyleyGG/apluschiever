@@ -2,7 +2,19 @@
 <div class="page-content">
     <div style="width: 75%;">
         <h1>These are all of the courses</h1>
-    <p-carousel [value]="courses" [numVisible]="3" [numScroll]="3" [responsiveOptions]="responsiveOptions">
+    <p-carousel [value]="allCourses" [numVisible]="3" [numScroll]="3" [responsiveOptions]="responsiveOptions">
+        <ng-template let-course pTemplate="item">
+            <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
+                <div>
+                    <h4 class="mb-1">{{ course.title }}</h4>
+                    <h6 class="mt-0 mb-3">{{ course.id }}</h6>
+                    <a [routerLink]="['/viewer', course.id]">{{ course.title }}</a>
+                </div>
+            </div>
+        </ng-template>
+    </p-carousel>
+    <h1>These are this user's courses</h1>
+    <p-carousel [value]="userCourses" [numVisible]="3" [numScroll]="3" [responsiveOptions]="responsiveOptions">
         <ng-template let-course pTemplate="item">
             <div class="border-1 surface-border border-round m-2 text-center py-5 px-3">
                 <div>
