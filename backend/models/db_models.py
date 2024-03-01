@@ -10,6 +10,12 @@ from models.dto_models import UserType
 from services.api_utility_service import pydantic_column_type
 
 
+class CourseStudentLink(SQLModel, table=True):
+    __tablename__ = 'CourseStudentLink'
+    student_id: uuid.UUID = Field(foreign_key="User.id", primary_key=True)
+    course_id: uuid.UUID = Field(foreign_key="Course.id", primary_key=True)
+
+
 class User(SQLModel, table=True):
     __tablename__ = 'User'
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
@@ -19,7 +25,7 @@ class User(SQLModel, table=True):
     password: str
     user_type: UserType
     owned_courses: Optional[List["Course"]] = Relationship(back_populates='course_owner')
-    enrolled_courses: Optional[List["Course"]] = Relationship(back_populates='enrolled_students')
+    enrolled_courses: Optional[List["Course"]] = Relationship(back_populates='enrolled_students', link_model=CourseStudentLink)
     node_progress: Dict[uuid.UUID, List[uuid.UUID]] = Field(sa_column=Column(JSON), default={})  # Key-value of {Node ID: [Completed Content IDs]}
 
 
@@ -80,5 +86,5 @@ class Course(SQLModel, table=True):
     short_description: Optional[str]
     course_owner_id: uuid.UUID = Field(foreign_key='User.id')
     course_owner: User = Relationship(back_populates='owned_courses')
-    enrolled_students: Optional[List[User]] = Relationship(back_populates='enrolled_courses')
+    enrolled_students: Optional[List[User]] = Relationship(back_populates='enrolled_courses', link_model=CourseStudentLink)
     nodes: Optional[List[Node]] = Relationship(back_populates="course")
