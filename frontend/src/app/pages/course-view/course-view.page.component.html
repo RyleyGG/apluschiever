@@ -14,8 +14,12 @@
       <span class="dialog-header-text">{{selectedNode.label}}</span>
     </div>
   </ng-template>
+  <div style="display: flex; align-items: center; gap: 0.5em;">
+    <p-tag *ngFor="let tag of selectedNode?.data.tags" value="{{tag}}"></p-tag>
+  </div>
   <p class="m-0">
     <!--TODO: ADD PROPER DESCRIPTION TEXT/tags HERE!-->
+    {{selectedNode?.data?.short_description}}
   </p>
   <ng-template pTemplate="footer">
     <!--TODO: Have click go to lesson page-->
@@ -42,21 +46,24 @@
 
     <span class="p-float-label" style="margin-top: 2em;">
       <p-multiSelect [options]="nodes" [(ngModel)]="selectedNodes" [selectAll]="selectAll"
-        (onChange)="updateHighlights()" (onClear)="updateHighlights()" (onSelectAllChange)="updateHighlights()"
-        display="chip" inputId="searchByNameInput" [filter]="true" dataKey="label" [style]="{'width':'100%'}" />
+        (onChange)="updateSelectedNodes(); updateHighlights();" (onClear)="updateSelectedNodes(); updateHighlights();"
+        (onSelectAllChange)="updateSelectedNodes(); updateHighlights();" display="chip" inputId="searchByNameInput"
+        [filter]="true" dataKey="label" [style]="{'width':'100%'}" />
       <label for="searchNodeNameInput">Search By Name</label>
     </span>
 
-    <span *ngIf="chips.length > 0" class="p-float-label" style="margin-top: 2em;">
-      <p-multiSelect [options]="chips" [(ngModel)]="selectedChips" (onChange)="updateHighlights()"
-        (onClear)="updateHighlights()" (onSelectAllChange)="updateHighlights()" [filter]="true" display="chip"
-        inputId="searchByChipsInput" [style]="{'width':'100%'}"></p-multiSelect>
-      <label for="searchByChipsInput">Search By Tags</label>
+    <span *ngIf="tags.length > 0" class="p-float-label" style="margin-top: 2em;">
+      <p-multiSelect [options]="tags" [(ngModel)]="selectedTags" (onChange)="updateSelectedNodes(); updateHighlights();"
+        (onClear)="updateSelectedNodes(); updateHighlights();"
+        (onSelectAllChange)="updateSelectedNodes(); updateHighlights();" [filter]="true" display="chip"
+        inputId="searchByTagsInput" [style]="{'width':'100%'}"></p-multiSelect>
+      <label for="searchByTagsInput">Search By Tags</label>
     </span>
 
     <span class="p-float-label" style="margin-top: 2em;">
-      <p-multiSelect [options]="contentTypes" [(ngModel)]="selectedContentTypes" (onChange)="updateHighlights()"
-        (onClear)="updateHighlights()" (onSelectAllChange)="updateHighlights()" display="chip"
+      <p-multiSelect [options]="contentTypes" [(ngModel)]="selectedContentTypes"
+        (onChange)="updateSelectedNodes(); updateHighlights();" (onClear)="updateSelectedNodes(); updateHighlights();"
+        (onSelectAllChange)="updateSelectedNodes(); updateHighlights();" display="chip"
         inputId="searchByContentTypeInput" [filter]="true" [style]="{'width':'100%'}"></p-multiSelect>
       <label for="searchByContentTypeInput">Search By Content Type</label>
     </span>

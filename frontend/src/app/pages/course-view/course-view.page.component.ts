@@ -9,13 +9,12 @@ import { SpeedDialModule } from 'primeng/speeddial';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { BlockUIModule } from 'primeng/blockui';
-import { AutoCompleteCompleteEvent, AutoCompleteModule } from 'primeng/autocomplete';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { TagModule } from 'primeng/tag';
 import { MenuItem } from 'primeng/api';
 
 import { FormsModule } from '@angular/forms';
-
-import FuzzySearch from 'fuzzy-search';
 
 import { GraphComponent } from '../../graph/graph.component';
 import { BlockableDiv } from '../../core/components/blockable-div/blockable-div.component';
@@ -34,7 +33,7 @@ import { PanelModule } from 'primeng/panel';
 @Component({
     selector: 'course-view-page',
     standalone: true,
-    imports: [CommonModule, GraphComponent, BlockableDiv, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
+    imports: [CommonModule, GraphComponent, BlockableDiv, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
     templateUrl: './course-view.page.component.html',
     styleUrl: './course-view.page.component.css'
 })
@@ -77,19 +76,20 @@ export class CourseViewPageComponent {
 
     //#region Filtering & Searching Properties
 
+    searchResults: Node[] = []; // array of node ids for matched nodes
+
     selectedNodes: Node[] = [];
     selectAll: boolean = false;
 
-    suggestedNodes: any[] = [];
-
-    showPreReqs: boolean = true;
-    showComplete: boolean = true;
-
-    chips: any[] = ["chip"];
-    selectedChips: any;
+    tags: any[] = ["chip"];
+    selectedTags: any[] = [];
 
     contentTypes: any[] = ["video", "text", "quiz"];
-    selectedContentTypes: any;
+    selectedContentTypes: any[] = [];
+
+    // view options
+    showPreReqs: boolean = true;
+    showComplete: boolean = true;
 
     searchColor: any;
     completeColor: any;
@@ -118,7 +118,10 @@ export class CourseViewPageComponent {
                     label: element.title,
                     color: "var(--text-color)",
                     data: {
-                        complete: element.complete
+                        short_description: element.short_description,
+                        complete: element.complete,
+                        tags: [...element.tags, "value", "test"],
+                        content_types: [...element.content_types, "video", "text", "quiz"]
                     }
                 }
                 this.nodes = [...this.nodes, newNode];
@@ -137,6 +140,13 @@ export class CourseViewPageComponent {
                 });
                 this.edges = [...this.edges, ...newEdges];
             });
+
+            // Grab all unique tags
+            this.tags = Array.from(new Set<string>(this.nodes.flatMap((node: any) => node.data.tags)));
+
+            // Grab all unique content types
+            this.contentTypes = Array.from(new Set<string>(this.nodes.flatMap((node: any) => node.data.content_types)));
+
             this.updateHighlights();
         });
     }
@@ -155,18 +165,41 @@ export class CourseViewPageComponent {
      * @param node The node that was clicked in the graph component.
      */
     onNodeClick(node: Node) {
-        this.selectedNode = node;
-        this.dialogVisible = true;
-        this.graphComponent.panToNodeId(node.id);
+        const nodeIndex = this.selectedNodes.findIndex(selectedNode => selectedNode.id === node.id);
+
+        if (nodeIndex !== -1) {
+            this.selectedNodes.splice(nodeIndex, 1);
+        } else {
+            this.selectedNode = node;
+            this.selectedNodes.push(node);
+            this.graphComponent.panToNodeId(node.id);
+        }
+
+        this.dialogVisible = (nodeIndex === -1);
         this.updateHighlights();
     }
 
+
     //#region Filtering & Searching Methods
 
-    getNodeLabels = (event: AutoCompleteCompleteEvent) => {
-        // Uses fuzzy searching to provide suggestions of what the user may be looking for
-        const searcher = new FuzzySearch(this.nodes, ['label'], { caseSensitive: true });
-        this.suggestedNodes = Array.from(searcher.search(event.query));
+    /**
+     * Update the search result nodes based on the filter statuses
+     */
+    updateSelectedNodes = (): void => {
+        // get the search results of the name
+        const nameResults = this.nodes
+            .filter((node) => this.selectedNodes.includes(node));
+
+        // then add on searches by tags
+        const tagResults = this.nodes
+            .filter((node) => this.selectedTags.some((tag: any) => node.data.tags.includes(tag)));
+
+        // then add on searches by content types
+        const contentTypeResults = this.nodes
+            .filter((node) => this.selectedContentTypes.some((contentType: any) => node.data.content_types.includes(contentType)));
+
+        // take the results of the above into one big array (this.searchResults) and remove all duplicates
+        this.searchResults = [...new Set([...nameResults, ...tagResults, ...contentTypeResults])];
     }
 
     //#endregion Filtering & Searching Methods
@@ -178,7 +211,6 @@ export class CourseViewPageComponent {
      * Updates all highlighting for the graph based on parameters
      */
     updateHighlights = (): void => {
-        console.log(this.selectedNodes);
         this.setNodeColor(this.nodes.map(node => node.id), "var(--text-color)");
         this.setEdgeColor(this.edges.map(edge => edge.id!), "var(--text-color)");
 
@@ -187,8 +219,12 @@ export class CourseViewPageComponent {
         this.highlightSearched(this.searchColor);
     }
 
-    highlightSearched = (color: string): void => this.setNodeColor(this.selectedNodes.map((node) => node.id), color);
-
+    /**
+     * Highlights the searched nodes to a given color.
+     * 
+     * @param color 
+     */
+    highlightSearched = (color: string): void => this.setNodeColor(this.searchResults.map((node) => node.id), color);
 
     /**
      * Highlight all the completed nodes with the given color.

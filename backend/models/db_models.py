@@ -64,9 +64,11 @@ class Node(SQLModel, table=True):
 class NodeOverview(BaseModel):
     id: uuid.UUID
     title: str
+    short_description: str
     parent_nodes: List["Node"]
     complete: bool
     tags: List[str]
+    content_types: List[str]
 
 
 class Course(SQLModel, table=True):
