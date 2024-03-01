@@ -7,6 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms'; 
 import { CardModule } from 'primeng/card';
 import { Router } from '@angular/router';
+import { DataViewModule } from 'primeng/dataview';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CourseService } from '../../core/services/course/course.service';
 import { UserService } from '../../core/services/user/user.service';
@@ -18,7 +19,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CheckboxModule, CarouselModule, ButtonModule, ConfirmDialogModule, RouterLink, CardModule],
+  imports: [CheckboxModule, CarouselModule, DataViewModule, ButtonModule, ConfirmDialogModule, RouterLink, CardModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -27,6 +28,7 @@ export class DashboardComponent {
   allCourses: Course[] = [];
   userCourses: Course[] = [];
   responsiveOptions: any[] | undefined;
+  showOptions = false;
   constructor(private courseService: CourseService, private userService: UserService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.responsiveOptions = [
       {

@@ -1,32 +1,36 @@
 <h1>{{title}}</h1>
 <div class="page-content">
-    <div style="width: 75%;">
-        <h1>These are this user's courses</h1>
-        <p-confirmDialog></p-confirmDialog>
-        <p-carousel [value]="userCourses" [numVisible]="3" [numScroll]="3" [responsiveOptions]="responsiveOptions">
-            <ng-template let-course pTemplate="item">
-                <div class="border-1 border-black surface-border border-round m-2 text-center py-5 px-3">
-                    <div [routerLink]="['/viewer', course.id]">
-                        <h4 class="mb-1">{{ course.title }}</h4>
-                        <h6 class="mt-0 mb-3">{{ course.id }}</h6>
+        <div>
+            <p-confirmDialog></p-confirmDialog>
+            <div class="grid" *ngIf="userCourses.length; else noCourses">
+                <ng-template ngFor [ngForOf]="userCourses" let-course>
+                    <div class="classDiv">
+                        <div [routerLink]="['/viewer', course.id]">
+                            <h4>{{ course.title }}</h4>
+                            <h6>{{ course.id }}</h6>
+                        </div>
+                            <p-button type="button" [rounded]="true" icon="pi pi-trash" (click)="confirm(course.id)"></p-button>
                     </div>
-                    <button pButton type="button" icon="pi pi-trash" (click)="confirm(course.id)"></button>
-                </div>
+                </ng-template>
+            </div>
+            <ng-template #noCourses>
+                <h2>You are not currently enrolled in any courses.</h2>
             </ng-template>
-        </p-carousel>
-        <h1>These are all of the courses</h1>
-        <p-carousel [value]="allCourses" [numVisible]="3" [numScroll]="3" [responsiveOptions]="responsiveOptions">
-            <ng-template let-course pTemplate="item">
-                <div class="border-2 surface-border border-round m-2 text-center py-5 px-3">
-                    <div [routerLink]="['/viewer', course.id]">
-                        <h4 class="mb-1">{{ course.title }}</h4>
-                        <h6 class="mt-0 mb-3">{{ course.id }}</h6>
+            
+        </div>
+        <div class="footer">
+            <h1>Suggested Courses</h1>
+            <p-carousel [value]="allCourses" [numVisible]="4" [numScroll]="3" [responsiveOptions]="responsiveOptions">
+                <ng-template let-course pTemplate="item">
+                    <div class="suggested">
+                        <div [routerLink]="['/viewer', course.id]">
+                            <h4>{{ course.title }}</h4>
+                        </div>
+                        <p-button type="button" [rounded]="true" icon="pi pi-plus" (click)="addCourse(course.id)" label="Add"></p-button>
                     </div>
-                    <button pButton type="button" icon="pi pi-plus" (click)="addCourse(course.id)" label="Add"></button>
-                </div>
-            </ng-template>
-        </p-carousel>
-</div>
+                </ng-template>
+            </p-carousel>
+        </div>
 </div>
 
 

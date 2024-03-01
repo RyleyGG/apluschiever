@@ -14,14 +14,12 @@ import { DragDropModule } from 'primeng/dragdrop';
 export class LessonComponent {
   
   drop() {
-    console.log("wjat");
+    
   }
   dragStart(container: string) {
     console.log(container);
   }
-  lessonid: string | any;
   constructor(private route : ActivatedRoute) {
-    this.lessonid = this.route.snapshot.paramMap.get('id');
   }
   title = this.route.snapshot.paramMap.get('id');
 }
