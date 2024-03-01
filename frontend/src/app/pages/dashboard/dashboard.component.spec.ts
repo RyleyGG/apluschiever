@@ -1,6 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { ComponentFixture } from '@angular/core/testing';
+import { routes } from './../../app.routes';
+import { provideRouter } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
 
 describe('DashboardComponent', () => {
@@ -12,7 +16,8 @@ describe('DashboardComponent', () => {
       imports: [DashboardComponent],
       providers: [
         provideHttpClient(),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        provideRouter(routes)
     ]
     })
     .compileComponents();
