@@ -79,7 +79,6 @@ export class CourseViewPageComponent {
     searchResults: Node[] = []; // array of node ids for matched nodes
 
     selectedNodes: Node[] = [];
-    selectAll: boolean = false;
 
     tags: any[] = ["chip"];
     selectedTags: any[] = [];
@@ -165,17 +164,11 @@ export class CourseViewPageComponent {
      * @param node The node that was clicked in the graph component.
      */
     onNodeClick(node: Node) {
-        const nodeIndex = this.selectedNodes.findIndex(selectedNode => selectedNode.id === node.id);
+        this.selectedNode = node;
+        this.graphComponent.panToNodeId(node.id);
+        this.dialogVisible = true;
 
-        if (nodeIndex !== -1) {
-            this.selectedNodes.splice(nodeIndex, 1);
-        } else {
-            this.selectedNode = node;
-            this.selectedNodes.push(node);
-            this.graphComponent.panToNodeId(node.id);
-        }
-
-        this.dialogVisible = (nodeIndex === -1);
+        this.updateSelectedNodes();
         this.updateHighlights();
     }
 
@@ -188,7 +181,7 @@ export class CourseViewPageComponent {
     updateSelectedNodes = (): void => {
         // get the search results of the name
         const nameResults = this.nodes
-            .filter((node) => this.selectedNodes.includes(node));
+            .filter((node) => this.selectedNodes.findIndex(selectedNode => selectedNode.id === node.id) !== -1);
 
         // then add on searches by tags
         const tagResults = this.nodes

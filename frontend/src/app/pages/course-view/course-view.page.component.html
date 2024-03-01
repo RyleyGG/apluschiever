@@ -18,8 +18,7 @@
     <p-tag *ngFor="let tag of selectedNode?.data.tags" value="{{tag}}"></p-tag>
   </div>
   <p class="m-0">
-    <!--TODO: ADD PROPER DESCRIPTION TEXT/tags HERE!-->
-    {{selectedNode?.data?.short_description}}
+    {{selectedNode?.data.short_description}}
   </p>
   <ng-template pTemplate="footer">
     <!--TODO: Have click go to lesson page-->
@@ -45,10 +44,10 @@
     <!--Need wrapping spans in order for label to animate up-->
 
     <span class="p-float-label" style="margin-top: 2em;">
-      <p-multiSelect [options]="nodes" [(ngModel)]="selectedNodes" [selectAll]="selectAll"
+      <p-multiSelect [options]="nodes" [(ngModel)]="selectedNodes"
         (onChange)="updateSelectedNodes(); updateHighlights();" (onClear)="updateSelectedNodes(); updateHighlights();"
         (onSelectAllChange)="updateSelectedNodes(); updateHighlights();" display="chip" inputId="searchByNameInput"
-        [filter]="true" dataKey="label" [style]="{'width':'100%'}" />
+        [filter]="true" dataKey="id" [style]="{'width':'100%'}" />
       <label for="searchNodeNameInput">Search By Name</label>
     </span>
 
