@@ -13,13 +13,20 @@ router = APIRouter()
 
 @router.post('/search_courses', response_model=List[Course], response_model_by_alias=False)
 async def get_courses_by_user(user: User = Depends(auth_service.validate_token), db: Session = Depends(get_session)):
-    return_obj = user.owned_courses
+    return_obj = user.enrolled_courses
     return return_obj
 
 @router.get('/add_course/{course_id}')
-async def get_courses_by_user(course_id: str, user: User = Depends(auth_service.validate_token), db: Session = Depends(get_session)):
+async def add_course(course_id: str, user: User = Depends(auth_service.validate_token), db: Session = Depends(get_session)):
     course_to_add = db.exec(select(Course).where(Course.id == course_id)).first()
-    user.owned_courses.append(course_to_add)
+    user.enrolled_courses.append(course_to_add)
+    db.commit()
+
+@router.get('/remove_course/{course_id}')
+async def remove_course(course_id: str, user: User = Depends(auth_service.validate_token), db: Session = Depends(get_session)):
+    course_to_remove = db.exec(select(Course).where(Course.id == course_id)).first()
+    if course_to_remove in user.enrolled_courses:
+        user.enrolled_courses.remove(course_to_remove)
     db.commit()
 
 @router.post('/search', response_model=List[User], response_model_by_alias=False)

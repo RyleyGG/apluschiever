@@ -1,0 +1,21 @@
+<h1>{{title}}</h1>
+<div class="page-content">
+    <div class="rectangle">
+        <div class="box1" pDroppable (onDrop)="drop()">
+            <div class="content" pDraggable="content1" (onDragStart)="dragStart('1')">Div 1</div>
+        </div>
+        <div class="right-side">
+            <div class="right-top">
+                <div class="box2" pDroppable (onDrop)="drop()">
+                    <div class="content" pDraggable="content2" (onDragStart)="dragStart('2')">Div 2</div>
+                </div>
+                <div class="box3" pDroppable (onDrop)="drop()">
+                    <div class="content" pDraggable="content3" (onDragStart)="dragStart('3')">Div 3</div>
+                </div>
+            </div>
+            <div class="box4" pDroppable (onDrop)="drop()">
+                <div class="content" pDraggable="content4" (onDragStart)="dragStart('4')">Div 4</div>
+            </div>
+        </div>
+    </div>
+</div>

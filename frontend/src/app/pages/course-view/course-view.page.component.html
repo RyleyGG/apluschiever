@@ -18,7 +18,7 @@
     <!--TODO: ADD PROPER DESCRIPTION TEXT HERE!-->
   </p>
   <ng-template pTemplate="footer">
-    <p-button icon="pi pi-book" (click)="dialogVisible = false" label="View Lesson" pAutoFocus
+    <p-button [routerLink]="['/lesson', selectedNode.label]" icon="pi pi-book" (click)="dialogVisible = false" label="View Lesson {{selectedNode.label}}" pAutoFocus
       [autofocus]="true"></p-button>
   </ng-template>
 </p-dialog>

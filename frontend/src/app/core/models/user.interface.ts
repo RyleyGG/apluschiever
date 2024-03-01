@@ -11,6 +11,7 @@ export interface User {
     email_address: string,
     user_type: string,
     owned_courses?: Course[];
+    enrolled_courses?: Course[];
 }
 
 /**

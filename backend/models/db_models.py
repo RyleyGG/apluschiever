@@ -19,6 +19,7 @@ class User(SQLModel, table=True):
     password: str
     user_type: UserType
     owned_courses: Optional[List["Course"]] = Relationship(back_populates='course_owner')
+    enrolled_courses: Optional[List["Course"]] = Relationship(back_populates='enrolled_students')
     node_progress: Dict[uuid.UUID, List[uuid.UUID]] = Field(sa_column=Column(JSON), default={})  # Key-value of {Node ID: [Completed Content IDs]}
 
 
@@ -79,4 +80,5 @@ class Course(SQLModel, table=True):
     short_description: Optional[str]
     course_owner_id: uuid.UUID = Field(foreign_key='User.id')
     course_owner: User = Relationship(back_populates='owned_courses')
+    enrolled_students: Optional[List[User]] = Relationship(back_populates='enrolled_courses')
     nodes: Optional[List[Node]] = Relationship(back_populates="course")

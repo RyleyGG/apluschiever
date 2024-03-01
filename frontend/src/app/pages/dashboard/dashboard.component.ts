@@ -12,12 +12,13 @@ import { CourseService } from '../../core/services/course/course.service';
 import { UserService } from '../../core/services/user/user.service';
 import { CarouselModule } from 'primeng/carousel';
 import {Course} from "../../core/models/course.interface";
-import { toArray } from 'rxjs/operators';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CheckboxModule, CarouselModule, ButtonModule, RouterLink, CardModule],
+  imports: [CheckboxModule, CarouselModule, ButtonModule, ConfirmDialogModule, RouterLink, CardModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -26,7 +27,7 @@ export class DashboardComponent {
   allCourses: Course[] = [];
   userCourses: Course[] = [];
   responsiveOptions: any[] | undefined;
-  constructor(private courseService: CourseService, private userService: UserService) {
+  constructor(private courseService: CourseService, private userService: UserService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.responsiveOptions = [
       {
           breakpoint: '1199px',
@@ -61,6 +62,25 @@ export class DashboardComponent {
     this.userService.addCourse(courseid).subscribe((data) => {
       window.location.reload();
     });
+  }
+  confirm(courseid: string) {
+      this.confirmationService.confirm({
+        message: 'Are you sure that you want to proceed?',
+            header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            acceptIcon:"none",
+            rejectIcon:"none",
+            rejectButtonStyleClass:"p-button-text",
+            accept: () => {
+                this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted' });
+                this.userService.removeCourse(courseid).subscribe((data) => {
+                  window.location.reload();
+                })
+            },
+            reject: () => {
+                this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+            }
+      });
   }
   
 }

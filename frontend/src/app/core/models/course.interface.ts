@@ -11,4 +11,5 @@ export interface Course {
     courseOwnerId: string;
     courseOwner: User;
     nodes: Node[];
+    enrolled_students?: User[];
 }

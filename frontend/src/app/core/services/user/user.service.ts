@@ -52,5 +52,23 @@ export class UserService {
             return throwError(() => error);
         })
     );
-}
+  }
+  /**
+   * Get all courses
+   * @param course_id 
+   * 
+   */
+  removeCourse(course_id: string) {
+    return this.httpClient.get<any>(this.REST_API_SERVER + `user/remove_course/${course_id}`, {}).pipe(
+        take(1),
+        map((res: any) => {
+            console.log(res);
+            return res;
+        }),
+        catchError((error: HttpErrorResponse) => {
+            // Something went really wrong
+            return throwError(() => error);
+        })
+    );
+  } 
 }

@@ -17,7 +17,7 @@ router = APIRouter()
 
 @router.post('/search', response_model=List[Course], response_model_by_alias=False)
 async def search_courses(filters: CourseFilters, db: Session = Depends(get_session)):
-    query_statement = select(Course)
+    query_statement = select(Course).order_by(Course.title)
     if filters.ids:
         query_statement = query_statement.where(Course.id.in_(filters.ids))
     if filters.owned_by:
