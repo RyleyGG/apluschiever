@@ -6,6 +6,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { routes } from './../../app.routes';
 import { provideRouter } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
@@ -17,7 +18,8 @@ describe('DashboardComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideRouter(routes)
+        provideRouter(routes),
+        ConfirmationService, MessageService
     ]
     })
     .compileComponents();
