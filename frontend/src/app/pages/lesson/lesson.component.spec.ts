@@ -5,26 +5,24 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture } from '@angular/core/testing';
 import { routes } from './../../app.routes';
 import { provideRouter } from '@angular/router';
-import { DashboardComponent } from './dashboard.component';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { LessonComponent } from './lesson.component';
 
-describe('DashboardComponent', () => {
-  let component: DashboardComponent;
-  let fixture: ComponentFixture<DashboardComponent>;
+describe('LessonComponent', () => {
+  let component: LessonComponent;
+  let fixture: ComponentFixture<LessonComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DashboardComponent],
+      imports: [LessonComponent],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideRouter(routes),
-        ConfirmationService, MessageService
+        provideRouter(routes)
     ]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(DashboardComponent);
+    fixture = TestBed.createComponent(LessonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

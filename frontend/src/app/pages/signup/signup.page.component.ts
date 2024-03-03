@@ -27,7 +27,7 @@ import { SignInInfo } from '../../core/models/auth.interface';
 })
 export class SignUpPageComponent {
     title = 'Sign-Up Page'
-
+    errorMessage = ""
     registerForm = this.fb.group({
         email_address: ['', [Validators.required, Validators.email]],
         first_name: ['', [Validators.required, Validators.pattern(/^[a-zA-Z]+(?: [a-zA-Z]+)*$/)]],
@@ -58,15 +58,27 @@ export class SignUpPageComponent {
         return this.registerForm.controls['confirmPassword'];
       }
     public signup(): void {
-        // Sample of how to sign up
+        const data = {
+          username: this.registerForm.value.email_address,
+          password: this.registerForm.value.password
+        };
         const postData = { ...this.registerForm.value };
         this.oauthService.sign_up(postData as SignUpInfo).subscribe((res: SuccessfulUserAuth) => {
             console.log(res);
-            this.oauthService.sign_in( postData as SignInInfo ).subscribe((res: SuccessfulUserAuth) => {
+            this.oauthService.sign_in( data as SignInInfo ).subscribe((res: SuccessfulUserAuth) => {
                 console.log(res);
                 this.router.navigate(['/dashboard']);
                 window.location.reload();
             })
+        },
+        (error) => {
+          //errors to account for -> email already exists
+          if (error.status === 400) {
+            this.errorMessage = 'This email address is already in use.';
+          } else {
+            this.errorMessage = 'There is an error with your sign-up. Please try again';
+            console.error('Other error:', error);
+          }
         });
     }
 }

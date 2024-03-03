@@ -1,12 +1,15 @@
 .page-content {
-    width: 100%;
-    min-height: 100%;
+    width: 75%;
+    max-height: 90%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    margin-top: 2%;
     padding: 1rem;
-    box-sizing: inherit;
+    height: 100%;
     position: relative;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: auto;
 }
 
 h1 {
@@ -18,3 +21,21 @@ h1 {
     margin: 0;
     margin-left: 9px;
 }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-gap: 10px;
+    overflow-y: auto;
+  }
+  .classDiv {
+    padding: 16px;
+    border: 1px solid var(--primary-color);
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  .suggested {
+    border: 1px solid var(--primary-color);
+    margin: 8px;
+    border-radius: 20px;
+    padding: 6px;
+  }

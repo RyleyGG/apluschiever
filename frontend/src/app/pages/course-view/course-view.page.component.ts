@@ -13,6 +13,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { TagModule } from 'primeng/tag';
 import { MenuItem } from 'primeng/api';
+import { ActivatedRoute } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
 
@@ -106,11 +107,14 @@ export class CourseViewPageComponent {
     edges: Edge[] = [];
     clusters: Cluster[] = [];
 
-    constructor(private courseService: CourseService, private elementRef: ElementRef) {
+    courseid: string | any;
+    constructor(private courseService: CourseService, private elementRef: ElementRef, private route: ActivatedRoute) {
+        this.courseid = this.route.snapshot.paramMap.get('id');
+        //this.courseid = this.route.snapshot.paramMap.get('ID');
         // On page load get the course information (id)
         // will need to be a URL parameter probably
         // TODO: Get the Course ID from another source (maybe route param, maybe a service?)
-        this.courseService.getNodes("8da5f22e-3ad1-4a84-b386-c821c9a396b0").subscribe((data) => {
+        this.courseService.getNodes(this.courseid).subscribe((data) => {
             this.nodes = [];
             this.edges = [];
             this.clusters = [];

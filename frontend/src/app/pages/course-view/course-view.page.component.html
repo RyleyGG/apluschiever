@@ -26,8 +26,8 @@
       <i class="pi pi-lock" style="font-size: 1.5rem"></i>
     </p-blockUI>
     <blockable-div #lessonButtonWrapper [style]="{display: 'inline-block'}">
-      <p-button icon="pi pi-book" (click)="dialogVisible = false" label="View Lesson" pAutoFocus [autofocus]="false"
-        [style]="{margin: '0'}" />
+      <p-button [routerLink]="['/lesson', selectedNode.label]" icon="pi pi-book" (click)="dialogVisible = false"
+        label="View Lesson" pAutoFocus [autofocus]="false" [style]="{margin: '0'}" />
     </blockable-div>
   </ng-template>
 </p-dialog>

@@ -43,7 +43,9 @@
                     Password should match
                 </small>
             </div>
+            <div *ngIf="errorMessage" class="error"> {{ errorMessage }}</div>
             <p-button [rounded]="true" label="Sign-Up" class="w-full" [disabled]="registerForm.invalid" type="submit"></p-button>
+            
         </p-card>
     </form>
 </div>
