@@ -32,7 +32,7 @@ async def search_courses(filters: CourseFilters, db: Session = Depends(get_sessi
 
 
 @router.get('/nodes/{course_id}', response_model=List[NodeOverview], response_model_by_alias=False)
-async def get_node_overview(course_id: str, db: Session = Depends(get_session)):
+async def get_node_overview(course_id: str, db: Session = Depends(get_session), user: User = Depends(auth_service.validate_token)):
     cur_course = db.exec(select(Course).where(Course.id == course_id)).first()
 
     if not cur_course:
@@ -43,18 +43,19 @@ async def get_node_overview(course_id: str, db: Session = Depends(get_session)):
     course_node_ids = [str(node.id) for node in cur_course.nodes]
     course_nodes = db.exec(select(Node).where(Node.id.in_(course_node_ids))).all()
 
-    
-
-    # TODO: Add complete and tags arrays properly
     node_overview = [
         NodeOverview(
             id = node.id,
             title = node.title,
             short_description = node.short_description,
             parent_nodes = node.parents,
-            complete = False, # how
-            tags = [], # need to make a new field for it
-            content_types = [] # how
+            complete = (node.id in user.node_progress.keys()) and 
+                (node.videos is not None and set([file.id for file in node.videos]).issubset(set(user.node_progress[node.id]))) and 
+                (node.markdown_files is not None and set([file.id for file in node.markdown_files]).issubset(set(user.node_progress[node.id]))) and
+                (node.uploaded_files is not None and set([file.id for file in node.uploaded_files]).issubset(set(user.node_progress[node.id]))) and
+                (node.third_party_resources is not None and set([file.id for file in node.third_party_resources]).issubset(set(user.node_progress[node.id]))),
+            tags = [], #node.tags,
+            content_types = [key for key in ["videos", "markdown_files", "uploaded_files", "third_party_resources"] if node.model_dump().get(key) is not None] # We will need to update this listing with new content types as we add more support for them. Maybe this can be turned into a setting somehow?
         ) for node in course_nodes
     ]
     return node_overview

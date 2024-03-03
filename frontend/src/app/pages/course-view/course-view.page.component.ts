@@ -110,7 +110,7 @@ export class CourseViewPageComponent {
         // On page load get the course information (id)
         // will need to be a URL parameter probably
         // TODO: Get the Course ID from another source (maybe route param, maybe a service?)
-        this.courseService.getNodes("70a04a98-3ae8-4507-93a0-10ce5e51a61f").subscribe((data) => {
+        this.courseService.getNodes("8da5f22e-3ad1-4a84-b386-c821c9a396b0").subscribe((data) => {
             this.nodes = [];
             this.edges = [];
             this.clusters = [];
