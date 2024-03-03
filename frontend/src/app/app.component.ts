@@ -7,13 +7,16 @@ import { InternetConnectionService } from './core/services/internet-connection/i
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { MenubarModule } from 'primeng/menubar';
+import { DialogModule } from 'primeng/dialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
 /**
  * The main application component, currently the sample hello world page.
  */
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, ToggleButtonModule, MenubarModule, RouterOutlet, NavbarComponent, ButtonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, ToggleButtonModule, DialogModule, MenubarModule, RouterOutlet, NavbarComponent, ButtonModule, RouterLink, RouterLinkActive],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
