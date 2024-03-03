@@ -124,8 +124,8 @@ export class CourseViewPageComponent {
                     data: {
                         short_description: element.short_description,
                         complete: element.complete,
-                        tags: [...element.tags, "value", "test"],
-                        content_types: [...element.content_types, "video", "text", "quiz"]
+                        tags: [...element.tags],
+                        content_types: [...element.content_types]
                     }
                 }
                 this.nodes = [...this.nodes, newNode];

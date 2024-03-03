@@ -4,6 +4,8 @@ import { CourseViewPageComponent } from './course-view.page.component';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
+
+
 describe('CourseViewPageComponent', () => {
     let component: CourseViewPageComponent;
 
@@ -22,4 +24,6 @@ describe('CourseViewPageComponent', () => {
     it('should be created', () => {
         expect(component).toBeTruthy();
     });
+
+
 });

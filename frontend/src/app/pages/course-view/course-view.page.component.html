@@ -59,7 +59,7 @@
       <label for="searchByTagsInput">Search By Tags</label>
     </span>
 
-    <span class="p-float-label" style="margin-top: 2em;">
+    <span *ngIf="contentTypes.length > 0" class="p-float-label" style="margin-top: 2em;">
       <p-multiSelect [options]="contentTypes" [(ngModel)]="selectedContentTypes" [selectAll]="selectAllContentTypes"
         (onChange)="updateSelectedNodes(); updateHighlights();" (onClear)="updateSelectedNodes(); updateHighlights();"
         (onSelectAllChange)="onSelectAllContentTypesChange($event);" display="chip" inputId="searchByContentTypeInput"
