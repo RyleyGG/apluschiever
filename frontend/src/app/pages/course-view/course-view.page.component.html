@@ -44,26 +44,26 @@
     <!--Need wrapping spans in order for label to animate up-->
 
     <span class="p-float-label" style="margin-top: 2em;">
-      <p-multiSelect [options]="nodes" [(ngModel)]="selectedNodes"
+      <p-multiSelect [options]="nodes" [(ngModel)]="selectedNodes" [selectAll]="selectAllNodes"
         (onChange)="updateSelectedNodes(); updateHighlights();" (onClear)="updateSelectedNodes(); updateHighlights();"
-        (onSelectAllChange)="updateSelectedNodes(); updateHighlights();" display="chip" inputId="searchByNameInput"
-        [filter]="true" dataKey="id" [style]="{'width':'100%'}" />
+        (onSelectAllChange)="onSelectAllNodesChange($event);" display="chip" inputId="searchByNameInput" [filter]="true"
+        dataKey="id" [style]="{'width':'100%'}" />
       <label for="searchNodeNameInput">Search By Name</label>
     </span>
 
     <span *ngIf="tags.length > 0" class="p-float-label" style="margin-top: 2em;">
-      <p-multiSelect [options]="tags" [(ngModel)]="selectedTags" (onChange)="updateSelectedNodes(); updateHighlights();"
-        (onClear)="updateSelectedNodes(); updateHighlights();"
-        (onSelectAllChange)="updateSelectedNodes(); updateHighlights();" [filter]="true" display="chip"
-        inputId="searchByTagsInput" [style]="{'width':'100%'}"></p-multiSelect>
+      <p-multiSelect [options]="tags" [(ngModel)]="selectedTags" [selectAll]="selectAllTags"
+        (onChange)="updateSelectedNodes(); updateHighlights();" (onClear)="updateSelectedNodes(); updateHighlights();"
+        (onSelectAllChange)="onSelectAllTagsChange($event);" [filter]="true" display="chip" inputId="searchByTagsInput"
+        [style]="{'width':'100%'}"></p-multiSelect>
       <label for="searchByTagsInput">Search By Tags</label>
     </span>
 
     <span class="p-float-label" style="margin-top: 2em;">
-      <p-multiSelect [options]="contentTypes" [(ngModel)]="selectedContentTypes"
+      <p-multiSelect [options]="contentTypes" [(ngModel)]="selectedContentTypes" [selectAll]="selectAllContentTypes"
         (onChange)="updateSelectedNodes(); updateHighlights();" (onClear)="updateSelectedNodes(); updateHighlights();"
-        (onSelectAllChange)="updateSelectedNodes(); updateHighlights();" display="chip"
-        inputId="searchByContentTypeInput" [filter]="true" [style]="{'width':'100%'}"></p-multiSelect>
+        (onSelectAllChange)="onSelectAllContentTypesChange($event);" display="chip" inputId="searchByContentTypeInput"
+        [filter]="true" [style]="{'width':'100%'}"></p-multiSelect>
       <label for="searchByContentTypeInput">Search By Content Type</label>
     </span>
 

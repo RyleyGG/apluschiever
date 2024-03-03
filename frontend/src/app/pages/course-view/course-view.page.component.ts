@@ -94,6 +94,11 @@ export class CourseViewPageComponent {
     completeColor: any;
     preReqColor: any;
 
+    // booleans for checkboxes
+    selectAllNodes: boolean = false;
+    selectAllTags: boolean = false;
+    selectAllContentTypes: boolean = false;
+
     //#endregion
 
 
@@ -157,6 +162,9 @@ export class CourseViewPageComponent {
         this.searchColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--indigo-700");
     }
 
+
+
+
     /**
      * This function fires whenever a node (or cluster) is clicked.
      * It updates the selected node, pans to that node and opens the dialog component.
@@ -174,6 +182,27 @@ export class CourseViewPageComponent {
 
 
     //#region Filtering & Searching Methods
+
+    onSelectAllNodesChange = ($event: any): void => {
+        this.selectAllNodes = $event.checked;
+        this.selectedNodes = $event.checked ? [...this.nodes] : [];
+        this.updateSelectedNodes();
+        this.updateHighlights();
+    }
+
+    onSelectAllTagsChange = ($event: any): void => {
+        this.selectAllTags = $event.checked;
+        this.selectedTags = $event.checked ? [...this.tags] : [];
+        this.updateSelectedNodes();
+        this.updateHighlights();
+    }
+
+    onSelectAllContentTypesChange = ($event: any): void => {
+        this.selectAllContentTypes = $event.checked;
+        this.selectedContentTypes = $event.checked ? [...this.contentTypes] : [];
+        this.updateSelectedNodes();
+        this.updateHighlights();
+    }
 
     /**
      * Update the search result nodes based on the filter statuses
