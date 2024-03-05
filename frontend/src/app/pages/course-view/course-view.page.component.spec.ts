@@ -7,6 +7,8 @@ import { ComponentFixture } from '@angular/core/testing';
 import { routes } from './../../app.routes';
 import { provideRouter } from '@angular/router';
 
+
+
 describe('CourseViewPageComponent', () => {
     let component: CourseViewPageComponent;
 
@@ -26,4 +28,6 @@ describe('CourseViewPageComponent', () => {
     it('should be created', () => {
         expect(component).toBeTruthy();
     });
+
+
 });

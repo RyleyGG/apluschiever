@@ -40,6 +40,7 @@ class Node(SQLModel, table=True):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     title: str
     short_description: str
+    tags: Optional[List[str]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[str]])))
     # SQLModel doesn't currently support polymorphism within attributes, meaning we can't have a generic abstract
     # Content class from which we actually use Video, Markdown, etc. classes when storing data.
     # Instead, we supply one attribute per content type we support.
@@ -68,15 +69,14 @@ class Node(SQLModel, table=True):
 
 
 # DTO models that have to be defined here because they rely on Node and therefore must init after
-class NodeGraphView(BaseModel):
-    node_id: str
-    parent_nodes: Optional[List[Node]] = []
-
-
 class NodeOverview(BaseModel):
     id: uuid.UUID
     title: str
+    short_description: str
     parent_nodes: List["Node"]
+    complete: bool
+    tags: List[str]
+    content_types: List[str]
 
 
 class Course(SQLModel, table=True):

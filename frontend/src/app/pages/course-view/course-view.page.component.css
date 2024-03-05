@@ -14,3 +14,12 @@
 :host ::ng-deep .p-speeddial {
     margin: 1em 0 0 1em;
 }
+
+:host ::ng-deep p-inputswitch>* {
+    display: block;
+}
+
+:host ::ng-deep p-multiselect .p-multiselect-trigger {
+    background: var(--primary-color);
+    color: var(--primary-color-text);
+}
