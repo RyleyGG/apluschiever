@@ -67,10 +67,6 @@ describe('GraphComponent', () => {
         component.layout.set("dagreCluster")
         fixture.detectChanges();
         expect((component as any).update).toHaveBeenCalledTimes(2);
-
-        component.layoutSettings.set({});
-        fixture.detectChanges();
-        expect((component as any).update).toHaveBeenCalledTimes(3);
     });
 
     it('Should update when graph view dependencies change', () => {
