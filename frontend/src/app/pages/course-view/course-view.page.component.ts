@@ -171,6 +171,12 @@ export class CourseViewPageComponent {
             this.contentTypes = Array.from(new Set<string>(this.nodes.flatMap((node: any) => node.data.content_types)));
 
             this.updateHighlights();
+
+            // For some reason this needs to be 1 millisecond delayed at minimum for the zoom and center to apply. Probably for the CSS to update/apply
+            setTimeout(() => {
+                this.graphComponent.zoomToFit();
+                this.graphComponent.panToCenter();
+            }, 1);
         });
     }
 
