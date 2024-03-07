@@ -23,3 +23,9 @@
     background: var(--primary-color);
     color: var(--primary-color-text);
 }
+
+.bottom-right {
+    bottom: 20px;
+    right: 20px;
+    position: fixed;
+}
