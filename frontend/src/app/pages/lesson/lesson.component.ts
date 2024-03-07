@@ -12,11 +12,20 @@ import { DragDropModule } from 'primeng/dragdrop';
   styleUrl: './lesson.component.css'
 })
 export class LessonComponent {
-  
-  drop() {
-    
+  box1 = ['item1'];
+  box2 = ['item2', 'another2'];
+  box3 = ['item3', 'another3'];
+  box4 = ['item4'];
+  source: string[] = [];
+  target: string[] = [];
+  temporary: string[] = [];
+  drop(box: string[]) {
+    this.temporary.splice(0, this.temporary.length, ...box);
+    box.splice(0, box.length, ...this.source);
+    this.source.splice(0, this.source.length, ...this.temporary);
   }
-  dragStart(container: string) {
+  dragStart(container: string[]) {
+    this.source = container;
     console.log(container);
   }
   constructor(private route : ActivatedRoute) {
