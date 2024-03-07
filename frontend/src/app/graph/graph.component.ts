@@ -58,8 +58,8 @@ export class GraphComponent {
     public edges = input.required<Edge[]>();
     public clusters = input<Cluster[]>([]);
 
-    public layout = signal<string | Layout>(new DagreClusterLayout());
-    public layoutSettings = signal<any>(DagreClusterLayout.defaultSettings);
+    public layout = signal<string | Layout>("dagreCluster");
+    public layoutSettings = input<any>(DagreClusterLayout.defaultSettings);
     public curve = signal<any>(shape.curveBundle.beta(1));
 
     // Animation Inputs
@@ -188,6 +188,7 @@ export class GraphComponent {
                     const newLayout = new DagreClusterLayout();
                     newLayout.settings = settings;
                     this.layout.set(newLayout);
+                    console.log(settings);
                 });
             }
             this.update();

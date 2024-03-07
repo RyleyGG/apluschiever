@@ -25,6 +25,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { uid } from '../../core/utils/unique-id';
 
 import { PanelModule } from 'primeng/panel';
+import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
 
 /**
  * The course view page component
@@ -41,6 +42,20 @@ import { PanelModule } from 'primeng/panel';
 export class CourseViewPageComponent {
     @ViewChild('graphComponent') graphComponent!: GraphComponent;
     selectedNode!: Node; // the node that is in the node dialog popup
+
+    /**
+     * Graph rendering settings in use
+     */
+    courseViewGraphSettings: DagreSettings = {
+        orientation: Orientation.LEFT_TO_RIGHT,
+        marginX: 20,
+        marginY: 20,
+        edgePadding: 100,
+        rankPadding: 200,
+        nodePadding: 50,
+        multigraph: true,
+        compound: true
+    };
 
     /**
      * Controls visibility of the node information dialog
