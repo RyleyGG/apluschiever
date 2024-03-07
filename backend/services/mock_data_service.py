@@ -11,7 +11,7 @@ from starlette import status
 
 from api import app
 from models.db_models import Course, Node, User, NodeParentLink
-from models.dto_models import NodeTags
+from models.dto_models import NodeTags, UserType
 from models.pydantic_models import Video, Markdown
 from services.api_utility_service import dbUrl, get_session
 from services.config_service import config
@@ -34,7 +34,8 @@ def generate_mock_users(db: Session, client: TestClient):
             'email_address': 'test@teacher.com',
             'first_name': 'joe',
             'last_name': 'teacher',
-            'password': '123'
+            'password': '123',
+            'user_type': 'Teacher'
         }
     )
 

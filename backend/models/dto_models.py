@@ -3,11 +3,18 @@ from pydantic import BaseModel, UUID4
 from typing import Optional, List
 
 
+class UserType(Enum):
+    STUDENT = 'Student'
+    ADMIN = 'Administrator'
+    TEACHER = 'Teacher'
+
+
 class SignUpInfo(BaseModel):
     email_address: str
     first_name: str
     last_name: str
     password: str
+    user_type: Optional[str] = None
 
 
 class SignInInfo(BaseModel):
@@ -47,12 +54,6 @@ class NewCourse(BaseModel):
     title: str
     short_description: Optional[str] = None
     course_owner_id: UUID4
-
-
-class UserType(Enum):
-    STUDENT = 'Student'
-    ADMIN = 'Administrator'
-    TEACHER = 'Teacher'
 
 
 class NodeProgressDetails(BaseModel):
