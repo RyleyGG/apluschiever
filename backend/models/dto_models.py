@@ -62,3 +62,10 @@ class NodeProgressDetails(BaseModel):
 
 class SupportedThirdParties(Enum):
     YOUTUBE = 'YouTube'
+
+
+class NodeTags(Enum):
+    CORE = 'Core'
+    ASSESSMENT = 'Assessment'
+    PRACTICE = 'Practice'
+    SUPPLEMENTAL = 'Supplemental'

@@ -9,6 +9,7 @@ from starlette import status
 
 from api import app
 from models.db_models import Course, Node, User, NodeParentLink
+from models.dto_models import NodeTags
 from models.pydantic_models import Video, Markdown
 from services.api_utility_service import dbUrl, get_session
 from services.config_service import config
@@ -73,6 +74,16 @@ def generate_mock_nodes(db: Session, client: TestClient):
                     new_node.markdown_files.append(Markdown(title='wasd', content='###wasd'))
                     if random.choice([True, False]):
                         break
+
+                if random.choice([True, False]):
+                    new_node.tags.append(NodeTags.CORE)
+                if random.choice([True, False]):
+                    new_node.tags.append(NodeTags.ASSESSMENT)
+                if random.choice([True, False]):
+                    new_node.tags.append(NodeTags.PRACTICE)
+                if random.choice([True, False]):
+                    new_node.tags.append(NodeTags.SUPPLEMENTAL)
+
                 parent_count = random.randint(1, math.ceil(len(node_layers[x - 1]) / 2)) if x > 0 else 0
                 new_node.parents = []
                 while len(new_node.parents) != parent_count:
