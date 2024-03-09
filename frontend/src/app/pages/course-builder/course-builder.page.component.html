@@ -1,0 +1,35 @@
+<!--This contains the graph control menu options.-->
+<p-speedDial [model]="dial_items" [radius]="75" direction="down-right" type="quarter-circle"></p-speedDial>
+
+<!--This displays the graph of the course.-->
+<graph #graphComponent class="course-view-graph-container" [edges]="this.edges" [nodes]="this.nodes"
+  [clusters]="this.clusters" [layoutSettings]="courseViewGraphSettings" (nodeClicked)="onNodeClick($event)"></graph>
+
+<!--This is a dialog component to display whenever a node is clicked.-->
+<p-dialog header="Header" [draggable]="false" [(visible)]="dialogVisible" [position]="'bottomright'"
+  [style]="{ width: '33vw' }">
+  <ng-template pTemplate="header">
+    <div class="dialog-header">
+      <!--Some way to set this avatar, maybe by uploading an image??-->
+      <p-avatar image="https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png" shape="circle" />
+
+      <span class="p-float-label">
+        <input pInputText id="Node Name" [(ngModel)]="selectedNode.label" /> <!--Is this value for ngModel fine?-->
+        <label for="Node Name">{{Set Lesson Name}}</label>
+      </span>
+    </div>
+  </ng-template>
+  <div style="display: flex; align-items: center; gap: 0.5em;">
+    <p-tag *ngFor="let tag of selectedNode?.data.tags" value="{{tag}}"></p-tag>
+  </div>
+
+  <span class="p-float-label">
+    <textarea id="float-input" pInputTextarea></textarea>
+    <label for="float-input">Set Lesson Description</label>
+  </span>
+  <ng-template pTemplate="footer">
+    <!--TODO: Have click go to lesson creation page / have a way to add content on click of the button-->
+    <p-button [routerLink]="['/lesson', selectedNode.label]" icon="pi pi-book" (click)="dialogVisible = false"
+      label="View Lesson" pAutoFocus [autofocus]="false" [style]="{margin: '0'}" />
+  </ng-template>
+</p-dialog>
