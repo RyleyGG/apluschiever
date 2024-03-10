@@ -13,16 +13,15 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { TagModule } from 'primeng/tag';
 import { MenuItem } from 'primeng/api';
+import { ContextMenuModule } from 'primeng/contextmenu';
 import { ActivatedRoute } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
 
 import { GraphComponent } from '../../graph/graph.component';
-import { BlockableDiv } from '../../core/components/blockable-div/blockable-div.component';
 import { Node, Edge, Cluster } from '../../graph/graph.interface';
 import { CourseService } from '../../core/services/course/course.service';
 import { InputTextModule } from 'primeng/inputtext';
-import { uid } from '../../core/utils/unique-id';
 
 import { PanelModule } from 'primeng/panel';
 import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
@@ -35,7 +34,7 @@ import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
 @Component({
     selector: 'course-build-page',
     standalone: true,
-    imports: [CommonModule, GraphComponent, BlockableDiv, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
+    imports: [CommonModule, GraphComponent, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
     templateUrl: './course-builder.page.component.html',
     styleUrl: './course-builder.page.component.css'
 })
@@ -90,6 +89,13 @@ export class CourseBuilderPageComponent {
         }
     ];
 
+    // TODO: add command for each item.
+    contextMenuItems: MenuItem[] = [
+        { label: 'Add Lesson Node', icon: 'pi pi-fw pi-book' },
+        { label: 'Add Connection', icon: 'pi pi-fw pi-arrows-h' },
+        { label: 'Menu Item 3', icon: 'pi pi-fw pi-trash' }
+    ];
+
 
     nodes: Node[] = [];
     edges: Edge[] = [];
@@ -108,6 +114,10 @@ export class CourseBuilderPageComponent {
         this.selectedNode = node;
         this.graphComponent.panToNodeId(node.id);
         this.dialogVisible = true;
+    }
+
+    onContextMenu(event: MouseEvent) {
+        event.preventDefault();
     }
 
 
