@@ -66,18 +66,50 @@
 
 <!--This is a dialog component to display whenever a node is clicked.-->
 <p-dialog header="Header" [draggable]="false" [(visible)]="dialogVisible" [position]="'bottomright'"
-  [style]="{ width: '33vw' }">
+  [style]="{ width: '33vw', padding: '0.5em' }">
   <ng-template pTemplate="header">
     <div class="dialog-header">
-      <p-avatar image="https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png" shape="circle" />
-      <span class="dialog-header-text">{{selectedNode.label}}</span>
+      <ng-container *ngIf="enableEdits">
+        <!--TODO: make below so that instead of an image, we show the image and clicking on it prompts for a new URL-->
+        <div (click)="changeAvatarUrl()" style="cursor: pointer;">
+          <p-avatar [image]="avatarUrl" shape="circle" />
+        </div>
+        <span class="p-float-label">
+          <input pInputText type="text" id="nameInput" [(ngModel)]="selectedName" />
+          <label for="nameInput">Lesson Name</label>
+        </span>
+      </ng-container>
+      <ng-container *ngIf="!enableEdits">
+        <p-avatar [image]="avatarUrl" shape="circle" />
+        <span class="dialog-header-text">{{selectedNode.label}}</span>
+      </ng-container>
+
     </div>
   </ng-template>
   <div style="display: flex; align-items: center; gap: 0.5em;">
-    <p-tag *ngFor="let tag of selectedNode?.data.tags" value="{{tag}}"></p-tag>
+    <ng-container *ngIf="enableEdits">
+      <span class="p-float-label" style="margin-top: 1.25em; width: 100%;">
+        <p-chips id="tags-input" [(ngModel)]="selectedTags" [style]="{ width: '100%', display: 'block' }"></p-chips>
+        <label for="tags-input">Tags</label>
+      </span>
+    </ng-container>
+    <ng-container *ngIf="!enableEdits">
+      <p-tag *ngFor="let tag of selectedNode?.data.tags" value="{{tag}}"></p-tag>
+    </ng-container>
   </div>
   <p class="m-0">
-    {{selectedNode?.data.short_description}}
+
+    <ng-container *ngIf="enableEdits">
+      <span class="p-float-label" style="margin-top: 1.5em;">
+        <textarea id="summary-input" rows="5" cols="30" pInputTextarea [autoResize]="true"
+          [style]="{ width: '100%'}"></textarea>
+        <label for="summary-input">Summary</label>
+      </span>
+    </ng-container>
+    <ng-container *ngIf="!enableEdits">
+      {{selectedNode?.data.short_description}}
+    </ng-container>
+
   </p>
   <ng-template pTemplate="footer">
     <!--TODO: Have click go to lesson page-->

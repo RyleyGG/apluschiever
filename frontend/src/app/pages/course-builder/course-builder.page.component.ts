@@ -17,6 +17,7 @@ import { ContextMenuModule } from 'primeng/contextmenu';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { CardModule } from 'primeng/card';
 import { ToggleButtonModule } from 'primeng/togglebutton';
+import { ChipsModule } from 'primeng/chips';
 import { ActivatedRoute } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
@@ -25,6 +26,7 @@ import { GraphComponent } from '../../graph/graph.component';
 import { Node, Edge, Cluster } from '../../graph/graph.interface';
 import { CourseService } from '../../core/services/course/course.service';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
 import { PanelModule } from 'primeng/panel';
 import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
@@ -38,7 +40,7 @@ import { uid } from '../../core/utils/unique-id';
 @Component({
     selector: 'course-build-page',
     standalone: true,
-    imports: [CommonModule, GraphComponent, CardModule, DividerModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
+    imports: [CommonModule, GraphComponent, CardModule, ChipsModule, InputTextareaModule, DividerModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
     templateUrl: './course-builder.page.component.html',
     styleUrl: './course-builder.page.component.css'
 })
@@ -72,9 +74,17 @@ export class CourseBuilderPageComponent {
     dialogVisible: boolean = false;
 
 
-
+    /**
+     * Whether editing should be enabled or disabled
+     */
     enableEdits: boolean = false;
+    /**
+     * True if in adding connection mode, false if not
+     */
     addConnection: boolean = false;
+    /**
+     * True if in deleting elements mode, false if not
+     */
     deleteElement: boolean = false;
 
     /**
@@ -89,7 +99,16 @@ export class CourseBuilderPageComponent {
      * Clusters within the displayed graph, currently unused.
      */
     clusters: Cluster[] = [];
-    edgeSourceNode: Node | null = null;
+
+    /**
+     * A variable used to store the source node for the newly made connections
+     */
+    private edgeSourceNode: Node | null = null;
+
+    selectedTags: string[] = [];
+
+    selectedName: string = "";
+    avatarUrl: string = "https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png";
 
     constructor(private courseService: CourseService, private elementRef: ElementRef) { }
 
@@ -151,6 +170,12 @@ export class CourseBuilderPageComponent {
     }
 
 
+    changeAvatarUrl() {
+        const newUrl = prompt('Enter new URL for the avatar:');
+        if (newUrl) {
+            this.avatarUrl = newUrl;
+        }
+    }
 
 
     //#region Node Highlighting
