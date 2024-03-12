@@ -30,10 +30,9 @@
     gap: 0.5em;
     padding: 0.5em;
   ">
-    <p-toggleButton [(ngModel)]="enableEdits" (ngModelChange)="onEnableEditsChange($event)" onIcon="pi pi-lock-open"
-      offIcon="pi pi-lock" [pTooltip]="enableEdits ? 'Disable Edits' : 'Enable Edits'" tooltipPosition="bottom" />
-    <p-toggleButton [(ngModel)]="addLesson" (ngModelChange)="onAddLessonChange($event)" onIcon="pi pi-plus-circle"
-      offIcon="pi pi-plus-circle" [pTooltip]="addLesson ? 'Disable Adding Lesson' : 'Enable Adding Lesson'"
+    <p-toggleButton [(ngModel)]="enableEdits" onIcon="pi pi-lock-open" offIcon="pi pi-lock"
+      [pTooltip]="enableEdits ? 'Disable Edits' : 'Enable Edits'" tooltipPosition="bottom" />
+    <p-button styleClass="p-togglebutton" icon="pi pi-plus-circle" (onClick)="addLesson()" pTooltip="Add Lesson"
       tooltipPosition="bottom" />
     <p-toggleButton [(ngModel)]="addConnection" onIcon="pi pi-share-alt" offIcon="pi pi-share-alt"
       [pTooltip]="addConnection ? 'Disable Adding Connection' : 'Enable Adding Connection'" tooltipPosition="bottom" />

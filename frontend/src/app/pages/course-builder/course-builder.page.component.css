@@ -28,11 +28,12 @@
     color: var(--primary-color-text);
 }
 
-/* TODO: setup the color correctly to swap for light and dark mode; also try to setup to move with graph panning? */
+/* TODO: setup the color correctly to swap for light and dark mode (right now I've just chosen a color that works in both modes */
+/* TODO: try to make this pan and scale with the graph*/
 :host ::ng-deep graph>div {
     background-image:
-        linear-gradient(rgba(var(--primary-color), 0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(var(--primary-color), 0.1) 1px, transparent 1px);
+        linear-gradient(rgba(100, 100, 100, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100, 100, 100, 0.1) 1px, transparent 1px);
     background-size: 4em 4em;
 }
 

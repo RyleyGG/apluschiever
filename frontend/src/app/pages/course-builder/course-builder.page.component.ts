@@ -74,7 +74,6 @@ export class CourseBuilderPageComponent {
 
 
     enableEdits: boolean = false;
-    addLesson: boolean = false;
     addConnection: boolean = false;
     deleteElement: boolean = false;
 
@@ -94,14 +93,8 @@ export class CourseBuilderPageComponent {
 
     constructor(private courseService: CourseService, private elementRef: ElementRef) { }
 
-
-    onEnableEditsChange(event: any) {
-
-    }
-
-    onAddLessonChange(event: any) {
+    addLesson() {
         // TODO: maybe make this open a dialog that will ask for information about the lesson first?
-        console.log(this.addLesson);
         const newNode = {
             id: uid(),
             label: "label",
