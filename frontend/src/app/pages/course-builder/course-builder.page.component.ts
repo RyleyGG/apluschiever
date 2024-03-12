@@ -14,6 +14,9 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { TagModule } from 'primeng/tag';
 import { MenuItem } from 'primeng/api';
 import { ContextMenuModule } from 'primeng/contextmenu';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { CardModule } from 'primeng/card';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ActivatedRoute } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
@@ -34,7 +37,7 @@ import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
 @Component({
     selector: 'course-build-page',
     standalone: true,
-    imports: [CommonModule, GraphComponent, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
+    imports: [CommonModule, GraphComponent, CardModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
     templateUrl: './course-builder.page.component.html',
     styleUrl: './course-builder.page.component.css'
 })
@@ -72,22 +75,64 @@ export class CourseBuilderPageComponent {
     dial_items: MenuItem[] = [
         {
             tooltipOptions: {
-                tooltipLabel: 'Add Filters'
+                tooltipLabel: 'Add Filters',
+                tooltipPosition: "bottom"
             },
             icon: 'pi pi-filter-fill',
+            iconStyle: { margin: 0 },
             command: () => { this.sidebarVisible = true; }
         },
         {
             tooltipOptions: {
-                tooltipLabel: 'Zoom to Fit'
+                tooltipLabel: 'Zoom to Fit',
+                tooltipPosition: "bottom"
             },
             icon: 'pi pi-money-bill',
+            iconStyle: { margin: 0 },
+            command: () => {
+                this.graphComponent.zoomToFit();
+                this.graphComponent.panToCenter();
+            }
+        },
+        {
+            tooltipOptions: {
+                tooltipLabel: 'Zoom to Fit',
+                tooltipPosition: "bottom"
+            },
+            icon: 'pi pi-money-bill',
+            iconStyle: { margin: 0 },
+            command: () => {
+                this.graphComponent.zoomToFit();
+                this.graphComponent.panToCenter();
+            }
+        },
+        {
+            tooltipOptions: {
+                tooltipLabel: 'Zoom to Fit',
+                tooltipPosition: "bottom"
+            },
+            icon: 'pi pi-money-bill',
+            iconStyle: { margin: 0 },
+            command: () => {
+                this.graphComponent.zoomToFit();
+                this.graphComponent.panToCenter();
+            }
+        },
+        {
+            tooltipOptions: {
+                tooltipLabel: 'Zoom to Fit',
+                tooltipPosition: "bottom"
+            },
+            icon: 'pi pi-money-bill',
+            iconStyle: { margin: 0 },
             command: () => {
                 this.graphComponent.zoomToFit();
                 this.graphComponent.panToCenter();
             }
         }
     ];
+    value: any;
+    checked: any = false;
 
     // TODO: add command for each item.
     contextMenuItems: MenuItem[] = [

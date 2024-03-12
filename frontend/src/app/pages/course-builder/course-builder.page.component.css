@@ -10,6 +10,10 @@
     white-space: nowrap;
 }
 
+:host {
+    position: relative;
+}
+
 /* Add margin to the speeddial element. */
 :host ::ng-deep .p-speeddial {
     margin: 1em 0 0 1em;
@@ -22,4 +26,37 @@
 :host ::ng-deep p-multiselect .p-multiselect-trigger {
     background: var(--primary-color);
     color: var(--primary-color-text);
+}
+
+/* TODO: setup the color correctly to swap for light and dark mode; also try to setup to move with graph panning? */
+:host ::ng-deep graph>div {
+    background-image:
+        linear-gradient(rgba(var(--primary-color), 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(var(--primary-color), 0.1) 1px, transparent 1px);
+    background-size: 4em 4em;
+}
+
+
+/* Overrides for p-card and toggleButton so the menu bars work. */
+:host ::ng-deep p-card .p-card-body,
+:host ::ng-deep p-card .p-card-content {
+    padding: 0;
+}
+
+:host ::ng-deep p-toggleButton>div {
+    border: none;
+    box-shadow: none !important;
+}
+
+:host ::ng-deep p-toggleButton>div[aria-checked="true"] {
+    background: var(--primary-color) !important;
+}
+
+:host ::ng-deep p-toggleButton>div>span {
+    border: none;
+    box-shadow: none !important;
+}
+
+:host ::ng-deep p-toggleButton>div[aria-checked="false"]>span {
+    color: var(--primary-color);
 }
