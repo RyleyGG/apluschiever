@@ -37,7 +37,7 @@
 }
 
 
-/* Overrides for p-card and toggleButton so the menu bars work. */
+/* Overrides for p-card, p-button, and toggleButton so the menu bars work. */
 :host ::ng-deep p-card .p-card-body,
 :host ::ng-deep p-card .p-card-content {
     padding: 0;
@@ -59,4 +59,10 @@
 
 :host ::ng-deep p-toggleButton>div[aria-checked="false"]>span {
     color: var(--primary-color);
+}
+
+:host ::ng-deep p-button>.p-button {
+    border: none;
+    color: var(--primary-color);
+    box-shadow: none !important;
 }

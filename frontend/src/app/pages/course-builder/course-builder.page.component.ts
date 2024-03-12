@@ -12,7 +12,7 @@ import { BlockUIModule } from 'primeng/blockui';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { TagModule } from 'primeng/tag';
-import { MenuItem } from 'primeng/api';
+import { DividerModule } from 'primeng/divider';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { CardModule } from 'primeng/card';
@@ -38,7 +38,7 @@ import { uid } from '../../core/utils/unique-id';
 @Component({
     selector: 'course-build-page',
     standalone: true,
-    imports: [CommonModule, GraphComponent, CardModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
+    imports: [CommonModule, GraphComponent, CardModule, DividerModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
     templateUrl: './course-builder.page.component.html',
     styleUrl: './course-builder.page.component.css'
 })
@@ -90,6 +90,7 @@ export class CourseBuilderPageComponent {
      * Clusters within the displayed graph, currently unused.
      */
     clusters: Cluster[] = [];
+    edgeSourceNode: Node | null = null;
 
     constructor(private courseService: CourseService, private elementRef: ElementRef) { }
 
@@ -101,11 +102,19 @@ export class CourseBuilderPageComponent {
     onAddLessonChange(event: any) {
         // TODO: maybe make this open a dialog that will ask for information about the lesson first?
         console.log(this.addLesson);
-        this.nodes.push({
+        const newNode = {
             id: uid(),
-            label: "TEST"
-        });
-        this.nodes = [...this.nodes];
+            label: "label",
+            data: {
+                tags: []
+            }
+        };
+        console.log(newNode);
+        this.nodes = [...this.nodes, newNode];
+
+        this.selectedNode = newNode;
+        this.graphComponent.panToNodeId(newNode.id);
+        this.dialogVisible = true;
     }
 
     /**
@@ -115,13 +124,24 @@ export class CourseBuilderPageComponent {
      * @param node The node that was clicked in the graph component.
      */
     onNodeClick(node: Node) {
-        if (this.deleteElement) {
+        if (this.enableEdits && this.deleteElement) {
             this.nodes = [...this.nodes.filter((n) => n.id !== node.id)];
+            this.edges = [...this.edges.filter((edge) => edge.source !== node.id && edge.target !== node.id)];
             return;
         }
 
-        if (this.addConnection) {
+        if (this.enableEdits && this.addConnection) {
             // Select two nodes with different clicks then make the connection between them.
+            if (!this.edgeSourceNode) {
+                this.edgeSourceNode = node;
+            } else {
+                this.edges = [...this.edges, {
+                    id: uid(),
+                    source: this.edgeSourceNode.id,
+                    target: node.id
+                }];
+                this.edgeSourceNode = null;
+            }
             return;
         }
 
@@ -132,7 +152,7 @@ export class CourseBuilderPageComponent {
     }
 
     onEdgeClick(edge: Edge) {
-        if (this.deleteElement) {
+        if (this.enableEdits && this.deleteElement) {
             this.edges = [...this.edges.filter((e) => e.id !== edge.id)];
         }
     }

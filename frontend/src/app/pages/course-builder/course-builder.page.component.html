@@ -1,6 +1,27 @@
 <p-card [style]="{
   position: 'absolute',
   top: '0.75em',
+  left: '0.75em',
+}">
+  <div style="
+    display: flex; 
+    align-items: center; 
+    gap: 0.5em;
+    padding: 0.5em;
+  ">
+    <!-- Course Name, Save, Publish, Increase Zoom, Decrease Zoom, Undo, Redo, -->
+    <b>Course Name</b>
+    <p-divider layout="vertical" [style]="{ margin: '0 0.25em', padding: '12px 0.25em' }"></p-divider>
+    <p-button styleClass="p-togglebutton" icon="pi pi-save" pTooltip="Save" tooltipPosition="bottom" />
+    <p-button styleClass="p-togglebutton" icon="pi pi-upload" pTooltip="Publish" tooltipPosition="bottom" />
+    <p-button styleClass="p-togglebutton" icon="pi pi-undo" pTooltip="Undo" tooltipPosition="bottom" />
+    <p-button styleClass="p-togglebutton" icon="pi pi-refresh" pTooltip="Redo" tooltipPosition="bottom" />
+  </div>
+</p-card>
+
+<p-card [style]="{
+  position: 'absolute',
+  top: '0.75em',
   right: '0.75em',
 }">
   <div style="
@@ -25,7 +46,24 @@
 <!--This displays the graph of the course.-->
 <graph #graphComponent class="course-view-graph-container" [edges]="this.edges" [nodes]="this.nodes"
   [clusters]="this.clusters" [layoutSettings]="courseViewGraphSettings" (nodeClicked)="onNodeClick($event)"
-  (edgeClicked)="onEdgeClick($event)" />
+  (edgeClicked)="onEdgeClick($event)">
+  <!--An override implementation of the edges so we can have a larger clickable area.-->
+  <ng-template #edgeTemplate let-edge>
+    <!-- Define marker for each edge -->
+    <svg:defs>
+      <svg:marker [attr.id]="'arrow-' + edge.id" [attr.viewBox]="'0 -10 20 20'" refX="8" refY="0" markerWidth="10"
+        markerHeight="10" orient="auto">
+        <svg:path [attr.fill]="edge.color" d="M 0 -10 L 10 0 L 0 10" />
+      </svg:marker>
+    </svg:defs>
+
+    <!--Transparent larger area to click on-->
+    <svg:path class="edge" stroke="transparent" stroke-width="30px" [attr.d]="edge.line" cursor="pointer" />
+
+    <svg:path class="edge" [attr.stroke]="edge.color" [attr.marker-end]="'url(#arrow-' + edge.id + ')'"
+      [attr.d]="edge.line" />
+  </ng-template>
+</graph>
 
 <!--This is a dialog component to display whenever a node is clicked.-->
 <p-dialog header="Header" [draggable]="false" [(visible)]="dialogVisible" [position]="'bottomright'"
