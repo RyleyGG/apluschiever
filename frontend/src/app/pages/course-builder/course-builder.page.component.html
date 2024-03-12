@@ -24,7 +24,8 @@
 
 <!--This displays the graph of the course.-->
 <graph #graphComponent class="course-view-graph-container" [edges]="this.edges" [nodes]="this.nodes"
-  [clusters]="this.clusters" [layoutSettings]="courseViewGraphSettings" (nodeClicked)="onNodeClick($event)" />
+  [clusters]="this.clusters" [layoutSettings]="courseViewGraphSettings" (nodeClicked)="onNodeClick($event)"
+  (edgeClicked)="onEdgeClick($event)" />
 
 <!--This is a dialog component to display whenever a node is clicked.-->
 <p-dialog header="Header" [draggable]="false" [(visible)]="dialogVisible" [position]="'bottomright'"
