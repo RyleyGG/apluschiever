@@ -9,23 +9,22 @@
     gap: 0.5em;
     padding: 0.5em;
   ">
-    <!--TODO: add onchange actions to all these using the event emitter.-->
-    <!--TODO: enable changing the pTooltip to something different based on the checked attribute for the enable/disable-->
-    <p-toggleButton [(ngModel)]="checked" onIcon="pi pi-lock-open" offIcon="pi pi-lock" pTooltip="Enable Edits"
+    <p-toggleButton [(ngModel)]="enableEdits" (ngModelChange)="onEnableEditsChange($event)" onIcon="pi pi-lock-open"
+      offIcon="pi pi-lock" [pTooltip]="enableEdits ? 'Disable Edits' : 'Enable Edits'" tooltipPosition="bottom" />
+    <p-toggleButton [(ngModel)]="addLesson" (ngModelChange)="onAddLessonChange($event)" onIcon="pi pi-plus-circle"
+      offIcon="pi pi-plus-circle" [pTooltip]="addLesson ? 'Disable Adding Lesson' : 'Enable Adding Lesson'"
       tooltipPosition="bottom" />
-    <p-toggleButton [(ngModel)]="checked" onIcon="pi pi-plus-circle" offIcon="pi pi-plus-circle" pTooltip="Add Lesson"
-      tooltipPosition="bottom" />
-    <p-toggleButton [(ngModel)]="checked" onIcon="pi pi-share-alt" offIcon="pi pi-share-alt" pTooltip="Add Connection"
-      tooltipPosition="bottom" />
-    <p-toggleButton [(ngModel)]="checked" onIcon="pi pi-trash" offIcon="pi pi-trash" pTooltip="Delete Element"
-      tooltipPosition="bottom" />
+    <p-toggleButton [(ngModel)]="addConnection" onIcon="pi pi-share-alt" offIcon="pi pi-share-alt"
+      [pTooltip]="addConnection ? 'Disable Adding Connection' : 'Enable Adding Connection'" tooltipPosition="bottom" />
+    <p-toggleButton [(ngModel)]="deleteElement" onIcon="pi pi-trash" offIcon="pi pi-trash"
+      [pTooltip]="deleteElement ? 'Disable Deleting Element' : 'Enable Deleting Element'" tooltipPosition="bottom" />
   </div>
 </p-card>
 
 
 <!--This displays the graph of the course.-->
 <graph #graphComponent class="course-view-graph-container" [edges]="this.edges" [nodes]="this.nodes"
-  [clusters]="this.clusters" [layoutSettings]="courseViewGraphSettings" (nodeClicked)="onNodeClick($event)"></graph>
+  [clusters]="this.clusters" [layoutSettings]="courseViewGraphSettings" (nodeClicked)="onNodeClick($event)" />
 
 <!--This is a dialog component to display whenever a node is clicked.-->
 <p-dialog header="Header" [draggable]="false" [(visible)]="dialogVisible" [position]="'bottomright'"

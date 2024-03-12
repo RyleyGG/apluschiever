@@ -28,6 +28,7 @@ import { InputTextModule } from 'primeng/inputtext';
 
 import { PanelModule } from 'primeng/panel';
 import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
+import { uid } from '../../core/utils/unique-id';
 
 /**
  * The course view page component
@@ -42,8 +43,14 @@ import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
     styleUrl: './course-builder.page.component.css'
 })
 export class CourseBuilderPageComponent {
+    /**
+     * A reference to the graph component
+     */
     @ViewChild('graphComponent') graphComponent!: GraphComponent;
-    selectedNode!: Node; // the node that is in the node dialog popup
+    /**
+     * The node to display information about in the node dialog popup
+     */
+    selectedNode!: Node;
 
     /**
      * Graph rendering settings in use
@@ -64,90 +71,42 @@ export class CourseBuilderPageComponent {
      */
     dialogVisible: boolean = false;
 
-    /**
-     * Controls visibility of the filter options sidebar 
-     */
-    sidebarVisible: boolean = false;
+
+
+    enableEdits: boolean = false;
+    addLesson: boolean = false;
+    addConnection: boolean = false;
+    deleteElement: boolean = false;
 
     /**
-     * Menu options for the '+' button 
+     * The nodes of the displayed graph
      */
-    dial_items: MenuItem[] = [
-        {
-            tooltipOptions: {
-                tooltipLabel: 'Add Filters',
-                tooltipPosition: "bottom"
-            },
-            icon: 'pi pi-filter-fill',
-            iconStyle: { margin: 0 },
-            command: () => { this.sidebarVisible = true; }
-        },
-        {
-            tooltipOptions: {
-                tooltipLabel: 'Zoom to Fit',
-                tooltipPosition: "bottom"
-            },
-            icon: 'pi pi-money-bill',
-            iconStyle: { margin: 0 },
-            command: () => {
-                this.graphComponent.zoomToFit();
-                this.graphComponent.panToCenter();
-            }
-        },
-        {
-            tooltipOptions: {
-                tooltipLabel: 'Zoom to Fit',
-                tooltipPosition: "bottom"
-            },
-            icon: 'pi pi-money-bill',
-            iconStyle: { margin: 0 },
-            command: () => {
-                this.graphComponent.zoomToFit();
-                this.graphComponent.panToCenter();
-            }
-        },
-        {
-            tooltipOptions: {
-                tooltipLabel: 'Zoom to Fit',
-                tooltipPosition: "bottom"
-            },
-            icon: 'pi pi-money-bill',
-            iconStyle: { margin: 0 },
-            command: () => {
-                this.graphComponent.zoomToFit();
-                this.graphComponent.panToCenter();
-            }
-        },
-        {
-            tooltipOptions: {
-                tooltipLabel: 'Zoom to Fit',
-                tooltipPosition: "bottom"
-            },
-            icon: 'pi pi-money-bill',
-            iconStyle: { margin: 0 },
-            command: () => {
-                this.graphComponent.zoomToFit();
-                this.graphComponent.panToCenter();
-            }
-        }
-    ];
-    value: any;
-    checked: any = false;
-
-    // TODO: add command for each item.
-    contextMenuItems: MenuItem[] = [
-        { label: 'Add Lesson Node', icon: 'pi pi-fw pi-book' },
-        { label: 'Add Connection', icon: 'pi pi-fw pi-arrows-h' },
-        { label: 'Menu Item 3', icon: 'pi pi-fw pi-trash' }
-    ];
-
-
     nodes: Node[] = [];
+    /**
+     * The edges of the displayed graph
+     */
     edges: Edge[] = [];
+    /**
+     * Clusters within the displayed graph, currently unused.
+     */
     clusters: Cluster[] = [];
 
     constructor(private courseService: CourseService, private elementRef: ElementRef) { }
 
+
+    onEnableEditsChange(event: any) {
+
+    }
+
+    onAddLessonChange(event: any) {
+        // TODO: maybe make this open a dialog that will ask for information about the lesson first?
+        console.log(this.addLesson);
+        this.nodes.push({
+            id: uid(),
+            label: "TEST"
+        });
+        this.nodes = [...this.nodes];
+    }
 
     /**
      * This function fires whenever a node (or cluster) is clicked.
@@ -156,14 +115,29 @@ export class CourseBuilderPageComponent {
      * @param node The node that was clicked in the graph component.
      */
     onNodeClick(node: Node) {
+        if (this.deleteElement) {
+            this.nodes = [...this.nodes.filter((n) => n.id !== node.id)];
+            return;
+        }
+
+        if (this.addConnection) {
+            // Select two nodes with different clicks then make the connection between them.
+            return;
+        }
+
+        // No special editing mode is enabled, so we just pan and pull up the info about the node.
         this.selectedNode = node;
         this.graphComponent.panToNodeId(node.id);
         this.dialogVisible = true;
     }
 
-    onContextMenu(event: MouseEvent) {
-        event.preventDefault();
+    onEdgeClick(edge: Edge) {
+        if (this.deleteElement) {
+            this.edges = [...this.edges.filter((e) => e.id !== edge.id)];
+        }
     }
+
+
 
 
     //#region Node Highlighting
