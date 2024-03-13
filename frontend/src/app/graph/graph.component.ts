@@ -189,7 +189,6 @@ export class GraphComponent {
                     const newLayout = new DagreClusterLayout();
                     newLayout.settings = settings;
                     this.layout.set(newLayout);
-                    console.log(settings);
                 });
             }
             this.update();
@@ -457,7 +456,6 @@ export class GraphComponent {
         setTimeout(() => {
             this.oldNodes = oldNodes;
             this.oldClusters = oldClusters;
-            console.log(this.oldNodes);
         }, 500);
 
         // Update edges
