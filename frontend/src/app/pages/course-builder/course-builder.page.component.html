@@ -10,12 +10,13 @@
     padding: 0.5em;
   ">
     <!-- Course Name, Save, Publish, Increase Zoom, Decrease Zoom, Undo, Redo, -->
-    <b>Course Name</b>
+    <input pInputText type="text" id="nameInput" [(ngModel)]="courseName" />
     <p-divider layout="vertical" [style]="{ margin: '0 0.25em', padding: '12px 0.25em' }"></p-divider>
     <p-button styleClass="p-togglebutton" icon="pi pi-save" pTooltip="Save" tooltipPosition="bottom" />
     <p-button styleClass="p-togglebutton" icon="pi pi-upload" pTooltip="Publish" tooltipPosition="bottom" />
-    <p-button styleClass="p-togglebutton" icon="pi pi-undo" pTooltip="Undo" tooltipPosition="bottom" />
-    <p-button styleClass="p-togglebutton" icon="pi pi-refresh" pTooltip="Redo" tooltipPosition="bottom" />
+    <p-button styleClass="p-togglebutton" icon="pi pi-undo" (click)="undo()" pTooltip="Undo" tooltipPosition="bottom" />
+    <p-button styleClass="p-togglebutton" icon="pi pi-refresh" (click)="redo()" pTooltip="Redo"
+      tooltipPosition="bottom" />
   </div>
 </p-card>
 

@@ -31,6 +31,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { PanelModule } from 'primeng/panel';
 import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
 import { uid } from '../../core/utils/unique-id';
+import { HistoryService } from '../../core/services/history/history.service';
 
 /**
  * The course view page component
@@ -110,7 +111,9 @@ export class CourseBuilderPageComponent {
     selectedName: string = "";
     avatarUrl: string = "https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png";
 
-    constructor(private courseService: CourseService, private elementRef: ElementRef) { }
+    courseName: string = "Course Name";
+
+    constructor(private courseService: CourseService, private historyService: HistoryService, private elementRef: ElementRef) { }
 
     addLesson() {
         // TODO: maybe make this open a dialog that will ask for information about the lesson first?
@@ -121,8 +124,14 @@ export class CourseBuilderPageComponent {
                 tags: []
             }
         };
-        console.log(newNode);
         this.nodes = [...this.nodes, newNode];
+
+        // update the history
+        this.historyService.saveCurrentState({
+            nodes: this.nodes,
+            edges: this.edges,
+            clusters: this.clusters
+        });
 
         this.selectedNode = newNode;
         this.graphComponent.panToNodeId(newNode.id);
@@ -139,6 +148,14 @@ export class CourseBuilderPageComponent {
         if (this.enableEdits && this.deleteElement) {
             this.nodes = [...this.nodes.filter((n) => n.id !== node.id)];
             this.edges = [...this.edges.filter((edge) => edge.source !== node.id && edge.target !== node.id)];
+
+            // update the history
+            this.historyService.saveCurrentState({
+                nodes: this.nodes,
+                edges: this.edges,
+                clusters: this.clusters
+            });
+
             return;
         }
 
@@ -154,6 +171,14 @@ export class CourseBuilderPageComponent {
                 }];
                 this.edgeSourceNode = null;
             }
+
+            // update the history
+            this.historyService.saveCurrentState({
+                nodes: this.nodes,
+                edges: this.edges,
+                clusters: this.clusters
+            });
+
             return;
         }
 
@@ -166,6 +191,13 @@ export class CourseBuilderPageComponent {
     onEdgeClick(edge: Edge) {
         if (this.enableEdits && this.deleteElement) {
             this.edges = [...this.edges.filter((e) => e.id !== edge.id)];
+
+            // update the history
+            this.historyService.saveCurrentState({
+                nodes: this.nodes,
+                edges: this.edges,
+                clusters: this.clusters
+            });
         }
     }
 
@@ -176,6 +208,24 @@ export class CourseBuilderPageComponent {
             this.avatarUrl = newUrl;
         }
     }
+
+
+    undo() {
+        const newState = this.historyService.undo();
+        if (!newState) { return; }
+        this.nodes = [...newState.nodes];
+        this.edges = [...newState.edges];
+        this.clusters = [...newState.clusters];
+    }
+
+    redo() {
+        const newState = this.historyService.redo();
+        if (!newState) { return; }
+        this.nodes = [...newState.nodes];
+        this.edges = [...newState.edges];
+        this.clusters = [...newState.clusters];
+    }
+
 
 
     //#region Node Highlighting
