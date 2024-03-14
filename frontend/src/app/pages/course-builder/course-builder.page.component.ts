@@ -106,10 +106,11 @@ export class CourseBuilderPageComponent {
      */
     private edgeSourceNode: Node | null = null;
 
-    selectedTags: string[] = [];
-
     selectedName: string = "";
-    avatarUrl: string = "https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png";
+    selectedAvatarUrl: string = "https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png";
+    selectedTags: string[] = [];
+    selectedDescription: string = "";
+
 
     courseName: string = "Course Name";
 
@@ -178,6 +179,8 @@ export class CourseBuilderPageComponent {
         });
 
         this.selectedNode = newNode;
+        this.selectedName = newNode.label || "";
+        this.selectedTags = newNode.data.tags;
         this.graphComponent.panToNodeId(newNode.id);
         this.dialogVisible = true;
     }
@@ -227,12 +230,14 @@ export class CourseBuilderPageComponent {
 
         // No special editing mode is enabled, so we just pan and pull up the info about the node.
         this.selectedNode = node;
+        this.selectedName = node.label || "";
+        this.selectedTags = node.data.tags || [];
         this.graphComponent.panToNodeId(node.id);
         this.dialogVisible = true;
     }
 
     /**
-     * This function fires whenever an edge is clicked
+     * This function fires whenever an edge is clicked.
      * 
      * @param edge the edge that was clicked in the graph component.
      */
@@ -250,11 +255,27 @@ export class CourseBuilderPageComponent {
     }
 
 
+
+
+
     changeAvatarUrl() {
         const newUrl = prompt('Enter new URL for the avatar:');
         if (newUrl) {
-            this.avatarUrl = newUrl;
+            this.selectedAvatarUrl = newUrl;
         }
+    }
+
+    updateSelectedNodeData(): void {
+        // TODO: add one for avatar URL
+        this.selectedNode.label = this.selectedName;
+        this.selectedNode.data.tags = this.selectedTags;
+        this.selectedNode.data.short_description = this.selectedDescription;
+
+        const index = this.nodes.findIndex(node => node.id === this.selectedNode.id);
+        if (index !== -1) {
+            this.nodes[index] = Object.assign({}, this.nodes[index], this.selectedNode);
+        }
+        this.nodes = [...this.nodes];
     }
 
     //#endregion UI Functions

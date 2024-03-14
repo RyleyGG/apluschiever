@@ -68,13 +68,13 @@
 
 <!--This is a dialog component to display whenever a node is clicked.-->
 <p-dialog header="Header" [draggable]="false" [(visible)]="dialogVisible" [position]="'bottomright'"
-  [style]="{ width: '33vw', padding: '0.5em' }">
+  [style]="{ width: '33vw'}">
   <ng-template pTemplate="header">
     <div class="dialog-header">
       <ng-container *ngIf="enableEdits">
         <!--TODO: make below so that instead of an image, we show the image and clicking on it prompts for a new URL-->
         <div (click)="changeAvatarUrl()" style="cursor: pointer;">
-          <p-avatar [image]="avatarUrl" shape="circle" />
+          <p-avatar [image]="selectedAvatarUrl" shape="circle" />
         </div>
         <span class="p-float-label">
           <input pInputText type="text" id="nameInput" [(ngModel)]="selectedName" />
@@ -82,7 +82,7 @@
         </span>
       </ng-container>
       <ng-container *ngIf="!enableEdits">
-        <p-avatar [image]="avatarUrl" shape="circle" />
+        <p-avatar [image]="selectedAvatarUrl" shape="circle" />
         <span class="dialog-header-text">{{selectedNode.label}}</span>
       </ng-container>
 
@@ -103,8 +103,8 @@
 
     <ng-container *ngIf="enableEdits">
       <span class="p-float-label" style="margin-top: 1.5em;">
-        <textarea id="summary-input" rows="5" cols="30" pInputTextarea [autoResize]="true"
-          [style]="{ width: '100%'}"></textarea>
+        <textarea id="summary-input" rows="5" cols="30" pInputTextarea [(ngModel)]="selectedDescription"
+          [autoResize]="true" [style]="{ width: '100%'}"></textarea>
         <label for="summary-input">Summary</label>
       </span>
     </ng-container>
@@ -114,8 +114,8 @@
 
   </p>
   <ng-template pTemplate="footer">
-    <!--TODO: Have click go to lesson page-->
-    <p-button [routerLink]="['/lesson', selectedNode.label]" icon="pi pi-book" (click)="dialogVisible = false"
-      label="View Lesson" pAutoFocus [autofocus]="false" [style]="{margin: '0'}" />
+    <!--TODO: Have button to save changes and button for uploading content-->
+    <p-button id="saveNodeButton" icon="pi pi-save" (click)="updateSelectedNodeData()" label="Save Changes" pAutoFocus
+      [autofocus]="false" [style]="{ margin: '0', color: '--primary-color-text'}" />
   </ng-template>
 </p-dialog>
