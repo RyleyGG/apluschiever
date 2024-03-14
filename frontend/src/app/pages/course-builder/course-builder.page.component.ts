@@ -115,6 +115,45 @@ export class CourseBuilderPageComponent {
 
     constructor(private courseService: CourseService, private historyService: HistoryService, private elementRef: ElementRef) { }
 
+    //#region UI Functions
+
+    /**
+     * Function which saves the current state of the course.
+     */
+    save(): void {
+
+    }
+
+    /**
+     * Function which saves and publishes the course in its current state.
+     */
+    publish(): void {
+
+    }
+
+    /**
+     * Function called when undo button is pressed. Updates the state to the previous state. 
+     */
+    undo(): void {
+        const newState = this.historyService.undo();
+        if (!newState) { return; }
+        this.nodes = [...newState.nodes];
+        this.edges = [...newState.edges];
+        this.clusters = [...newState.clusters];
+    }
+
+    /**
+     * Function called when undo button is pressed. Updates the state to the new state. 
+     */
+    redo(): void {
+        const newState = this.historyService.redo();
+        if (!newState) { return; }
+        this.nodes = [...newState.nodes];
+        this.edges = [...newState.edges];
+        this.clusters = [...newState.clusters];
+    }
+
+
     /**
      * This function fires when the user clicks the button to add a new lesson node. 
      */
@@ -218,28 +257,7 @@ export class CourseBuilderPageComponent {
         }
     }
 
-    /**
-     * Function called when undo button is pressed. Updates the state to the previous state. 
-     */
-    undo(): void {
-        const newState = this.historyService.undo();
-        if (!newState) { return; }
-        this.nodes = [...newState.nodes];
-        this.edges = [...newState.edges];
-        this.clusters = [...newState.clusters];
-    }
-
-    /**
-     * Function called when undo button is pressed. Updates the state to the new state. 
-     */
-    redo(): void {
-        const newState = this.historyService.redo();
-        if (!newState) { return; }
-        this.nodes = [...newState.nodes];
-        this.edges = [...newState.edges];
-        this.clusters = [...newState.clusters];
-    }
-
+    //#endregion UI Functions
 
 
     //#region Node Highlighting
