@@ -115,11 +115,16 @@ export class CourseBuilderPageComponent {
 
     constructor(private courseService: CourseService, private historyService: HistoryService, private elementRef: ElementRef) { }
 
-    addLesson() {
+    /**
+     * This function fires when the user clicks the button to add a new lesson node. 
+     */
+    addLesson(): void {
+        if (!this.enableEdits) { return; }
+
         // TODO: maybe make this open a dialog that will ask for information about the lesson first?
         const newNode = {
             id: uid(),
-            label: "label",
+            label: "Default Label",
             data: {
                 tags: []
             }
@@ -140,7 +145,6 @@ export class CourseBuilderPageComponent {
 
     /**
      * This function fires whenever a node (or cluster) is clicked.
-     * It updates the selected node, pans to that node and opens the dialog component.
      * 
      * @param node The node that was clicked in the graph component.
      */
@@ -188,6 +192,11 @@ export class CourseBuilderPageComponent {
         this.dialogVisible = true;
     }
 
+    /**
+     * This function fires whenever an edge is clicked
+     * 
+     * @param edge the edge that was clicked in the graph component.
+     */
     onEdgeClick(edge: Edge) {
         if (this.enableEdits && this.deleteElement) {
             this.edges = [...this.edges.filter((e) => e.id !== edge.id)];
@@ -209,8 +218,10 @@ export class CourseBuilderPageComponent {
         }
     }
 
-
-    undo() {
+    /**
+     * Function called when undo button is pressed. Updates the state to the previous state. 
+     */
+    undo(): void {
         const newState = this.historyService.undo();
         if (!newState) { return; }
         this.nodes = [...newState.nodes];
@@ -218,7 +229,10 @@ export class CourseBuilderPageComponent {
         this.clusters = [...newState.clusters];
     }
 
-    redo() {
+    /**
+     * Function called when undo button is pressed. Updates the state to the new state. 
+     */
+    redo(): void {
         const newState = this.historyService.redo();
         if (!newState) { return; }
         this.nodes = [...newState.nodes];
