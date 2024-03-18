@@ -10,12 +10,13 @@ import {Markdown, Video} from "../../core/models/node-content.interface";
 import { Node } from "../../graph/graph.interface";
 import { NodeService } from '../../core/services/node/node.service';
 import { FullscreenComponent } from '../../components/fullscreen/fullscreen.component';
+import { ThirdpartyComponent } from '../../components/thirdparty/thirdparty.component';
 import { SplitterModule } from 'primeng/splitter';
 
 @Component({
   selector: 'app-lesson',
   standalone: true,
-  imports: [CommonModule, DragDropModule, SplitterModule, ButtonModule, VideoComponent, FileviewerComponent, FullscreenComponent],
+  imports: [CommonModule, DragDropModule, ThirdpartyComponent, SplitterModule, ButtonModule, VideoComponent, FileviewerComponent, FullscreenComponent],
   templateUrl: './lesson.component.html',
   styleUrl: './lesson.component.css'
 })
@@ -25,8 +26,8 @@ export class LessonComponent {
   lesson: any;
   box1 = [FileviewerComponent];
   box2 = [VideoComponent];
-  box3 = [null];
-  box4 = [FileviewerComponent];
+  box3 = [ThirdpartyComponent];
+  box4 = [ThirdpartyComponent];
   currentComponent = null;
   componentSource = null;
   componentTarget = null;

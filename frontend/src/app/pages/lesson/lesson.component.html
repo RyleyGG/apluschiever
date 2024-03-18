@@ -21,14 +21,14 @@
                     <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="fullscreen(this.content)"></p-button>
                     
                 </div>
-                <div class="box3" pDroppable="lessonContent" *ngFor="let content of box3" (onDrop)="drop(this.content, box3)" pDraggable="lessonContent" (onDragStart)="dragStart(this.content, box3)">
-                    <ng-container class="content" *ngComponentOutlet="content"></ng-container>
-                    <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="fullscreen(this.content)"></p-button>
+                <div class="box3" pDroppable="lessonContent" (onDrop)="drop(this, box3)" pDraggable="lessonContent" (onDragStart)="dragStart(this, box3)">
+                    <app-thirdparty class="content" [param]="'https://www.online-ide.com/'"></app-thirdparty>
+                    <p-button type="button" class="fsbutton" [rounded]="true" (click)="fullscreen(this)" icon="pi pi-window-maximize" ></p-button>
                 </div>
             </div>
-            <div class="box4" pDroppable="lessonContent" *ngFor="let content of box4" (onDrop)="drop(this.content, box4)" pDraggable="lessonContent" (onDragStart)="dragStart(this.content, box4)">
-                <ng-container class="content" *ngComponentOutlet="content"></ng-container>
-                <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="fullscreen(this.content)"></p-button>
+            <div class="box4" pDroppable="lessonContent" (onDrop)="drop(this, box4)" pDraggable="lessonContent" (onDragStart)="dragStart(this, box4)">
+                <app-thirdparty class="content" [param]="'https://primeng.org/splitter'"></app-thirdparty>
+                <p-button type="button" class="fsbutton" [rounded]="true" (click)="fullscreen(this)" icon="pi pi-window-maximize" ></p-button>
             </div>
         </div>
     </div>
