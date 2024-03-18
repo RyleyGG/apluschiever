@@ -20,8 +20,8 @@ export class LessonComponent {
   title = "";
   node_id: string | any; 
   lesson: any;
-  box1 = [];
-  box2 = [];
+  box1 = [FileviewerComponent];
+  box2 = [VideoComponent];
   box3 = [];
   box4 = [];
   //source: string[] = [];

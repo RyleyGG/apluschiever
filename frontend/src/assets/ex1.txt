@@ -1,0 +1,67 @@
+.Sh NAME
+Exercise 1 - Command Line           
+.Sh SYNOPSIS
+Practice using the Linux command line to create, edit, tar, and untar files. 
+The exercise also introduced how future assignments will be formatted and
+submitted.
+.Sh DESCRIPTION
+The terminal navigation portion of the exercise involved:
+.Bl -tag -width -indent
+.It - creating directory velichko_ksenia at /home/reptilian
+.It - using grep to search for files containing the phrase "android_dev" at /usr/rep/src/reptilian-kernel
+.It - placing the output from the grep command into a file named "output.txt"
+.It - taking screenshots to document
+.It - using the mv command to move "output.txt" to /home/reptilian/velichko_ksenia
+.It - creating tar file ex1.tar of /home/reptilian/velichko_ksenia
+.It - using gzip to compress ex1.tar and create ex1.tar.gz
+.El
+.Bl -tag -width -indent
+.It /usr/rep/src/reptilian-kernel/drivers/usb/gadget/configfs.c
+.Bl -indent
+Found when issuing the grep command to find all files within the 
+kernel source directory containing the phrase "android_dev".
+.El
+.It mkdir velichko_ksenia
+.Bl -tag -indent
+.It This command was introduced in a previous class. 
+.It It allows the user to create a new directory with the name passed in as an argument. 
+.It The first argument passed in, velichko_ksenia, is the name of the new directory.
+.El
+.It grep -R "android_dev" reptilian-kernel > output.txt
+.Bl -tag -indent
+.It This command was introduced in the instructions for Ex1. 
+.It It allows the user to search for patterns or phrases within files. 
+.It The -R option allows grep to search recursively for the phrase that follows. The next argument, reptilian-kernel, specifies the directory to be searched.
+.It The > output.txt argument passes the results of the command into a file with the name output.txt
+.El
+.It ls
+.Bl -tag -indent
+.It This command was introduced in the instructions for Ex1. 
+.It It allows the user to view the contents of the current directory.
+.El
+.It mv output.txt ../../../home/reptilian/velichko_ksenia
+.Bl -tag -indent
+.It This command was introduced in a previous class. 
+.It It allows the user to move the file passed in as the first argument into the location passed in as the second argument. 
+.It In this case, it moves output.txt to ../../../home/reptilian/velichko_ksenia
+.El
+.It tar -cvf ex1.tar velichko_ksenia
+.Bl -tag -indent
+.It This command was introduced in the instructions for Ex1. 
+.It It allows the user to compress the contents of a directory or file. 
+.It Argument -c creates a new archive, -v provides updates, -f allows the user to pass in an additional argument with the file name that should be assigned to the compressed file. 
+.It The last argument is the file or directory the user wishes to compress.
+.El
+.It gzip ex1.tar
+.Bl -tag -indent
+.It This command was introduced in the instructions for Ex1. 
+.It It allows the user to compress the contents of a file or directory. 
+.It The first argument is the file that the user wishes to gzip.
+.Sh TESTING 
+Testing involved the use of ls and cat to view directories and file contents.
+This would allow for the confirmation that files were processed correctly
+and contained all of the necessary information.
+.Sh BUGS
+No known bugs.
+.Sh AUTHOR
+Ksenia Velichko
