@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, ContentChild, ElementRef, EventEmitter, HostListener, Output, QueryList, TemplateRef, ViewChildren, ViewEncapsulation, computed, effect, input, isSignal, signal, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { animate, style, transition as ngTransition, trigger } from '@angular/animations';
+import { toSignal } from "@angular/core/rxjs-interop";
 
 import * as shape from 'd3-shape';
 import * as ease from 'd3-ease';
@@ -13,6 +14,7 @@ import { Node, Edge, Cluster, Graph, Layout } from './graph.interface';
 import { MouseWheelDirective } from '../core/directives/mouse-wheel.directive';
 import { DagreClusterLayout } from './layouts/dagreCluster';
 import { uid } from '../core/utils/unique-id';
+import { fromEvent } from 'rxjs';
 
 /**
  * Interface for a matrix, used by GraphComponent internally to track pan/zoom information.
@@ -56,8 +58,8 @@ export class GraphComponent {
     public edges = input.required<Edge[]>();
     public clusters = input<Cluster[]>([]);
 
-    public layout = signal<string | Layout>(new DagreClusterLayout());
-    public layoutSettings = signal<any>(DagreClusterLayout.defaultSettings);
+    public layout = signal<string | Layout>("dagreCluster");
+    public layoutSettings = input<any>(DagreClusterLayout.defaultSettings);
     public curve = signal<any>(shape.curveBundle.beta(1));
 
     // Animation Inputs
@@ -90,13 +92,24 @@ export class GraphComponent {
 
     // Public Properties & Computed Values
 
+    /**
+     * A private signal used to trigger resizing events.
+     */
+    private windowResizeSignal = toSignal(fromEvent(window, 'resize'));
+
     /*
      * We try setting width/height first through the input view(),
      * if that fails then we try getting the size via the parent element,
      * if that fails, we fallback to a default value.
      */
-    width = computed(() => Math.floor((this.view() || this.getParentDimensions() || [600, 400])[0]));
-    height = computed(() => Math.floor((this.view() || this.getParentDimensions() || [600, 400])[1]));
+    width = computed(() => {
+        this.windowResizeSignal();
+        return Math.floor((this.view() || this.getParentDimensions() || [600, 400])[0]);
+    });
+    height = computed(() => {
+        this.windowResizeSignal();
+        return Math.floor((this.view() || this.getParentDimensions() || [600, 400])[1]);
+    });
 
     /**
      * Computed signal to automatically convert the transformation matrix storing pan/zoom information 
@@ -175,6 +188,7 @@ export class GraphComponent {
                     const newLayout = new DagreClusterLayout();
                     newLayout.settings = settings;
                     this.layout.set(newLayout);
+                    console.log(settings);
                 });
             }
             this.update();
@@ -240,6 +254,9 @@ export class GraphComponent {
      * Initialized the graph component and calls the first render for the component.
      */
     ngOnInit(): void {
+        // emit a window resize after tiny delay to prevent graph from initially rendering incorrectly.
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+
         this.createGraph();
         this.initialized = true;
         requestAnimationFrame(() => this.draw());
