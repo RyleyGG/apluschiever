@@ -1,31 +1,43 @@
-<h1>{{title}}</h1>
+
 <div class="page-content">
+    <div class="lessonInfo">
+        <h1>{{title}}</h1>
+        <div class="objectives" *ngIf="showObjectives">
+            Lesson Objectives
+          </div>
+          <button pButton class="p-button-sm" type="button" (click)="seeMore()">
+            {{ showObjectives ? 'See Less' : 'View Lesson Objectives' }}
+          </button>
+    </div>
     <div class="rectangle">
-        <div class="box1" pDroppable="lessonContent">
-            <div class="content" pDraggable="lessonContent" *ngFor="let content of box1">
-                <ng-container *ngComponentOutlet="content"></ng-container>
-            </div>
+        <div class="box1" pDroppable="lessonContent" *ngFor="let content of box1" (onDrop)="drop(this.content, box1)" pDraggable="lessonContent" (onDragStart)="dragStart(this.content, box1)">
+            <ng-container class="content" *ngComponentOutlet="content"></ng-container>
+            <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="fullscreen(this.content)"></p-button>
         </div>
         <div class="right-side">
             <div class="right-top">
-                <div class="box2" pDroppable="lessonContent">
-                    <div class="content" pDraggable="lessonContent" *ngFor="let content of box2">
-                        <ng-container *ngComponentOutlet="content"></ng-container>
-                    </div>
+                <div class="box2" pDroppable="lessonContent" *ngFor="let content of box2" (onDrop)="drop(this.content, box2)" pDraggable="lessonContent" (onDragStart)="dragStart(this.content, box2)">
+                    <ng-container class="content" *ngComponentOutlet="content"></ng-container>
+                    <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="fullscreen(this.content)"></p-button>
+                    
                 </div>
-                <div class="box3" pDroppable="lessonContent">
-                    <div class="content" pDraggable="lessonContent" *ngFor="let content of box3">
-                        <ng-container *ngComponentOutlet="content"></ng-container>
-                    </div>
+                <div class="box3" pDroppable="lessonContent" *ngFor="let content of box3" (onDrop)="drop(this.content, box3)" pDraggable="lessonContent" (onDragStart)="dragStart(this.content, box3)">
+                    <ng-container class="content" *ngComponentOutlet="content"></ng-container>
+                    <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="fullscreen(this.content)"></p-button>
                 </div>
             </div>
-            <div class="box4" pDroppable="lessonContent">
-                <div class="content" pDraggable="lessonContent" *ngFor="let content of box4">
-                    <ng-container *ngComponentOutlet="content"></ng-container>
-                </div>
+            <div class="box4" pDroppable="lessonContent" *ngFor="let content of box4" (onDrop)="drop(this.content, box4)" pDraggable="lessonContent" (onDragStart)="dragStart(this.content, box4)">
+                <ng-container class="content" *ngComponentOutlet="content"></ng-container>
+                <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="fullscreen(this.content)"></p-button>
             </div>
         </div>
     </div>
+    <ng-container *ngIf="currentComponent">
+        <app-fullscreen>
+            <p-button type="button" class="exitbutton" [rounded]="true" icon="pi pi-times" (click)="fullscreen(null)"></p-button>
+            <ng-container *ngComponentOutlet="currentComponent"></ng-container>
+        </app-fullscreen>
+    </ng-container>
 </div>
 
 
