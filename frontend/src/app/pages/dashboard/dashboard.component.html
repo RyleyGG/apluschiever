@@ -1,17 +1,27 @@
-<h1>{{title}}</h1>
-<div class="page-content">
+<div style="display: grid; grid-template-columns: 60% 40%; gap: 1.5em; padding: 1.5em;">
     <!--TODO: Add a general user stats section. #Lessons complete, #Courses Complete, etc. -->
+    <!--TODO: make a grid with two column layout one having 60% one with 40%-->
 
-    <section>
+    <section style="grid-column: 1 / 2;">
+        <p style="font-size: 2rem; font-weight: 700; margin: 0;">Dashboard</p>
+    </section>
+
+    <section style="grid-column: 1;">
+        <p-card>
+            <p style="margin: 0; padding: 0; font-weight: 700; font-size: 1.75rem;">Begin a new course today!</p>
+            <ng-template pTemplate="footer">
+                <p-button type="button" [rounded]="true" label="Enroll in a new course" />
+            </ng-template>
+        </p-card>
         <!--
             Make this section a banner for enrolling in a new course...
             Clicking might have a side menu pop-up or something?
         -->
     </section>
 
-    <section>
+    <section style="grid-column: 1;">
         <div style="display: flex; gap: 1.5em; align-items: center; justify-content: start;">
-            <p style="font-size: 2.5rem; font-weight: 700; margin: 0;">My Courses</p>
+            <p style="font-size: 2rem; font-weight: 700; margin: 0;">My Courses</p>
             <!-- TODO: add click handlers to filter shown courses based on clicks.-->
             <p-button type="button" [rounded]="true" [outlined]="true" label="All" />
             <p-button type="button" [rounded]="true" [outlined]="true" label="In Progress" />
@@ -54,10 +64,25 @@
         </ng-template>
     </section>
 
+    <!--For some reason padding and grid gap don't play nice, so I add the margin-right here to accomodate-->
+    <section style="grid-column: 2; grid-row: 2 / 4; margin-right: 1.5em;">
+        <p-card header="Username" subheader="Email">
+            <ng-template pTemplate="header">
+                <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
+            </ng-template>
+            Statistics about number of courses / completed courses / completed lessons / etc.
+            <ng-template pTemplate="footer">
+                <p-button label="Edit Profile" [rounded]="true" [outlined]="true" icon="pi pi-pencil" />
+            </ng-template>
+        </p-card>
+    </section>
+</div>
 
 
-    <!--TODO: Make This into not a footer section-->
-    <!--TODO: Add searching/filtering options-->
+<!--
+
+TODO: Make This into not a footer section
+TODO: Add searching/filtering options
     <div class="footer">
         <h1>Suggested Courses</h1>
         <p-carousel [value]="allCourses" [numVisible]="4" [numScroll]="3" [responsiveOptions]="responsiveOptions">
@@ -72,4 +97,6 @@
             </ng-template>
         </p-carousel>
     </div>
-</div>
+
+
+-->
