@@ -1,37 +1,31 @@
 <h1>{{title}}</h1>
 <div class="page-content">
     <div class="rectangle">
-        <div class="box1" pDroppable="lessonContent" (onDrop)="drop(box1)">
-            <div class="content" pDraggable="lessonContent" (onDragStart)="dragStart(box1)">
-                <div *ngFor="let content of box1">
-                    {{ content }}
-                </div>
+        <div class="box1" pDroppable="lessonContent">
+            <div class="content" pDraggable="lessonContent" *ngFor="let content of box1">
+                <ng-container *ngComponentOutlet="content"></ng-container>
             </div>
         </div>
         <div class="right-side">
             <div class="right-top">
-                <div class="box2" pDroppable="lessonContent" (onDrop)="drop(box2)">
-                    <div class="content" pDraggable="lessonContent" (onDragStart)="dragStart(box2)">
-                        <div *ngFor="let content of box2">
-                            {{ content }}
-                        </div>
+                <div class="box2" pDroppable="lessonContent">
+                    <div class="content" pDraggable="lessonContent" *ngFor="let content of box2">
+                        <ng-container *ngComponentOutlet="content"></ng-container>
                     </div>
                 </div>
-                <div class="box3" pDroppable="lessonContent" (onDrop)="drop(box3)">
-                    <div class="content" pDraggable="lessonContent" (onDragStart)="dragStart(box3)">
-                        <div *ngFor="let content of box3">
-                            {{ content }}
-                        </div>
+                <div class="box3" pDroppable="lessonContent">
+                    <div class="content" pDraggable="lessonContent" *ngFor="let content of box3">
+                        <ng-container *ngComponentOutlet="content"></ng-container>
                     </div>
                 </div>
             </div>
-            <div class="box4" pDroppable="lessonContent" (onDrop)="drop(box4)">
-                <div class="content" pDraggable="lessonContent" (onDragStart)="dragStart(box4)">
-                    <div *ngFor="let content of box4">
-                        {{ content }}
-                    </div>
+            <div class="box4" pDroppable="lessonContent">
+                <div class="content" pDraggable="lessonContent" *ngFor="let content of box4">
+                    <ng-container *ngComponentOutlet="content"></ng-container>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+

@@ -3,32 +3,47 @@ import { ActivatedRoute } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragDropModule } from 'primeng/dragdrop';
+import { VideoComponent } from '../../components/video/video.component';
+import { FileviewerComponent } from '../../components/fileviewer/fileviewer.component';
+import {Markdown, Video} from "../../core/models/node-content.interface";
+import { Node } from "../../graph/graph.interface";
+import { NodeService } from '../../core/services/node/node.service';
 
 @Component({
   selector: 'app-lesson',
   standalone: true,
-  imports: [CommonModule, DragDropModule],
+  imports: [CommonModule, DragDropModule, VideoComponent, FileviewerComponent],
   templateUrl: './lesson.component.html',
   styleUrl: './lesson.component.css'
 })
 export class LessonComponent {
-  box1 = ['item1'];
-  box2 = ['item2', 'another2'];
-  box3 = ['item3', 'another3'];
-  box4 = ['item4'];
-  source: string[] = [];
-  target: string[] = [];
-  temporary: string[] = [];
+  title = "";
+  node_id: string | any; 
+  lesson: any;
+  box1 = [];
+  box2 = [];
+  box3 = [];
+  box4 = [];
+  //source: string[] = [];
+  //target: string[] = [];
+  //temporary: string[] = [];
   drop(box: string[]) {
-    this.temporary.splice(0, this.temporary.length, ...box);
-    box.splice(0, box.length, ...this.source);
-    this.source.splice(0, this.source.length, ...this.temporary);
+    //this.temporary.splice(0, this.temporary.length, ...box);
+    //box.splice(0, box.length, ...this.source);
+    //this.source.splice(0, this.source.length, ...this.temporary);
   }
   dragStart(container: string[]) {
-    this.source = container;
-    console.log(container);
+    //this.source = container;
+    //console.log(container);
   }
-  constructor(private route : ActivatedRoute) {
+  constructor(private nodeService: NodeService, private route : ActivatedRoute) {
+    this.node_id = this.route.snapshot.paramMap.get('id');
+    this.nodeService.getNode(this.node_id).subscribe((data: any) => {
+      this.title = data.title;
+      this.lesson = data;
+    });
   }
-  title = this.route.snapshot.paramMap.get('id');
+//getNode(node_id: string) 
+  
+
 }
