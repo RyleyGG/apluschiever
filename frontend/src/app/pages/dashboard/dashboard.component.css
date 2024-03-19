@@ -46,3 +46,41 @@ h1 {
 .user-stats-container>* {
   flex-grow: 1;
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+/* Track */
+::-webkit-scrollbar-track {}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--primary-300);
+  border-radius: 0.25em;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-500);
+}
+
+/* width */
+::ng-deep ::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+/* Track */
+::ng-deep ::-webkit-scrollbar-track {}
+
+/* Handle */
+::ng-deep ::-webkit-scrollbar-thumb {
+  background: var(--primary-300);
+  border-radius: 0.25em;
+}
+
+/* Handle on hover */
+::ng-deep ::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-500);
+}

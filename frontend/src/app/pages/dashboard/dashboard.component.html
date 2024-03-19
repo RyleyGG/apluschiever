@@ -31,7 +31,7 @@
 
         <p-confirmDialog></p-confirmDialog>
 
-        <div class="grid" style="max-height: 500px; padding: 1em 0; grid-auto-flow: row;"
+        <div class="grid" style="max-height: 500px; padding: 1em 1em 1em 0; grid-auto-flow: row;"
             *ngIf="userCourses.length; else noCourses">
             <ng-template ngFor [ngForOf]="userCourses" let-course>
                 <p-card [header]="course.title">
