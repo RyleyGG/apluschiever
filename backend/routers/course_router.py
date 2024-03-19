@@ -33,6 +33,35 @@ async def search_courses(filters: CourseFilters, db: Session = Depends(get_sessi
     return return_obj
 
 
+@router.post('/add_or_update', response_model=Course, response_model_by_alias=False)
+async def add_or_update_course(course: Course, db: Session = Depends(get_session)):
+    course_has_valid_id = False
+    try:
+        uuid.UUID(course.id)
+        course_has_valid_id = True
+    except ValueError:
+        pass
+
+    if course_has_valid_id:
+        existing_course = db.exec(select(Course).where(Course.id == course.id)).first()
+
+        if existing_course:
+            existing_course.title = course.title
+            existing_course.short_description = course.short_description
+            existing_course.nodes = course.nodes
+            existing_course.is_published = course.is_published
+            db.add(existing_course)
+            db.commit()
+            db.refresh(existing_course)
+            return existing_course
+    else:
+        course.id = None
+        db.add(course)
+        db.commit()
+        db.refresh(course)
+        return course
+
+
 @router.get('/nodes/{course_id}', response_model=List[NodeOverview], response_model_by_alias=False)
 async def get_node_overview(course_id: str, db: Session = Depends(get_session), user: User = Depends(auth_service.validate_token)):
     cur_course = db.exec(select(Course).where(Course.id == course_id)).first()
