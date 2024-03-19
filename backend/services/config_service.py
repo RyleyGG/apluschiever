@@ -23,6 +23,7 @@ class Config(BaseSettings):
     model_config = SettingsConfigDict(env_file=env_dir / '.env', from_attributes=True, extra='allow')
     _tests_user_id: str = None
     _tests_access_token: str = None
+    _tests_teacher_id: str = None
 config: Config = Config()
 
 logger.add(cwd / 'logs' / f'{str(int(datetime.now().timestamp()))}.log')

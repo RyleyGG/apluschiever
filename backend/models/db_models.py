@@ -6,7 +6,7 @@ from sqlalchemy import JSON, Column
 from sqlmodel import SQLModel, Field, Relationship
 
 from models.pydantic_models import Video, Markdown, UploadFile, ThirdPartyResource
-from models.dto_models import UserType
+from models.dto_models import UserType, NodeTags
 from services.api_utility_service import pydantic_column_type
 
 
@@ -40,7 +40,7 @@ class Node(SQLModel, table=True):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     title: str
     short_description: str
-    tags: Optional[List[str]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[str]])))
+    tags: Optional[List[NodeTags]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[NodeTags]])))
     # SQLModel doesn't currently support polymorphism within attributes, meaning we can't have a generic abstract
     # Content class from which we actually use Video, Markdown, etc. classes when storing data.
     # Instead, we supply one attribute per content type we support.
@@ -88,3 +88,4 @@ class Course(SQLModel, table=True):
     course_owner: User = Relationship(back_populates='owned_courses')
     enrolled_students: Optional[List[User]] = Relationship(back_populates='enrolled_courses', link_model=CourseStudentLink)
     nodes: Optional[List[Node]] = Relationship(back_populates="course")
+    is_published: bool = Field(default=False)

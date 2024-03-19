@@ -11,6 +11,11 @@ from services.api_utility_service import get_session
 router = APIRouter()
 
 
+@router.get('/me', response_model=User, response_model_by_alias=False)
+async def get_current_user(user: User = Depends(auth_service.validate_token)):
+    return user
+
+
 @router.post('/search_courses', response_model=List[Course], response_model_by_alias=False)
 async def get_courses_by_user(user: User = Depends(auth_service.validate_token), db: Session = Depends(get_session)):
     return_obj = user.enrolled_courses

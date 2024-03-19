@@ -3,11 +3,18 @@ from pydantic import BaseModel, UUID4
 from typing import Optional, List
 
 
+class UserType(Enum):
+    STUDENT = 'Student'
+    ADMIN = 'Administrator'
+    TEACHER = 'Teacher'
+
+
 class SignUpInfo(BaseModel):
     email_address: str
     first_name: str
     last_name: str
     password: str
+    user_type: Optional[str] = None
 
 
 class SignInInfo(BaseModel):
@@ -36,6 +43,7 @@ class CourseFilters(BaseModel):
     ids: Optional[List[UUID4]] = None
     owned_by: Optional[List[UUID4]] = None
     course_title: Optional[str] = None
+    is_published: Optional[bool] = None
 
 
 class NodeFilters(BaseModel):
@@ -49,12 +57,6 @@ class NewCourse(BaseModel):
     course_owner_id: UUID4
 
 
-class UserType(Enum):
-    STUDENT = 'Student'
-    ADMIN = 'Administrator'
-    TEACHER = 'Teacher'
-
-
 class NodeProgressDetails(BaseModel):
     node_id: str
     completed_content: List[str]
@@ -62,3 +64,10 @@ class NodeProgressDetails(BaseModel):
 
 class SupportedThirdParties(Enum):
     YOUTUBE = 'YouTube'
+
+
+class NodeTags(Enum):
+    CORE = 'Core'
+    ASSESSMENT = 'Assessment'
+    PRACTICE = 'Practice'
+    SUPPLEMENTAL = 'Supplemental'
