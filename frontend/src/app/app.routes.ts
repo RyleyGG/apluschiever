@@ -9,6 +9,7 @@ import { SignOutPageComponent } from './pages/signout/signout.page.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { CourseViewPageComponent } from './pages/course-view/course-view.page.component';
 import { LessonComponent } from './pages/lesson/lesson.component';
+import { CourseBuilderPageComponent } from './pages/course-builder/course-builder.page.component';
 
 export const routes: Routes = [
     // Routes for authentication
@@ -20,6 +21,9 @@ export const routes: Routes = [
     { path: "dashboard", component: DashboardComponent, canActivate: [signedInGuard] },
     { path: "viewer/:id", component: CourseViewPageComponent, canActivate: [signedInGuard] },
     { path: "lesson/:id", component: LessonComponent, canActivate: [signedInGuard] },
+
+    // Routes for creating content
+    { path: "builder", component: CourseBuilderPageComponent },
 
     // General
     { path: "landing", component: LandingPageComponent },

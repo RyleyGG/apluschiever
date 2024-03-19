@@ -11,7 +11,7 @@ from services.api_utility_service import get_session
 router = APIRouter()
 
 
-@router.post('/me', response_model=User, response_model_by_alias=False)
+@router.get('/me', response_model=User, response_model_by_alias=False)
 async def get_current_user(user: User = Depends(auth_service.validate_token)):
     return user
 

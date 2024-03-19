@@ -38,7 +38,8 @@
             <!--Handles all the edges between nodes-->
             <svg:g class="edges">
                 <svg:g #linkElement *ngFor="let edge of graph.edges; trackBy: trackEdgeBy" class="edge-group"
-                    [id]="edge.id" [@svgGraphAnimation]="animateEnabled() ? 'active' : 'inactive'">
+                    [id]="edge.id" [@svgGraphAnimation]="animateEnabled() ? 'active' : 'inactive'"
+                    (click)="onEdgeClick($event, edge)">
                     <ng-container *ngIf="edgeTemplate" [ngTemplateOutlet]="edgeTemplate"
                         [ngTemplateOutletContext]="{ $implicit: edge }"></ng-container>
 
