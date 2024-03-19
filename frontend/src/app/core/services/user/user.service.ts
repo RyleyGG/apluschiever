@@ -7,8 +7,8 @@ import { catchError, map, take, throwError } from "rxjs";
 })
 export class UserService {
     /**
-       * The server to hit
-       */
+     * The server to hit
+     */
     private REST_API_SERVER = "http://localhost:8000/";
 
     /**
@@ -36,7 +36,7 @@ export class UserService {
     }
 
     /**
-     * Get all courses
+     * Get all courses the user is enrolled in
      * @returns
      */
     getUserCourses() {
@@ -54,9 +54,8 @@ export class UserService {
     }
 
     /**
-     * Get all courses
-     * @param course_id 
-     * 
+     * Add the user to a course
+     * @param course_id the course id of the course to enroll in
      */
     addCourse(course_id: string) {
         return this.httpClient.get<any>(this.REST_API_SERVER + `user/add_course/${course_id}`, {}).pipe(
@@ -73,9 +72,8 @@ export class UserService {
     }
 
     /**
-     * Get all courses
-     * @param course_id 
-     * 
+     * Remove the user from a course
+     * @param course_id the course id of the course to remove the user from
      */
     removeCourse(course_id: string) {
         return this.httpClient.get<any>(this.REST_API_SERVER + `user/remove_course/${course_id}`, {}).pipe(

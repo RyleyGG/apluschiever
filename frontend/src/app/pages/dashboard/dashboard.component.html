@@ -133,26 +133,3 @@
 
     </ng-template>
 </p-sidebar>
-
-
-<!--
-
-TODO: Make This into not a footer section
-TODO: Add searching/filtering options
-    <div class="footer">
-        <h1>Suggested Courses</h1>
-        <p-carousel [value]="allCourses" [numVisible]="4" [numScroll]="3" [responsiveOptions]="responsiveOptions">
-            <ng-template let-course pTemplate="item">
-                <div class="suggested">
-                    <div [routerLink]="['/viewer', course.id]">
-                        <h4>{{ course.title }}</h4>
-                    </div>
-                    <p-button type="button" [rounded]="true" icon="pi pi-plus" (click)="addCourse(course.id)"
-                        label="Add"></p-button>
-                </div>
-            </ng-template>
-        </p-carousel>
-    </div>
-
-
--->
