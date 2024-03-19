@@ -70,11 +70,22 @@
 
     <!--For some reason padding and grid gap don't play nice, so I add the margin-right here to accomodate-->
     <section style="grid-column: 2; grid-row: 2 / 4; margin-right: 1.5em;">
-        <p-card header="Username" subheader="Email">
+        <p-card header="{{loggedInUser?.first_name + ' ' + loggedInUser?.last_name}}"
+            subheader="{{loggedInUser?.email_address}}">
             <ng-template pTemplate="header">
                 <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
             </ng-template>
-            Statistics about number of courses / completed courses / completed lessons / etc.
+            <div class="user-stats-container" style="display: flex; flex-wrap: wrap; gap: 1.5em; ">
+                <p-card header="{{userCourses.length}}">
+                    Total courses
+                </p-card>
+                <p-card header="{{userCourses.length}}">
+                    Courses completed
+                </p-card>
+                <p-card header="{{userCourses.length}}">
+                    Courses in progress
+                </p-card>
+            </div>
             <ng-template pTemplate="footer">
                 <p-button label="Edit Profile" [rounded]="true" [outlined]="true" icon="pi pi-pencil" />
             </ng-template>

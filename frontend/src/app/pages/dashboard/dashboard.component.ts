@@ -16,6 +16,7 @@ import { Course } from "../../core/models/course.interface";
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SidebarModule } from 'primeng/sidebar';
+import { User } from '../../core/models/user.interface';
 
 
 
@@ -34,6 +35,7 @@ export class DashboardComponent {
   showOptions = false;
 
   public sidebarVisible: boolean = false;
+  public loggedInUser: User | null = null;
 
 
   constructor(private courseService: CourseService, private userService: UserService, private confirmationService: ConfirmationService, private messageService: MessageService) {
@@ -67,7 +69,7 @@ export class DashboardComponent {
       });
     });
     this.userService.getUser().subscribe((data) => {
-      console.log(data);
+      this.loggedInUser = data;
     });
   }
 

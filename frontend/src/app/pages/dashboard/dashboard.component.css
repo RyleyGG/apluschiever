@@ -42,3 +42,7 @@ h1 {
   border-radius: 20px;
   padding: 6px;
 }
+
+.user-stats-container>* {
+  flex-grow: 1;
+}
