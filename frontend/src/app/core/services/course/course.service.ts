@@ -1,7 +1,7 @@
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {catchError, map, take, throwError} from "rxjs";
-import {CourseFilters} from "../../models/course.interface";
+import {Course, CourseFilters} from "../../models/course.interface";
 
 /**
  * A service which interacts with the course endpoints.
@@ -47,7 +47,7 @@ export class CourseService {
 
   /**
    * Get all courses
-   * @returns
+   * @returns list of courses
    */
   getCourses(courseFilters: CourseFilters = {}) {
     return this.httpClient.post<any>(this.REST_API_SERVER + `course/search`, courseFilters).pipe(
@@ -61,6 +61,19 @@ export class CourseService {
         return throwError(() => error);
       })
     );
+  }
+
+  /**
+   * Updates a given course
+   * @returns the updated course
+   */
+  addOrUpdateCourse(course: Course) {
+    return this.httpClient.post<Course>(this.REST_API_SERVER + `course/add_or_update/`, course).pipe(
+      take(1),
+      map((res: Course) => {
+        return res;
+      })
+    )
   }
 
 }
