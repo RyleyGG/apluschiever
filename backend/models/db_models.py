@@ -88,3 +88,4 @@ class Course(SQLModel, table=True):
     course_owner: User = Relationship(back_populates='owned_courses')
     enrolled_students: Optional[List[User]] = Relationship(back_populates='enrolled_courses', link_model=CourseStudentLink)
     nodes: Optional[List[Node]] = Relationship(back_populates="course")
+    is_published: bool = Field(default=False)

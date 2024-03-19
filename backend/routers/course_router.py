@@ -22,6 +22,8 @@ async def search_courses(filters: CourseFilters, db: Session = Depends(get_sessi
         query_statement = query_statement.where(Course.id.in_(filters.ids))
     if filters.owned_by:
         query_statement = query_statement.where(Course.course_owner_id.in_(filters.owned_by))
+    if filters.is_published is not None:
+        query_statement = query_statement.where(Course.is_published == True if filters.is_published else Course.is_published == False)
 
     # TODO: make this more resilient (i.e. fuzzy searching, case-insensitivity)
     if filters.course_title:

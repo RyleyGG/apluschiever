@@ -43,6 +43,7 @@ class CourseFilters(BaseModel):
     ids: Optional[List[UUID4]] = None
     owned_by: Optional[List[UUID4]] = None
     course_title: Optional[str] = None
+    is_published: Optional[bool] = None
 
 
 class NodeFilters(BaseModel):
