@@ -45,7 +45,7 @@ async def attempt_sign_up(signup_obj: SignUpInfo, db: Session = Depends(get_sess
         password=hashed_password,
         first_name=signup_obj.first_name,
         last_name=signup_obj.last_name,
-        user_type=UserType.STUDENT
+        user_type=UserType.STUDENT if not signup_obj.user_type else UserType(signup_obj.user_type)
     )
     db.add(new_user)
     db.commit()
