@@ -66,6 +66,9 @@ export class DashboardComponent {
         this.userCourses = [...this.userCourses, element];
       });
     });
+    this.userService.getUser().subscribe((data) => {
+      console.log(data);
+    });
   }
 
 
