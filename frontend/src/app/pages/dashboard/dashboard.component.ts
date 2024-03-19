@@ -15,14 +15,14 @@ import { CarouselModule } from 'primeng/carousel';
 import { Course } from "../../core/models/course.interface";
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-
+import { SidebarModule } from 'primeng/sidebar';
 
 
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CheckboxModule, CarouselModule, DataViewModule, ButtonModule, ConfirmDialogModule, RouterLink, CardModule],
+  imports: [CheckboxModule, CarouselModule, DataViewModule, SidebarModule, ButtonModule, ConfirmDialogModule, RouterLink, CardModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -32,6 +32,8 @@ export class DashboardComponent {
   userCourses: Course[] = [];
   responsiveOptions: any[] | undefined;
   showOptions = false;
+
+  public sidebarVisible: boolean = false;
 
 
   constructor(private courseService: CourseService, private userService: UserService, private confirmationService: ConfirmationService, private messageService: MessageService) {

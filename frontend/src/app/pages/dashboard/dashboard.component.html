@@ -10,7 +10,8 @@
         <p-card>
             <p style="margin: 0; padding: 0; font-weight: 700; font-size: 1.75rem;">Begin a new course today!</p>
             <ng-template pTemplate="footer">
-                <p-button type="button" [rounded]="true" label="Enroll in a new course" />
+                <p-button type="button" [rounded]="true" label="Enroll in a new course"
+                    (click)="sidebarVisible=true;" />
             </ng-template>
         </p-card>
         <!--
@@ -28,21 +29,23 @@
             <p-button type="button" [rounded]="true" [outlined]="true" label="Completed" />
         </div>
 
-        <!--TODO: make this scroll if it doesn't already-->
-        <div class="grid" style="padding: 1em 0;" *ngIf="userCourses.length; else noCourses">
+        <p-confirmDialog></p-confirmDialog>
+
+        <div class="grid" style="max-height: 500px; padding: 1em 0; grid-auto-flow: row;"
+            *ngIf="userCourses.length; else noCourses">
             <ng-template ngFor [ngForOf]="userCourses" let-course>
                 <p-card [header]="course.title">
                     <ng-template pTemplate="header">
                         <!--
-                            TODO: alternate image here.
-                            Maybe let course creator pick this image?
-                            Maybe let it be randomized?
-                        -->
+                                    TODO: alternate image here.
+                                    Maybe let course creator pick this image?
+                                    Maybe let it be randomized?
+                                -->
                         <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
                     </ng-template>
                     <!--
-                        TODO: appears there may be a bug with short description for courses?? idk...
-                    -->
+                                TODO: appears there may be a bug with short description for courses?? idk...
+                            -->
                     <p>
                         {{course.shortDescription}}
                     </p>
@@ -58,6 +61,7 @@
                 </p-card>
             </ng-template>
         </div>
+
         <!--TODO: Pretty This Up -->
         <ng-template #noCourses>
             <h2>You are not currently enrolled in any courses.</h2>
@@ -77,6 +81,47 @@
         </p-card>
     </section>
 </div>
+
+
+<p-sidebar [(visible)]="sidebarVisible" [style]="{ width: '100vw' }" [modal]="true">
+    <ng-template pTemplate="header">
+        <h1 style="margin: 0;">
+            Enroll
+        </h1>
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div class="grid" style="grid-template-columns: 33% 33% 33%; padding: 1em 0;" *ngIf="allCourses.length">
+            <ng-template ngFor [ngForOf]="allCourses" let-course>
+                <p-card [header]="course.title">
+                    <ng-template pTemplate="header">
+                        <!--
+                            TODO: alternate image here.
+                            Maybe let course creator pick this image?
+                            Maybe let it be randomized?
+                        -->
+                        <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
+                    </ng-template>
+                    <!--
+                        TODO: appears there may be a bug with short description for courses?? idk...
+                    -->
+                    <p>
+                        {{course.shortDescription}}
+                    </p>
+                    <!--TODO: progress bar here-->
+                    <ng-template pTemplate="footer">
+                        <div style="display: flex; justify-content: end;">
+                            <p-button label="Enroll" [rounded]="true" [outlined]="true"
+                                (click)="addCourse(course.id)" />
+                        </div>
+                    </ng-template>
+                </p-card>
+            </ng-template>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+
+    </ng-template>
+</p-sidebar>
 
 
 <!--
