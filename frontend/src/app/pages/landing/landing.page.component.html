@@ -1,7 +1,79 @@
-<div class="page-content">
-    <div>
-        <h1>Welcome to {{ title }}</h1>
-        <p>Please sign up or sign in to continue</p>
+<!--Hero Section-->
+<div class="grid" style="background-color: var(--surface-section); color: var(--surface-800);">
+    <div class="hero-column" style="padding: 3rem; text-align: left; display: flex; align-items: center;">
+        <section>
+            <span style="font-weight: 700; font-size: 3rem; display: block;">Learn the skills</span>
+            <div style="font-weight: 700; color: var(--primary-color); font-size: 3rem; margin-bottom: 1rem;">you need
+                to succeed</div>
+            <p style="color: var(--surface-700); line-height: 1.5; margin-bottom: 1.5rem; font-size: 1.25rem;">Explore
+                concepts in the order
+                YOU decide!</p>
+
+            <button pButton pRipple label="Learn More" type="button" class="p-button-raised"
+                style="margin-right: 1.5em;" (click)="scrollToComponent('whyAchieverSection')"></button>
+            <button pButton pRipple label="Register" type="button" class="p-button-outlined"
+                [routerLink]="['/signup']"></button>
+        </section>
     </div>
-    <div class="divider" role="separator" aria-label="Divider"></div>
+    <div class="hero-column" style="overflow: hidden; text-align: right;">
+        <!--TODO: Pick a better image here-->
+        <img src="https://www.insidehighered.com/sites/default/files/styles/max_650x650/public/2023-11/shapecharge%20e%20plus.jpg?itok=WhyZXGoJ"
+            alt="Image"
+            style="display: block; clip-path: polygon(8% 0, 100% 0%, 100% 100%, 0 100%); float: right; min-width: 850px;">
+    </div>
+</div>
+
+<!--Feature / Why A+chiever Section-->
+<div id="whyAchieverSection"
+    style="background-color: var(--surface-section); padding: 5rem 1.5rem; text-align: center;">
+    <div style="margin-bottom: 1.5rem; font-size: 2.5rem;">
+        <span style="font-weight: 900;">Why A+chiever Works</span>
+    </div>
+    <div class="grid">
+        <div class="feature-column" style="margin-bottom: 1.5rem; padding: 0 2rem;">
+            <span class="feature-icon-box" style="border-radius: 10px">
+                <i style="font-size: 2rem; color: var(--primary-color)" class="pi pi-book"></i>
+            </span>
+            <div style="font-weight: 900; font-size: 1.5rem; margin-bottom: 1.5rem; font-weight: 500;">Based on
+                Research</div>
+            <span style="font-weight: 700; line-height: 1.5;">A+chiever was designed based on educational research from
+                a variety of universities, to empower students to learn at their own pace.</span>
+        </div>
+        <div class="feature-column" style="margin-bottom: 1.5rem; padding: 0 2rem;">
+            <span class="feature-icon-box" style="border-radius: 10px">
+                <i style="font-size: 2rem; color: var(--primary-color)" class="pi pi-users"></i>
+            </span>
+            <div style="font-weight: 900; font-size: 1.5rem; margin-bottom: 1.5rem; font-weight: 500;">User Chosen
+                Lesson Plan</div>
+            <span style="font-weight: 700; line-height: 1.5;">Engage with the topics you want to learn when you want to
+                learn them.</span>
+        </div>
+        <div class="feature-column" style="margin-bottom: 1.5rem; padding: 0 2rem;">
+            <span class="feature-icon-box" style="border-radius: 10px">
+                <i style="font-size: 2rem; color: var(--primary-color)" class="pi pi-check-circle"></i>
+            </span>
+            <div style="font-weight: 900; font-size: 1.5rem; margin-bottom: 1.5rem; font-weight: 500;">Easy to Use
+            </div>
+            <span style="font-weight: 700; line-height: 1.5;">Our easy to understand UI and powerful searching options
+                allow users to quickly find the lessons applicable to them, speeding up the learning process.</span>
+        </div>
+    </div>
+</div>
+
+<!--Call To Action Section-->
+<div style="background-color: var(--surface-section); padding: 5rem 1.5rem;">
+    <div style="font-weight: 700; text-align: center;">
+        <div style="font-weight: 900; font-size: 2.5rem; margin-bottom: 1.5rem;">Start
+            Achieving Today</div>
+        <div style="font-weight: 700; font-size: 1.5rem; margin-bottom: 2rem" class="text-700 text-2xl mb-5">Whether you
+            need to review a single concept, or master an entire skillset, A+chiever can help.</div>
+        <button pButton pRipple label="Register Now" icon="pi pi-check"
+            style="font-weight: 700; padding: 1rem 2rem; white-space: nowrap;" class="p-button-raised p-button-rounded"
+            [routerLink]="['/signup']"></button>
+    </div>
+</div>
+
+<!--Footer Section (maybe not needed)-->
+<div>
+
 </div>
