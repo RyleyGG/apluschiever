@@ -53,6 +53,20 @@ export class UserService {
         );
     }
 
+    getUserCoursesProgress(course_ids: string[]) {
+        return this.httpClient.post<any>(this.REST_API_SERVER + `user/course_progress`, { "course_id_list": course_ids }).pipe(
+            take(1),
+            map((res: any) => {
+                console.log(res);
+                return res;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                // Something went really wrong
+                return throwError(() => error);
+            })
+        );
+    }
+
     /**
      * Add the user to a course
      * @param course_id the course id of the course to enroll in

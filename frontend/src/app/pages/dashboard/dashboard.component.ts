@@ -71,6 +71,11 @@ export class DashboardComponent {
       data.forEach((element: Course) => {
         this.userCourses = [...this.userCourses, element];
       });
+
+      console.log(this.userCourses.map(item => item.id));
+      this.userService.getUserCoursesProgress(this.userCourses.map(item => item.id)).subscribe((data) => {
+        console.log(data);
+      });
       // add filter here to filter the user courses for complete ones and incomplete ones
     });
 

@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 
 from sqlmodel import Session, select
+from starlette import status
 
 from models.db_models import User, Course
-from models.dto_models import UserFilters
+from models.dto_models import NodeProgressDetails, UserFilters
 from services import auth_service
 from services.api_utility_service import get_session
 
@@ -15,6 +16,30 @@ router = APIRouter()
 async def get_current_user(user: User = Depends(auth_service.validate_token)):
     return user
 
+@router.post('/course_progress')
+async def get_enrolled_course_progress(course_id_list: List[str], user: User = Depends(auth_service.validate_token), db: Session = Depends(get_session)):
+    # this just goes through one by one and gets each course's progress, theres gotta be a better way
+    def get_course_progress(course_id):
+        cur_course = db.exec(select(Course).where(Course.id == course_id)).first()
+
+        if not cur_course:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Supplied Course ID is invalid",
+            )
+        course_node_ids = [str(node.id) for node in cur_course.nodes]
+        filtered_node_progress = {node_id: progress for node_id, progress in user.node_progress.items() if node_id in course_node_ids}
+
+        node_progress_list = []
+        for k, v in filtered_node_progress.items():
+            node_progress_list.append(NodeProgressDetails(node_id=k, progress=v))
+        return node_progress_list
+    
+    return_obj = dict()
+    for course_id in course_id_list:
+        return_obj.update({course_id: get_course_progress(course_id)})
+    print(return_obj)
+    return return_obj
 
 @router.post('/search_courses', response_model=List[Course], response_model_by_alias=False)
 async def get_courses_by_user(user: User = Depends(auth_service.validate_token), db: Session = Depends(get_session)):
