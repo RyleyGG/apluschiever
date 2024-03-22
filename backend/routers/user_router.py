@@ -30,11 +30,13 @@ async def get_enrolled_course_progress(course_id_list: List[str], user: User = D
         course_node_ids = [str(node.id) for node in cur_course.nodes]
         filtered_node_progress = {node_id: progress for node_id, progress in user.node_progress.items() if node_id in course_node_ids}
 
-        node_progress_list = []
-        for k, v in filtered_node_progress.items():
-            node_progress_list.append(NodeProgressDetails(node_id=k, progress=v))
-        return node_progress_list
-    
+        # Calculate overall completion percentage
+        total_nodes = len(course_node_ids)
+        completed_nodes = sum(1 for node_id in course_node_ids if node_id in filtered_node_progress)
+        completion_percentage = (completed_nodes / total_nodes) * 100 if total_nodes > 0 else 0
+
+        return completion_percentage
+
     return_obj = dict()
     for course_id in course_id_list:
         return_obj.update({course_id: get_course_progress(course_id)})

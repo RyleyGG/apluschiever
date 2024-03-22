@@ -54,7 +54,7 @@ export class UserService {
     }
 
     getUserCoursesProgress(course_ids: string[]) {
-        return this.httpClient.post<any>(this.REST_API_SERVER + `user/course_progress`, { "course_id_list": course_ids }).pipe(
+        return this.httpClient.post<any>(this.REST_API_SERVER + `user/course_progress`, course_ids).pipe(
             take(1),
             map((res: any) => {
                 console.log(res);

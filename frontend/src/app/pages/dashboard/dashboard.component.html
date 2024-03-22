@@ -50,6 +50,9 @@
                         {{course.shortDescription}}
                     </p>
                     <!--TODO: progress bar here-->
+                    <p-progressBar [value]="course.progress" [style]="{ height: '0.5em'}">
+                        <ng-template pTemplate="content" let-value></ng-template>
+                    </p-progressBar>
                     <ng-template pTemplate="footer">
                         <div style="display: flex; justify-content: space-between;">
                             <p-button type="button" [rounded]="true" [outlined]="true" icon="pi pi-trash"
@@ -79,10 +82,10 @@
                 <p-card header="{{userCourses.length}}">
                     Total courses
                 </p-card>
-                <p-card header="{{userCourses.length}}">
+                <p-card header="{{userCompletedCourses.length}}">
                     Courses completed
                 </p-card>
-                <p-card header="{{userCourses.length}}">
+                <p-card header="{{userInProgressCourses.length}}">
                     Courses in progress
                 </p-card>
             </div>

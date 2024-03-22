@@ -16,6 +16,7 @@ import { Course } from "../../core/models/course.interface";
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SidebarModule } from 'primeng/sidebar';
+import { ProgressBarModule } from 'primeng/progressbar';
 import { User } from '../../core/models/user.interface';
 
 
@@ -25,7 +26,7 @@ import { User } from '../../core/models/user.interface';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CheckboxModule, CarouselModule, DataViewModule, SidebarModule, ButtonModule, ConfirmDialogModule, RouterLink, CardModule],
+  imports: [CheckboxModule, CarouselModule, ProgressBarModule, DataViewModule, SidebarModule, ButtonModule, ConfirmDialogModule, RouterLink, CardModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -38,15 +39,15 @@ export class DashboardComponent {
   /**
    * Listing of the courses the user is enrolled in
    */
-  public userCourses: Course[] = [];
+  public userCourses: any[] = [];
   /**
    * Listing of the courses the user is enrolled in and has completed
    */
-  public userCompletedCourses: Course[] = [];
+  public userCompletedCourses: any[] = [];
   /**
    * Listing of the courses the user is enrolled in and hasn't completed
    */
-  public userInProgressCourses: Course[] = [];
+  public userInProgressCourses: any[] = [];
 
   /**
    * Whether the enrollment sidebar should be shown or not
@@ -74,9 +75,12 @@ export class DashboardComponent {
 
       console.log(this.userCourses.map(item => item.id));
       this.userService.getUserCoursesProgress(this.userCourses.map(item => item.id)).subscribe((data) => {
-        console.log(data);
+        for (let key in data) {
+          (this.userCourses.find(course => course.id == key) as any).progress = data[key];
+        }
       });
-      // add filter here to filter the user courses for complete ones and incomplete ones
+      this.userCompletedCourses = this.userCourses.filter((course) => course.progress == 100);
+      this.userInProgressCourses = this.userCourses.filter((course) => course.progress != 100);
     });
 
     this.userService.getUser().subscribe((data) => {
