@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, AfterViewInit  } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -12,6 +12,7 @@ import { NodeService } from '../../core/services/node/node.service';
 import { FullscreenComponent } from '../../components/fullscreen/fullscreen.component';
 import { ThirdpartyComponent } from '../../components/thirdparty/thirdparty.component';
 import { SplitterModule } from 'primeng/splitter';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-lesson',
@@ -20,12 +21,12 @@ import { SplitterModule } from 'primeng/splitter';
   templateUrl: './lesson.component.html',
   styleUrl: './lesson.component.css'
 })
-export class LessonComponent {
+export class LessonComponent{
   title = "";
   node_id: string | any; 
   lesson: any;
-  box1 = [FileviewerComponent];
-  box2 = [VideoComponent];
+  box1= [VideoComponent];
+  box2= [FileviewerComponent];
   box3 = [ThirdpartyComponent];
   box4 = [ThirdpartyComponent];
   currentComponent = null;
@@ -54,7 +55,7 @@ export class LessonComponent {
   fullscreen(component: any) {
     this.currentComponent = component;
   }
-  constructor(private nodeService: NodeService, private route : ActivatedRoute) {
+  constructor(private nodeService: NodeService, private route : ActivatedRoute, private sanitizer: DomSanitizer) {
     this.node_id = this.route.snapshot.paramMap.get('id');
     this.nodeService.getNode(this.node_id).subscribe((data: any) => {
       this.title = data.title;
