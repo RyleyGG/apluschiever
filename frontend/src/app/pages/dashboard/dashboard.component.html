@@ -24,16 +24,19 @@
         <div style="display: flex; gap: 1.5em; align-items: center; justify-content: start;">
             <p style="font-size: 2rem; font-weight: 700; margin: 0;">My Courses</p>
             <!-- TODO: add click handlers to filter shown courses based on clicks.-->
-            <p-button type="button" [rounded]="true" [outlined]="true" label="All" />
-            <p-button type="button" [rounded]="true" [outlined]="true" label="In Progress" />
-            <p-button type="button" [rounded]="true" [outlined]="true" label="Completed" />
+            <p-button type="button" [rounded]="true" [outlined]="true" label="All"
+                (click)="displayedCourses = userCourses" />
+            <p-button type="button" [rounded]="true" [outlined]="true" label="In Progress"
+                (click)="displayedCourses = userInProgressCourses" />
+            <p-button type="button" [rounded]="true" [outlined]="true" label="Completed"
+                (click)="displayedCourses = userCompletedCourses" />
         </div>
 
         <p-confirmDialog></p-confirmDialog>
 
         <div class="grid" style="max-height: 500px; padding: 1em 1em 1em 0; grid-auto-flow: row;"
-            *ngIf="userCourses.length; else noCourses">
-            <ng-template ngFor [ngForOf]="userCourses" let-course>
+            *ngIf="displayedCourses.length; else noCourses">
+            <ng-template ngFor [ngForOf]="displayedCourses" let-course>
                 <p-card [header]="course.title">
                     <ng-template pTemplate="header">
                         <!--
@@ -67,7 +70,7 @@
 
         <!--TODO: Pretty This Up -->
         <ng-template #noCourses>
-            <h2>You are not currently enrolled in any courses.</h2>
+            <h2>There are no courses to display.</h2>
         </ng-template>
     </section>
 

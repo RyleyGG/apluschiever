@@ -37,6 +37,11 @@ export class DashboardComponent {
   public allCourses: Course[] = [];
 
   /**
+   * The courses displayed to the user in the dashboard. This may be filtered with button clicks. 
+   */
+  public displayedCourses: any[] = [];
+
+  /**
    * Listing of the courses the user is enrolled in
    */
   public userCourses: any[] = [];
@@ -73,14 +78,17 @@ export class DashboardComponent {
         this.userCourses = [...this.userCourses, element];
       });
 
-      console.log(this.userCourses.map(item => item.id));
+      // Get the course progresses
       this.userService.getUserCoursesProgress(this.userCourses.map(item => item.id)).subscribe((data) => {
         for (let key in data) {
           (this.userCourses.find(course => course.id == key) as any).progress = data[key];
         }
       });
+      // Create the secondary arrays
       this.userCompletedCourses = this.userCourses.filter((course) => course.progress == 100);
       this.userInProgressCourses = this.userCourses.filter((course) => course.progress != 100);
+
+      this.displayedCourses = this.userCourses;
     });
 
     this.userService.getUser().subscribe((data) => {
