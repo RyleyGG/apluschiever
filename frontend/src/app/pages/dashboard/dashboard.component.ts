@@ -17,7 +17,10 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SidebarModule } from 'primeng/sidebar';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
 import { User } from '../../core/models/user.interface';
+import { uid } from '../../core/utils/unique-id';
 
 
 /**
@@ -26,7 +29,7 @@ import { User } from '../../core/models/user.interface';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CheckboxModule, CarouselModule, ProgressBarModule, DataViewModule, SidebarModule, ButtonModule, ConfirmDialogModule, RouterLink, CardModule],
+  imports: [CheckboxModule, CarouselModule, FormsModule, DialogModule, InputTextModule, ProgressBarModule, DataViewModule, SidebarModule, ButtonModule, ConfirmDialogModule, RouterLink, CardModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -63,6 +66,15 @@ export class DashboardComponent {
    */
   public loggedInUser: User | null = null;
 
+  /**
+   * Whether the edit profile dialog should be shown or not
+   */
+  public editProfileDialogVisible: boolean = false;
+
+  public updatedFirstName: string = "";
+  public updatedLastName: string = "";
+  public updatedEmail: string = "";
+
 
   constructor(private courseService: CourseService, private userService: UserService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.courseService.getCourses().subscribe((data) => {
@@ -91,8 +103,12 @@ export class DashboardComponent {
       this.displayedCourses = this.userCourses;
     });
 
-    this.userService.getUser().subscribe((data) => {
+    this.userService.getCurrentUser().subscribe((data) => {
       this.loggedInUser = data;
+
+      this.updatedFirstName = this.loggedInUser?.first_name || "";
+      this.updatedLastName = this.loggedInUser?.last_name || "";
+      this.updatedEmail = this.loggedInUser?.email_address || "";
     });
   }
 
@@ -129,5 +145,34 @@ export class DashboardComponent {
       }
     });
   }
+
+
+
+  //#region Updating User Info
+
+  public cancelUserUpdate() {
+    this.updatedFirstName = this.loggedInUser?.first_name || "";
+    this.updatedLastName = this.loggedInUser?.last_name || "";
+    this.updatedEmail = this.loggedInUser?.email_address || "";
+  }
+
+  public updateUserInformation() {
+    console.log("UPDATE!");
+    console.log(this.updatedFirstName);
+    console.log(this.updatedLastName);
+    console.log(this.updatedEmail);
+    this.userService.updateCurrentUser({
+      id: this.loggedInUser?.id || uid(),
+      first_name: this.updatedFirstName,
+      last_name: this.updatedLastName,
+      email_address: this.updatedEmail,
+      user_type: this.loggedInUser?.user_type || 'Student'
+    }).subscribe((data) => {
+      console.log(data);
+      window.location.reload();
+    });
+  }
+
+  //#endregion Updating User Info
 
 }

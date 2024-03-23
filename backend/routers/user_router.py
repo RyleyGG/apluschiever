@@ -16,6 +16,15 @@ router = APIRouter()
 async def get_current_user(user: User = Depends(auth_service.validate_token)):
     return user
 
+@router.post('/update_user', response_model=User, response_model_by_alias=False)
+async def update_current_user(updated_user: User, user: User = Depends(auth_service.validate_token), db: Session = Depends(get_session)):
+    print(updated_user)
+    user.first_name = updated_user.first_name
+    user.last_name = updated_user.last_name
+    user.email_address = updated_user.email_address
+    db.commit()
+    return user
+
 @router.post('/course_progress')
 async def get_enrolled_course_progress(course_id_list: List[str], user: User = Depends(auth_service.validate_token), db: Session = Depends(get_session)):
     # this just goes through one by one and gets each course's progress, theres gotta be a better way
@@ -40,7 +49,6 @@ async def get_enrolled_course_progress(course_id_list: List[str], user: User = D
     return_obj = dict()
     for course_id in course_id_list:
         return_obj.update({course_id: get_course_progress(course_id)})
-    print(return_obj)
     return return_obj
 
 @router.post('/search_courses', response_model=List[Course], response_model_by_alias=False)

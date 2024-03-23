@@ -1,4 +1,4 @@
-<div style="display: grid; grid-template-columns: 60% 40%; gap: 1.5em; padding: 1.5em;">
+<div style="display: grid; grid-template-columns: 60% 40%; gap: 1.5em; padding: 1.5em; overflow-x: visible;">
     <!--TODO: Add a general user stats section. #Lessons complete, #Courses Complete, etc. -->
     <!--TODO: make a grid with two column layout one having 60% one with 40%-->
 
@@ -20,21 +20,22 @@
         -->
     </section>
 
-    <section style="grid-column: 1;">
-        <div style="display: flex; gap: 1.5em; align-items: center; justify-content: start;">
+    <section style="grid-column: 1; overflow-x: visible;">
+        <div style="display: flex; gap: 1.5em; align-items: center; justify-content: start; overflow-x: visible;">
             <p style="font-size: 2rem; font-weight: 700; margin: 0;">My Courses</p>
             <!-- TODO: add click handlers to filter shown courses based on clicks.-->
-            <p-button type="button" [rounded]="true" [outlined]="true" label="All"
+            <p-button type="button" [rounded]="true" [outlined]="displayedCourses != userCourses" label="All"
                 (click)="displayedCourses = userCourses" />
-            <p-button type="button" [rounded]="true" [outlined]="true" label="In Progress"
-                (click)="displayedCourses = userInProgressCourses" />
-            <p-button type="button" [rounded]="true" [outlined]="true" label="Completed"
-                (click)="displayedCourses = userCompletedCourses" />
+            <p-button type="button" [rounded]="true" [outlined]="displayedCourses != userInProgressCourses"
+                label="In Progress" (click)="displayedCourses = userInProgressCourses" />
+            <p-button type="button" [rounded]="true" [outlined]="displayedCourses != userCompletedCourses"
+                label="Completed" (click)="displayedCourses = userCompletedCourses" />
         </div>
 
         <p-confirmDialog></p-confirmDialog>
 
-        <div class="grid" style="max-height: 500px; padding: 1em 1em 1em 0; grid-auto-flow: row;"
+        <div class="grid my-courses-container"
+            style="max-height: 500px; padding: 1em 2em 1em 1em; grid-auto-flow: row; overflow-x: visible;"
             *ngIf="displayedCourses.length; else noCourses">
             <ng-template ngFor [ngForOf]="displayedCourses" let-course>
                 <p-card [header]="course.title">
@@ -89,7 +90,8 @@
                 </p-card>
             </div>
             <ng-template pTemplate="footer">
-                <p-button label="Edit Profile" [rounded]="true" [outlined]="true" icon="pi pi-pencil" />
+                <p-button label="Edit Profile" [rounded]="true" [outlined]="true" icon="pi pi-pencil"
+                    (click)="editProfileDialogVisible=true;" />
             </ng-template>
         </p-card>
     </section>
@@ -103,7 +105,7 @@
         </h1>
     </ng-template>
     <ng-template pTemplate="content">
-        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr; padding: 1em 0;" *ngIf="allCourses.length">
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr 1fr 1fr; padding: 1em 0;" *ngIf="allCourses.length">
             <ng-template ngFor [ngForOf]="allCourses" let-course>
                 <p-card [header]="course.title">
                     <ng-template pTemplate="header">
@@ -131,3 +133,32 @@
 
     </ng-template>
 </p-sidebar>
+
+<div *ngIf="editProfileDialogVisible">
+    <p-dialog header="Edit Profile" [(visible)]="editProfileDialogVisible" [modal]="true" [style]="{ width: '50vw' }"
+        [draggable]="false" [resizable]="false">
+        <div style="display: flex; justify-content: space-between; align-content: center;">
+            <span class="p-float-label">
+                <input pInputText id="firstName" [(ngModel)]="updatedFirstName" />
+                <label for="firstName">First Name</label>
+            </span>
+            <span class="p-float-label">
+                <input pInputText id="lastName" [(ngModel)]="updatedLastName" />
+                <label for="lastName">Last Name</label>
+            </span>
+        </div>
+        <span class="p-float-label" style="margin-top: 1.5em; width: 100%;">
+            <input pInputText id="email" style="width: 100%;" [(ngModel)]="updatedEmail" />
+            <label for="email">Email</label>
+        </span>
+
+        <ng-template pTemplate="footer">
+            <div style="display: flex;">
+                <p-button icon="pi pi-times" label="Cancel" [rounded]="true" [outlined]="true"
+                    (click)="cancelUserUpdate();" />
+                <p-button icon="pi pi-save" label="Save" [rounded]="true" [outlined]="true"
+                    (click)="updateUserInformation();" />
+            </div>
+        </ng-template>
+    </p-dialog>
+</div>

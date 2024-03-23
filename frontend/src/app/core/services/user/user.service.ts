@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, map, take, throwError } from "rxjs";
+import { User } from "../../models/user.interface";
 
 @Injectable({
     providedIn: "root"
@@ -21,8 +22,23 @@ export class UserService {
     /**
      * Get the logged in user's information
      */
-    getUser() {
+    getCurrentUser() {
         return this.httpClient.post<any>(this.REST_API_SERVER + `user/me`, {}).pipe(
+            take(1),
+            map((res: any) => {
+                console.log(res);
+                return res;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                // Something went really wrong
+                return throwError(() => error);
+            })
+        )
+    }
+
+    updateCurrentUser(new_user_data: User) {
+        console.log(new_user_data)
+        return this.httpClient.post<any>(this.REST_API_SERVER + `user/update_user`, new_user_data).pipe(
             take(1),
             map((res: any) => {
                 console.log(res);
