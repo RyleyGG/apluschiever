@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-video',
@@ -8,5 +9,9 @@ import { Component } from '@angular/core';
   styleUrl: './video.component.css'
 })
 export class VideoComponent {
-  videoUrl = "https://youtu.be/fov2mcNZPmc?si=f-e5sRvzmBCJ0eot";
+  @Input() video: string | any;
+  constructor(private sanitizer: DomSanitizer) {}
+  getURL(): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(this.video);
+  }
 }

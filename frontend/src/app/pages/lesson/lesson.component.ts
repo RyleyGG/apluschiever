@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit  } from '@angular/core';
+import { Component, ViewChild, AfterViewInit, ElementRef, ComponentFactoryResolver} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -22,6 +22,8 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   styleUrl: './lesson.component.css'
 })
 export class LessonComponent{
+  @ViewChild('video') childDiv!: ElementRef;
+  
   title = "";
   node_id: string | any; 
   lesson: any;
@@ -55,14 +57,11 @@ export class LessonComponent{
   fullscreen(component: any) {
     this.currentComponent = component;
   }
-  constructor(private nodeService: NodeService, private route : ActivatedRoute, private sanitizer: DomSanitizer) {
+  constructor(private resolver: ComponentFactoryResolver, private nodeService: NodeService, private route : ActivatedRoute, private sanitizer: DomSanitizer) {
     this.node_id = this.route.snapshot.paramMap.get('id');
     this.nodeService.getNode(this.node_id).subscribe((data: any) => {
       this.title = data.title;
       this.lesson = data;
     });
   }
-//getNode(node_id: string) 
-  
-
 }

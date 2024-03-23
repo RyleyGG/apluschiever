@@ -1,41 +1,51 @@
 
 <div class="page-content">
-    <div class="lessonInfo">
+    <div class="lessonInfo" style="padding: 1rem;">
         <h1>{{title}}</h1>
         <div class="objectives" *ngIf="showObjectives">
-            Lesson Objectives
+            <!--TODO remove hardcoded objectives-->
+            <h2>Lesson Objectives</h2>
+            <ul>
+                <li>Understand the Pythagorean theorem</li>
+                <li>Learn how to apply the Pythagorean theorem correctly</li>
+                <li>Explore different variations of the pythagorean theorem</li>
+                <li>Practice solving problems using the pythagorean theorem</li>
+            </ul>
           </div>
           <button pButton class="p-button-sm" type="button" (click)="seeMore()">
             {{ showObjectives ? 'See Less' : 'View Lesson Objectives' }}
           </button>
     </div>
     <div class="rectangle">
-        <div class="box1" pDroppable="lessonContent" *ngFor="let content of box1" (onDrop)="drop(this.content, box1)" pDraggable="lessonContent" (onDragStart)="dragStart(this.content, box1)">
-            <ng-container class="content" *ngComponentOutlet="content"></ng-container>
-            <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="fullscreen(this.content)"></p-button>
+        <div class="box1" pDroppable="lessonContent" (onDrop)="drop(this, box1)" pDraggable="lessonContent" (onDragStart)="dragStart(this, box1)">
+            <div style="background-color: var(--primary-color); color: white; height: 7%; padding: 1rem;">Draggable</div>
+            <app-fileviewer></app-fileviewer>
+            <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="fullscreen(this)"></p-button>
         </div>
-        <div class="right-side">
-            <div class="right-top">
-                <div class="box2" pDroppable="lessonContent" *ngFor="let content of box2" (onDrop)="drop(this.content, box2)" pDraggable="lessonContent" (onDragStart)="dragStart(this.content, box2)">
-                    <ng-container class="content" *ngComponentOutlet="content"></ng-container>
-                    <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="fullscreen(this.content)"></p-button>
-                    
-                </div>
-                <div class="box3" pDroppable="lessonContent" (onDrop)="drop(this, box3)" pDraggable="lessonContent" (onDragStart)="dragStart(this, box3)">
-                    <app-thirdparty class="content" [param]="'https://www.online-ide.com/'"></app-thirdparty>
-                    <p-button type="button" class="fsbutton" [rounded]="true" (click)="fullscreen(this)" icon="pi pi-window-maximize" ></p-button>
-                </div>
-            </div>
-            <div class="box4" pDroppable="lessonContent" (onDrop)="drop(this, box4)" pDraggable="lessonContent" (onDragStart)="dragStart(this, box4)">
-                <app-thirdparty class="content" [param]="'https://primeng.org/splitter'"></app-thirdparty>
-                <p-button type="button" class="fsbutton" [rounded]="true" (click)="fullscreen(this)" icon="pi pi-window-maximize" ></p-button>
-            </div>
+        <div class="box2" pDroppable="lessonContent" (onDrop)="drop(this, box1)" pDraggable="lessonContent" (onDragStart)="dragStart(this, box1)">
+            <app-video [video]="'https://www.youtube.com/embed/d8EA5TxGzcY?si=gnyuYGfVvhw1YePz'"></app-video>
+            <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="fullscreen(this)"></p-button>
+        </div>
+        <div class="box3" pDroppable="lessonContent" (onDrop)="drop(this, box3)" pDraggable="lessonContent" (onDragStart)="dragStart(this, box3)">
+            <app-thirdparty [param]="'https://www.calculator.net/pythagorean-theorem-calculator.html'"></app-thirdparty>
+            <p-button type="button" class="fsbutton" [rounded]="true" (click)="fullscreen(this)" icon="pi pi-window-maximize" ></p-button>
+        </div>
+        <div class="box4" pDroppable="lessonContent" (onDrop)="drop(this, box4)" pDraggable="lessonContent" (onDragStart)="dragStart(this, box4)">
+            <app-thirdparty [param]="'https://www.mathsisfun.com/pythagoras.html'"></app-thirdparty>
+            <p-button type="button" class="fsbutton" [rounded]="true" (click)="fullscreen(this)" icon="pi pi-window-maximize" ></p-button>
+        </div>
+        <div class="box5" pDroppable="lessonContent" (onDrop)="drop(this, box1)" pDraggable="lessonContent" (onDragStart)="dragStart(this, box1)">
+            <app-video [video]="'https://www.youtube.com/embed/uthjpYKD7Ng?si=CrgWvB8aSgHVGJmr'"></app-video>
+            <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="fullscreen(this)"></p-button>
         </div>
     </div>
     <ng-container *ngIf="currentComponent">
         <app-fullscreen>
             <p-button type="button" class="exitbutton" [rounded]="true" icon="pi pi-times" (click)="fullscreen(null)"></p-button>
-            <ng-container *ngComponentOutlet="currentComponent"></ng-container>
+            <div style="height: 95%;">
+                <app-fileviewer></app-fileviewer>
+            </div>
+                <div>Note: Students should focus on problems 1, 6, and 10 in particular</div>
         </app-fullscreen>
     </ng-container>
 </div>
