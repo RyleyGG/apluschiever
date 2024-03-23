@@ -18,6 +18,8 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { CardModule } from 'primeng/card';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ChipsModule } from 'primeng/chips';
+import { FileUploadModule } from 'primeng/fileupload';
+import { EditorModule } from 'primeng/editor';
 import { ActivatedRoute } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
@@ -44,7 +46,7 @@ import { UserService } from "../../core/services/user/user.service";
 @Component({
   selector: 'course-build-page',
   standalone: true,
-  imports: [CommonModule, GraphComponent, CardModule, ChipsModule, InputTextareaModule, DividerModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
+  imports: [CommonModule, GraphComponent, FileUploadModule, EditorModule, CardModule, ChipsModule, InputTextareaModule, DividerModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
   templateUrl: './course-builder.page.component.html',
   styleUrl: './course-builder.page.component.css'
 })
@@ -124,6 +126,10 @@ export class CourseBuilderPageComponent {
   selectedAvatarUrl: string = "https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png";
   selectedTags: string[] = [];
   selectedDescription: string = "";
+
+  addContentSidebarVisible: boolean = false;
+  editorText: string = "";
+  uploadedFiles: any[] = [];
 
 
   courseName: string = "Course Name";

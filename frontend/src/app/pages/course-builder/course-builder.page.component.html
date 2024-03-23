@@ -114,7 +114,8 @@
 
   </p>
   <ng-template pTemplate="footer">
-    <p-button id="addContentButton" icon="pi pi-book" label="Add Content" [style]="{ color: '--primary-color-text'}" />
+    <p-button id="addContentButton" icon="pi pi-book" label="Add Content" (click)="addContentSidebarVisible=true;"
+      [style]="{ color: '--primary-color-text'}" />
     <p-button id="saveNodeButton" icon="pi pi-save" (click)="updateSelectedNodeData()" label="Save Changes" pAutoFocus
       [autofocus]="false" [style]="{ margin: '0', color: '--primary-color-text'}" />
   </ng-template>
@@ -131,3 +132,43 @@
 
   Assessment Questions Upload/Creation Section
 -->
+
+<p-sidebar [(visible)]="addContentSidebarVisible" [style]="{ width: '33vw' }" [modal]="false">
+  <ng-template pTemplate="header">
+    <h1 style="margin: 0;">
+      Add Lesson Content
+    </h1>
+  </ng-template>
+  <ng-template pTemplate="content">
+    <!--Add text to accompany the lesson-->
+    Lesson Text
+    <p-editor [(ngModel)]="editorText" [style]="{ height: '320px' }"></p-editor>
+
+    <!--File Upload-->
+    Upload Files
+    <p-fileUpload name="demo[]" url="" (onUpload)="onUpload($event)" [multiple]="true" accept="image/*"
+      maxFileSize="1000000000">
+      <ng-template pTemplate="content">
+        <ul *ngIf="uploadedFiles.length">
+          <li *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
+        </ul>
+      </ng-template>
+    </p-fileUpload>
+
+    <!--Third Party Content URL-->
+    Add Third Party Content URLs
+
+    <!--Assessment Questions-->
+    Upload Assessment File
+    <p-fileUpload name="demo[]" url="" (onUpload)="onUpload($event)" [multiple]="true" accept="image/*"
+      maxFileSize="1000000000">
+      <ng-template pTemplate="content">
+        <ul *ngIf="uploadedFiles.length">
+          <li *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
+        </ul>
+      </ng-template>
+    </p-fileUpload>
+
+
+  </ng-template>
+</p-sidebar>
