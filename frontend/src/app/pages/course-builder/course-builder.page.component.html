@@ -114,8 +114,20 @@
 
   </p>
   <ng-template pTemplate="footer">
-    <!--TODO: Have button to save changes and button for uploading content-->
+    <p-button id="addContentButton" icon="pi pi-book" label="Add Content" [style]="{ color: '--primary-color-text'}" />
     <p-button id="saveNodeButton" icon="pi pi-save" (click)="updateSelectedNodeData()" label="Save Changes" pAutoFocus
       [autofocus]="false" [style]="{ margin: '0', color: '--primary-color-text'}" />
   </ng-template>
 </p-dialog>
+
+<!--
+  TODO: make a side panel for adding content to this node
+
+  Markdown/Text Section
+
+  File Upload Section
+
+  Third Party Content URL Section
+
+  Assessment Questions Upload/Creation Section
+-->

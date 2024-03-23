@@ -72,6 +72,11 @@
     color: var(--primary-color-text) !important;
 }
 
+:host ::ng-deep p-button#addContentButton>.p-button {
+    color: var(--primary-color-text) !important;
+}
+
+
 :host ::ng-deep p-dialog>*>*>:nth-child(2) {
     padding: 3em 1.5em 1.5em 1.5em;
 }
