@@ -75,3 +75,7 @@
 :host ::ng-deep p-dialog>*>*>:nth-child(2) {
     padding: 3em 1.5em 1.5em 1.5em;
 }
+
+:host {
+    overflow: hidden;
+}
