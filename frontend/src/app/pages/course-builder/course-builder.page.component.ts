@@ -1,40 +1,40 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {DialogModule} from 'primeng/dialog';
-import {AvatarModule} from 'primeng/avatar';
-import {ButtonModule} from 'primeng/button';
-import {SidebarModule} from 'primeng/sidebar';
-import {TooltipModule} from 'primeng/tooltip';
-import {SpeedDialModule} from 'primeng/speeddial';
-import {MultiSelectModule} from 'primeng/multiselect';
-import {ColorPickerModule} from 'primeng/colorpicker';
-import {BlockUIModule} from 'primeng/blockui';
-import {AutoCompleteModule} from 'primeng/autocomplete';
-import {InputSwitchModule} from 'primeng/inputswitch';
-import {TagModule} from 'primeng/tag';
-import {DividerModule} from 'primeng/divider';
-import {ContextMenuModule} from 'primeng/contextmenu';
-import {SelectButtonModule} from 'primeng/selectbutton';
-import {CardModule} from 'primeng/card';
-import {ToggleButtonModule} from 'primeng/togglebutton';
-import {ChipsModule} from 'primeng/chips';
-import {ActivatedRoute} from '@angular/router';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
+import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
+import { SidebarModule } from 'primeng/sidebar';
+import { TooltipModule } from 'primeng/tooltip';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ColorPickerModule } from 'primeng/colorpicker';
+import { BlockUIModule } from 'primeng/blockui';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { TagModule } from 'primeng/tag';
+import { DividerModule } from 'primeng/divider';
+import { ContextMenuModule } from 'primeng/contextmenu';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { CardModule } from 'primeng/card';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { ChipsModule } from 'primeng/chips';
+import { ActivatedRoute } from '@angular/router';
 
-import {FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
-import {GraphComponent} from '../../graph/graph.component';
-import {Node, Edge, Cluster} from '../../graph/graph.interface';
-import {CourseService} from '../../core/services/course/course.service';
-import {InputTextModule} from 'primeng/inputtext';
-import {InputTextareaModule} from 'primeng/inputtextarea';
+import { GraphComponent } from '../../graph/graph.component';
+import { Node, Edge, Cluster } from '../../graph/graph.interface';
+import { CourseService } from '../../core/services/course/course.service';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
-import {PanelModule} from 'primeng/panel';
-import {DagreSettings, Orientation} from '../../graph/layouts/dagreCluster';
-import {uid} from '../../core/utils/unique-id';
-import {HistoryService} from '../../core/services/history/history.service';
-import {Course, CourseFilters} from "../../core/models/course.interface";
-import {User} from "../../core/models/user.interface";
-import {UserService} from "../../core/services/user/user.service";
+import { PanelModule } from 'primeng/panel';
+import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
+import { uid } from '../../core/utils/unique-id';
+import { HistoryService } from '../../core/services/history/history.service';
+import { Course, CourseFilters } from "../../core/models/course.interface";
+import { User } from "../../core/models/user.interface";
+import { UserService } from "../../core/services/user/user.service";
 
 /**
  * The course view page component
@@ -162,6 +162,19 @@ export class CourseBuilderPageComponent {
    * Function which saves and publishes the course in its current state.
    */
   publish(): void {
+    const validationResult = this.hasCycle();
+    if (validationResult.hasCycle == true) {
+      this.setNodeColor(this.nodes.map((node) => node.id), "var(--text-color)");
+      this.setEdgeColor(this.edges.map((edge) => edge.id!), "var(--text-color)");
+
+      this.setNodeColor(validationResult.cycleNodes, "#FF0000");
+      this.setEdgeColor(validationResult.cycleEdges, "#FF0000");
+
+      // some way to alert the user that there is a cycle
+      alert('There is at least one cycle in the course structure. Remove it before publishing!');
+      return;
+    }
+
     const courseObj: Course = {
       id: !!this.existingCourse ? this.existingCourse?.id : '',
       title: this.courseName,
@@ -218,7 +231,8 @@ export class CourseBuilderPageComponent {
       label: "Default Label",
       data: {
         tags: []
-      }
+      },
+      color: "var(--text-color)"
     };
     this.nodes = [...this.nodes, newNode];
 
@@ -264,7 +278,8 @@ export class CourseBuilderPageComponent {
         this.edges = [...this.edges, {
           id: uid(),
           source: this.edgeSourceNode.id,
-          target: node.id
+          target: node.id,
+          color: "var(--text-color)"
         }];
         this.edgeSourceNode = null;
       }
@@ -362,7 +377,7 @@ export class CourseBuilderPageComponent {
       }
 
       if (nodeIds.includes(node.id)) {
-        return {...node, color: color};
+        return { ...node, color: color };
       }
       return node;
     });
@@ -381,7 +396,7 @@ export class CourseBuilderPageComponent {
       }
 
       if (edgeIds.includes(edge.id)) {
-        return {...edge, color: color};
+        return { ...edge, color: color };
       }
       return edge;
     });
@@ -419,6 +434,53 @@ export class CourseBuilderPageComponent {
     }
 
     return preReqs;
+  }
+
+  /**
+   * Performs DFS on the nodes in the graph to determine if there is a cycle.
+   * 
+   * @returns an object containing information about the cycle and if it exists.
+   */
+  hasCycle = (): { hasCycle: boolean, cycleNodes: string[], cycleEdges: string[] } => {
+    const visited: { [key: string]: boolean } = {};
+    const recursionStack: { [key: string]: boolean } = {};
+    const cycleNodes: string[] = [];
+    const cycleEdges: string[] = [];
+
+    const dfs = (currentNodeId: string, parentNodeId: string | null): boolean => {
+      visited[currentNodeId] = true;
+      recursionStack[currentNodeId] = true;
+      cycleNodes.push(currentNodeId);
+
+      for (const edge of this.edges) {
+        if (edge.source === currentNodeId) {
+          const targetNodeId = edge.target;
+          if (!visited[targetNodeId]) {
+            if (dfs(targetNodeId, currentNodeId)) {
+              cycleEdges.push(edge.id!);
+              return true;
+            }
+          } else if (recursionStack[targetNodeId] && targetNodeId !== parentNodeId) {
+            cycleEdges.push(edge.id!);
+            return true;
+          }
+        }
+      }
+
+      recursionStack[currentNodeId] = false;
+      cycleNodes.pop(); // Remove the node from cycleNodes if it's not part of the cycle
+      return false;
+    };
+
+    for (const node of this.nodes) {
+      const nodeId = node.id;
+      if (!visited[nodeId]) {
+        if (dfs(nodeId, null)) {
+          return { hasCycle: true, cycleNodes, cycleEdges };
+        }
+      }
+    }
+    return { hasCycle: false, cycleNodes: [], cycleEdges: [] };
   }
 
   //#endregion Helper Functions
