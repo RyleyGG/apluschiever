@@ -15,10 +15,10 @@ import { CarouselModule } from 'primeng/carousel';
 import { Course } from "../../core/models/course.interface";
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { SidebarModule } from 'primeng/sidebar';
-import { ProgressBarModule } from 'primeng/progressbar';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { SidebarModule } from 'primeng/sidebar';
 import { User } from '../../core/models/user.interface';
 import { uid } from '../../core/utils/unique-id';
 

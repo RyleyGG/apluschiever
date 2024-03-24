@@ -75,7 +75,7 @@ def generate_mock_users(db: Session, client: TestClient):
 
 def generate_mock_courses(db: Session, client: TestClient):
     for i in range(25):
-        mock_course = Course(title=f'Course #{i + 1}', course_owner_id=config._tests_teacher_id)
+        mock_course = Course(title=f'Course #{i + 1}', course_owner_id=config._tests_teacher_id, is_published=True)
         db.add(mock_course)
     db.commit()
 

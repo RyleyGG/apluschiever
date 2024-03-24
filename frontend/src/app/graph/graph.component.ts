@@ -89,6 +89,7 @@ export class GraphComponent {
     // Graph Outputs
     @Output() zoomLevelUpdated = new EventEmitter<number>();    // Emits when the zoom level is changed. 
     @Output() nodeClicked = new EventEmitter<Node>();           // Emits when a node is clicked.
+    @Output() edgeClicked = new EventEmitter<Edge>();           // Emits when a edge is clicked.
 
     // Public Properties & Computed Values
 
@@ -188,7 +189,6 @@ export class GraphComponent {
                     const newLayout = new DagreClusterLayout();
                     newLayout.settings = settings;
                     this.layout.set(newLayout);
-                    console.log(settings);
                 });
             }
             this.update();
@@ -456,7 +456,6 @@ export class GraphComponent {
         setTimeout(() => {
             this.oldNodes = oldNodes;
             this.oldClusters = oldClusters;
-            console.log(this.oldNodes);
         }, 500);
 
         // Update edges
@@ -730,9 +729,15 @@ export class GraphComponent {
      * @param event the mouse event which triggered this function call.
      * @param node the node that was clicked.
      */
-    public onNodeClick = (event: MouseEvent, node: Node): any => {
-        this.nodeClicked.emit(node);
-    }
+    public onNodeClick = (event: MouseEvent, node: Node): void => this.nodeClicked.emit(node);
+
+    /**
+     * Triggers when an edge is clicked.
+     * 
+     * @param event the mouse event which triggered this function call.
+     * @param edge the edge that was clicked
+     */
+    public onEdgeClick = (event: MouseEvent, edge: Edge): void => this.edgeClicked.emit(edge);
 
     //#endregion
 
