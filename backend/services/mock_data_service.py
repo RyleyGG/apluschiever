@@ -119,14 +119,17 @@ def generate_mock_nodes(db: Session, client: TestClient):
                     new_node.tags.append(NodeTags.PRACTICE)
                 if random.choice([True, False]):
                     new_node.tags.append(NodeTags.SUPPLEMENTAL)
+                print(new_node.tags)
 
                 # Adding parent(s)
                 parent_count = random.randint(1, math.ceil(len(node_layers[x - 1]) / 2)) if x > 0 else 0
                 new_node.parents = []
-                while len(new_node.parents) != parent_count:
+                count = 0
+                while len(new_node.parents) != parent_count and count < 10000:
                     rand_node = random.choice(node_layers[x - 1])
                     if rand_node not in new_node.parents:
                         new_node.parents.append(rand_node)
+                    count += 1
                 node_layers[x].append(new_node)
                 db.add(new_node)
                 db.commit()

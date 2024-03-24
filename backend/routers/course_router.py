@@ -85,7 +85,7 @@ async def get_node_overview(course_id: str, db: Session = Depends(get_session), 
                 (node.markdown_files is not None and set([file.id for file in node.markdown_files]).issubset(set(user.node_progress[node.id]))) and
                 (node.uploaded_files is not None and set([file.id for file in node.uploaded_files]).issubset(set(user.node_progress[node.id]))) and
                 (node.third_party_resources is not None and set([file.id for file in node.third_party_resources]).issubset(set(user.node_progress[node.id]))),
-            tags = [], #node.tags,
+            tags = node.tags,
             content_types = [key for key in ["videos", "markdown_files", "uploaded_files", "third_party_resources"] if node.model_dump().get(key) is not None] # We will need to update this listing with new content types as we add more support for them. Maybe this can be turned into a setting somehow?
         ) for node in course_nodes
     ]
