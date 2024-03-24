@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit, ElementRef, ComponentFactoryResolver} from '@angular/core';
+import { Component, ViewChild, OnInit, ElementRef, ViewContainerRef, ComponentFactoryResolver} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -21,13 +21,22 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   templateUrl: './lesson.component.html',
   styleUrl: './lesson.component.css'
 })
-export class LessonComponent{
-  @ViewChild('video') childDiv!: ElementRef;
-  
+export class LessonComponent {
+  @ViewChild('video', { read: ViewContainerRef }) video: ViewContainerRef | any;
+  addDynamicComponent() {
+    // 1. Resolve the component factory
+    const factory = this.resolver.resolveComponentFactory(VideoComponent);
+
+    // 2. Create the component and add it to the view
+    const componentRef = this.video.createComponent(factory);
+
+    // 3. Set input properties of the component
+    componentRef.instance.video = 'https://www.youtube.com/embed/d8EA5TxGzcY?si=gnyuYGfVvhw1YePz'; // Set your input property
+  }
   title = "";
   node_id: string | any; 
   lesson: any;
-  box1= [VideoComponent];
+  box1= [];
   box2= [FileviewerComponent];
   box3 = [ThirdpartyComponent];
   box4 = [ThirdpartyComponent];
