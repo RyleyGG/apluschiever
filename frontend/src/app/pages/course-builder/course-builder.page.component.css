@@ -76,6 +76,9 @@
     color: var(--primary-color-text) !important;
 }
 
+:host ::ng-deep p-sidebar p-button>.p-button {
+    color: var(--primary-color-text) !important;
+}
 
 :host ::ng-deep p-dialog>*>*>:nth-child(2) {
     padding: 3em 1.5em 1.5em 1.5em;

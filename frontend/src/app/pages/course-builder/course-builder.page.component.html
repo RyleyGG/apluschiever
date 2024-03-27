@@ -141,13 +141,12 @@
   </ng-template>
   <ng-template pTemplate="content">
     <!--Add text to accompany the lesson-->
-    Lesson Text
+    <h2 style="margin: 0.5em 0;">Lesson Text</h2>
     <p-editor [(ngModel)]="editorText" [style]="{ height: '320px' }"></p-editor>
 
     <!--File Upload-->
-    Upload Files
-    <p-fileUpload name="demo[]" url="" (onUpload)="onUpload($event)" [multiple]="true" accept="image/*"
-      maxFileSize="1000000000">
+    <h2 style="margin: 0.5em 0;">Upload Files</h2>
+    <p-fileUpload name="demo[]" url="" (onUpload)="onUpload($event)" [multiple]="true" maxFileSize="1000000000">
       <ng-template pTemplate="content">
         <ul *ngIf="uploadedFiles.length">
           <li *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
@@ -155,11 +154,31 @@
       </ng-template>
     </p-fileUpload>
 
-    <!--Third Party Content URL-->
-    Add Third Party Content URLs
+    <!--
+      Third Party Content URL
+      TODO: Style this to be nicer looking
+    -->
+    <h2 style="margin: 0.5em 0;">Add Third Party Content URLs</h2>
+    <div>
+      <div style="display: flex; flex-direction: row; justify-content: space-between; gap: 1em;">
+        <input type="text" pInputText [(ngModel)]="newURL" style="flex-grow: 1;" />
+        <button pButton type="button" label="Add URL" (click)="addURL()"></button>
+      </div>
+      <ul *ngIf="urls.length > 0"
+        style="list-style-type: none; display: flex; flex-direction: column; gap: 1em; padding-left: 1em;">
+        <li *ngFor="let url of urls; let i = index"
+          style="display: flex; align-items: center; justify-content: space-between;">
+          <a href="{{url}}">{{url}}</a>
+          <button pButton type="button" icon="pi pi-times" (click)="removeURL(i)"></button>
+        </li>
+      </ul>
+    </div>
 
-    <!--Assessment Questions-->
-    Upload Assessment File
+    <!--
+      Assessment Questions
+      TODO: update file formats allowed.
+    -->
+    <h2 style="margin: 0.5em 0;">Upload Assessment File</h2>
     <p-fileUpload name="demo[]" url="" (onUpload)="onUpload($event)" [multiple]="true" accept="image/*"
       maxFileSize="1000000000">
       <ng-template pTemplate="content">

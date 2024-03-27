@@ -130,6 +130,8 @@ export class CourseBuilderPageComponent {
   addContentSidebarVisible: boolean = false;
   editorText: string = "";
   uploadedFiles: any[] = [];
+  newURL: string = '';
+  urls: any[] = [];
 
 
   courseName: string = "Course Name";
@@ -345,6 +347,26 @@ export class CourseBuilderPageComponent {
       this.nodes[index] = Object.assign({}, this.nodes[index], this.selectedNode);
     }
     this.nodes = [...this.nodes];
+  }
+
+  /**
+   * Adds a URL to the list of 3rd party content URLs.
+   */
+  addURL() {
+    if (this.newURL.trim() !== '') {
+      this.urls.push(this.newURL.trim());
+      this.newURL = ''; // Clear the input field
+    }
+  }
+
+  /**
+   * Remove a URL from the 3rd party content URLs list
+   * @param index the index of the content URL to remove
+   */
+  removeURL(index: number) {
+    if (index >= 0 && index < this.urls.length) {
+      this.urls.splice(index, 1);
+    }
   }
 
   //#endregion UI Functions
