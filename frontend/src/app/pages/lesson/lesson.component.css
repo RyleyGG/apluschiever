@@ -9,6 +9,16 @@
 .fsbutton {
   margin-left: 5px;
 }
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 500px 700px;
+  grid-column-gap: 30px;
+  grid-row-gap: 50px;
+  width: 98%;
+  margin: auto;
+  margin-bottom: 30px;
+}
 .exitbutton {
   position: absolute;
   top: 10px;
@@ -25,7 +35,6 @@
   width: 98%;
   margin: auto;
   height: 150%;
-  margin-bottom: 15px;
   }
   
   .box1 { 

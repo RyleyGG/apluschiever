@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, ElementRef, ViewContainerRef, ComponentFactoryResolver} from '@angular/core';
+import { Component, ViewChild, OnInit, ElementRef, ComponentRef, AfterViewInit, QueryList, ViewContainerRef, ComponentFactoryResolver} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -21,50 +21,40 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   templateUrl: './lesson.component.html',
   styleUrl: './lesson.component.css'
 })
-export class LessonComponent {
-  @ViewChild('video', { read: ViewContainerRef }) video: ViewContainerRef | any;
-  addDynamicComponent() {
-    // 1. Resolve the component factory
-    const factory = this.resolver.resolveComponentFactory(VideoComponent);
+export class LessonComponent implements AfterViewInit {
+  @ViewChild('component', { read: ViewContainerRef }) component: ViewContainerRef | any;
 
-    // 2. Create the component and add it to the view
-    const componentRef = this.video.createComponent(factory);
-
-    // 3. Set input properties of the component
-    componentRef.instance.video = 'https://www.youtube.com/embed/d8EA5TxGzcY?si=gnyuYGfVvhw1YePz'; // Set your input property
+  lessonComponentArray: { componentType: any, input: any }[] = [
+    { componentType: FileviewerComponent, input: null},
+    { componentType: ThirdpartyComponent, input: 'https://www.mathsisfun.com/pythagoras.html' },
+    { componentType: ThirdpartyComponent, input: 'https://www.calculator.net/pythagorean-theorem-calculator.html' },
+    { componentType: VideoComponent, input: 'https://www.youtube.com/embed/vbG_YBTiN38?si=vnI_tJ4xFaqiMnlz' },
+    { componentType: ThirdpartyComponent, input: 'https://primeng.org/' },
+    { componentType: VideoComponent, input: 'https://www.youtube.com/embed/uthjpYKD7Ng?si=CrgWvB8aSgHVGJmr' },
+  ];
+  ngAfterViewInit(): void {
+    this.lessonComponentArray.forEach((componentData) => {
+      const factory = this.resolver.resolveComponentFactory(componentData.componentType);
+      const componentRef = this.component.createComponent(factory);
+      componentRef.instance.param = componentData.input;
+    });
   }
   title = "";
   node_id: string | any; 
   lesson: any;
-  box1= [];
-  box2= [FileviewerComponent];
-  box3 = [ThirdpartyComponent];
-  box4 = [ThirdpartyComponent];
-  currentComponent = null;
-  componentSource = null;
-  componentTarget = null;
-  source: any[] = [];
-  target: any[] = [];
+  
+  test(component: any) {
+    console.log("click!" + component);
+  }
   showObjectives = false;
   seeMore() {
     this.showObjectives = !this.showObjectives;
   }
-  drop(component: any, box: any) {
-    this.componentTarget = component;
-    this.target = box;
-    if (this.target != this.source) {
-      this.target.pop();
-      this.source.pop();
-      this.target.push(this.componentSource);
-      this.source.push(this.componentTarget);
-    }
+  drop(component: any) {
+    console.log("hum" + component);
   }
-  dragStart(component: any, box: any) {
-    this.componentSource = component;
-    this.source = box;
-  }
-  fullscreen(component: any) {
-    this.currentComponent = component;
+  dragStart(component: any) {
+    console.log("yum" + component);
   }
   constructor(private resolver: ComponentFactoryResolver, private nodeService: NodeService, private route : ActivatedRoute, private sanitizer: DomSanitizer) {
     this.node_id = this.route.snapshot.paramMap.get('id');
