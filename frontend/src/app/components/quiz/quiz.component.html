@@ -1,0 +1,26 @@
+<div style="display: flex; flex-direction: column; gap: 0.5em;">
+    <h1 style="font-weight: 700; font-size: 2rem; margin: 0.5rem; color: var(--primary-color)">Lesson Assessment:
+    </h1>
+    @for(question of questions; track question; let i = $index) {
+    <p-card>
+        <p style="margin: 0 0 0.5rem 0; padding: 0;">
+            <span style="font-weight: 700; font-size: 1.5rem; margin-right: 0.5rem; color: var(--primary-color)">
+                {{i}}.
+            </span>
+            {{question.text }}
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 1em;">
+            @for (option of question.options; track option; let j = $index) {
+            <div style="display: flex; align-items: center;">
+                <p-radioButton [inputId]="question.id + '_' + option.id" name="optionGroup{{ question.id }}"
+                    value="{{ option }}" [(ngModel)]="selectedOptions[question.id]" />
+                <label for="quesiton.id + '_' + j" style="margin-left: 0.5rem;">{{ option }}</label>
+            </div>
+            }
+        </div>
+    </p-card>
+    }
+
+    <button pButton (click)="submit()" label="Submit"></button>
+</div>
