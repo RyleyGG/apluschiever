@@ -87,3 +87,7 @@
 :host {
     overflow: hidden;
 }
+
+:host ::ng-deep p-fileUpload .p-fileupload-buttonbar>p-button {
+    display: none;
+}

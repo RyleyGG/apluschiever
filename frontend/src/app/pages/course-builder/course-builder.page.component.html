@@ -148,9 +148,13 @@
       [maxFileSize]="1000000000" accept="image/*, .pdf, text/plain, text/csv, .xls, .xlsm, .xlsx">
       <ng-template let-file pTemplate="file" style="display: none;"></ng-template>
       <ng-template pTemplate="content">
-        <ul *ngIf="uploadedFiles">
-          <li *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
-        </ul>
+        <div *ngIf="uploadedFiles">
+          <div *ngFor="let file of uploadedFiles"
+            style="display: flex; align-items: center; justify-content: space-between; gap: 1em;">
+            <p>{{ file.name }} - {{ file.size }} bytes</p>
+            <p-button icon="pi pi-times" (onClick)="onRemoveContentFile(file)" />
+          </div>
+        </div>
       </ng-template>
     </p-fileUpload>
 
@@ -183,9 +187,13 @@
       [maxFileSize]="1000000000">
       <ng-template let-file pTemplate="file" style="display: none;"></ng-template>
       <ng-template pTemplate="content">
-        <ul *ngIf="assessmentFile">
-          <li *ngFor="let file of assessmentFile">{{ file.name }} - {{ file.size }} bytes</li>
-        </ul>
+        <div *ngIf="assessmentFile">
+          <div *ngFor="let file of assessmentFile"
+            style="display: flex; align-items: center; justify-content: space-between; gap: 1em;">
+            <p>{{ file.name }} - {{ file.size }} bytes</p>
+            <p-button icon="pi pi-times" (onClick)="onRemoveAssessmentFile()" />
+          </div>
+        </div>
       </ng-template>
     </p-fileUpload>
 

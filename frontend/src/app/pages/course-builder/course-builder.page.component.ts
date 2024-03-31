@@ -37,7 +37,6 @@ import { HistoryService } from '../../core/services/history/history.service';
 import { Course, CourseFilters } from "../../core/models/course.interface";
 import { User } from "../../core/models/user.interface";
 import { UserService } from "../../core/services/user/user.service";
-import { CustomFileUploadDirective } from '../../core/directives/file-upload.directive';
 
 /**
  * The course view page component
@@ -47,7 +46,7 @@ import { CustomFileUploadDirective } from '../../core/directives/file-upload.dir
 @Component({
   selector: 'course-build-page',
   standalone: true,
-  imports: [CommonModule, GraphComponent, CustomFileUploadDirective, FileUploadModule, EditorModule, CardModule, ChipsModule, InputTextareaModule, DividerModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
+  imports: [CommonModule, GraphComponent, FileUploadModule, EditorModule, CardModule, ChipsModule, InputTextareaModule, DividerModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
   templateUrl: './course-builder.page.component.html',
   styleUrl: './course-builder.page.component.css'
 })
@@ -385,10 +384,26 @@ export class CourseBuilderPageComponent {
   }
 
   /**
-   * 
+   * Remove the content file that was selected to be removed
+   */
+  onRemoveContentFile(file: any) {
+    const index = this.uploadedFiles.findIndex(f => f === file);
+    this.uploadedFiles.splice(index, 1);
+    this.uploadedFiles = [...this.uploadedFiles];
+  }
+
+  /**
+   * Update the assessment file that is selected. 
    */
   onAssessmentFileSelect(event: any) {
     this.assessmentFile = [...event.currentFiles];
+  }
+
+  /**
+   * Removes the assessment file that was selected.
+   */
+  onRemoveAssessmentFile() {
+    this.assessmentFile = [];
   }
 
   updateNodeData() {
