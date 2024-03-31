@@ -1,5 +1,5 @@
 import { WritableSignal } from "@angular/core";
-import {Markdown, Video} from "../core/models/node-content.interface";
+import {RichText, Video} from "../core/models/node-content.interface";
 import {Course} from "../core/models/course.interface";
 
 /**
@@ -51,7 +51,7 @@ export interface Node {
     label?: string;
     shortDescription?: string;
     videos?: Video[];
-    markdownFiles?: Markdown[];
+    richTextFiles?: RichText[];
     courses?: Course[];
 
     color?: string; // Hex string for a color.
