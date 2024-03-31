@@ -145,7 +145,7 @@
     <!--File Upload-->
     <h2 style="margin: 0.5em 0;">Upload Files</h2>
     <p-fileUpload name="uploadContentFileUpload" (onSelect)="onFileSelect($event)" [multiple]="true"
-      [maxFileSize]="1000000000">
+      [maxFileSize]="1000000000" accept="image/*, .pdf, text/plain, text/csv, .xls, .xlsm, .xlsx">
       <ng-template let-file pTemplate="file" style="display: none;"></ng-template>
       <ng-template pTemplate="content">
         <ul *ngIf="uploadedFiles">

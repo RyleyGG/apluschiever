@@ -16,6 +16,24 @@ export interface RichText {
 }
 
 
+/**
+ * Represents an embedded third party resource
+ */
+export interface ThirdPartyResource {
+  embedLink: string;
+  resourceSource: string;
+}
+
+
+/**
+ * Represents an uploaded file
+ */
+export interface UploadFile {
+  fileName: string;
+  fileContent: Blob;
+}
+
+
 export interface NodeProgressDetails {
     node_id: string
     completed_content: string[]
