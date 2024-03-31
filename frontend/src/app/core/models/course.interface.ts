@@ -1,4 +1,3 @@
-import {Markdown, Video} from "./node-content.interface";
 import {User} from "./user.interface";
 import {Node} from '../../graph/graph.interface';
 

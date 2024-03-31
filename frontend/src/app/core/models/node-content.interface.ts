@@ -10,7 +10,7 @@ export interface Video {
 /**
  * Represents a markdown content type.
  */
-export interface Markdown {
+export interface RichText {
     id: string;
     content: string;
 }

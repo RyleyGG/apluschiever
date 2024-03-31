@@ -5,7 +5,7 @@ from pydantic import field_validator, BaseModel
 from sqlalchemy import JSON, Column
 from sqlmodel import SQLModel, Field, Relationship
 
-from models.pydantic_models import Video, Markdown, UploadFile, ThirdPartyResource
+from models.pydantic_models import Video, UploadFile, ThirdPartyResource, RichText
 from models.dto_models import UserType, NodeTags
 from services.api_utility_service import pydantic_column_type
 
@@ -45,7 +45,7 @@ class Node(SQLModel, table=True):
     # Content class from which we actually use Video, Markdown, etc. classes when storing data.
     # Instead, we supply one attribute per content type we support.
     videos: Optional[List[Video]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[Video]])))
-    markdown_files: Optional[List[Markdown]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[Markdown]])))
+    rich_text_files: Optional[List[RichText]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[RichText]])))
     uploaded_files: Optional[List[UploadFile]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[UploadFile]])))
     third_party_resources: Optional[List[ThirdPartyResource]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[ThirdPartyResource]])))
     course_id: uuid.UUID = Field(foreign_key='Course.id')

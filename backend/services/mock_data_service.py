@@ -12,7 +12,7 @@ from starlette import status
 from api import app
 from models.db_models import Course, Node, User, NodeParentLink
 from models.dto_models import NodeTags, UserType
-from models.pydantic_models import Video, Markdown
+from models.pydantic_models import Video, RichText
 from services.api_utility_service import dbUrl, get_session
 from services.config_service import config
 
@@ -98,14 +98,14 @@ def generate_mock_nodes(db: Session, client: TestClient):
 
                 # Adding content
                 new_node.videos = []
-                new_node.markdown_files = []
+                new_node.rich_text_files = []
                 for n in range(10):
                     new_node.videos.append(Video(title='wasd', embed_link='wasd', video_source='wasd'))
                     if random.choice([True, False]):
                         break
 
                 for n in range(10):
-                    new_node.markdown_files.append(Markdown(title='wasd', content='###wasd'))
+                    new_node.rich_text_files.append(RichText(title='wasd', content='###wasd'))
                     if random.choice([True, False]):
                         break
 
@@ -139,8 +139,8 @@ def generate_mock_nodes(db: Session, client: TestClient):
                     user_node_progress[str(new_node.id)] = []
                     for video in new_node.videos:
                         user_node_progress[str(new_node.id)].append(str(video.id))
-                    for markdown in new_node.markdown_files:
-                        user_node_progress[str(new_node.id)].append(str(markdown.id))
+                    for rich_text in new_node.rich_text_files:
+                        user_node_progress[str(new_node.id)].append(str(rich_text.id))
                 else:
                     keep_completing = False
 

@@ -5,7 +5,7 @@ from sqlalchemy import delete
 from sqlmodel import Session, select
 
 from models.db_models import User, Course, Node
-from models.pydantic_models import Video, Markdown
+from models.pydantic_models import Video, RichText
 from services.config_service import config
 
 
@@ -21,7 +21,7 @@ def test_add_courses_and_nodes(db: Session, client: TestClient):
         if i % 2 == 0:
             new_node.videos = [Video(title='wasd', embed_link='wasd', video_source='wasd')]
         else:
-            new_node.markdown_files = [Markdown(title='wasd', content='###wasd')]
+            new_node.rich_text_files = [RichText(title='wasd', content='###wasd')]
         test_nodes.append(new_node)
 
     db.add(test_course_1)
@@ -54,14 +54,14 @@ def test_user_node_progress(db: Session, client: TestClient):
         new_node = Node(title=f'Node {i}', short_description=f'Node {i}', course_id=random.choice(cur_courses).id)
 
         new_node.videos = []
-        new_node.markdown_files = []
+        new_node.rich_text_files = []
         for n in range(10):
             new_node.videos.append(Video(title='wasd', embed_link='wasd', video_source='wasd'))
             if random.choice([True, False]):
                 break
 
         for n in range(10):
-            new_node.markdown_files.append(Markdown(title='wasd', content='###wasd'))
+            new_node.rich_text_files.append(RichText(title='wasd', content='###wasd'))
             if random.choice([True, False]):
                 break
         db.add(new_node)
@@ -78,7 +78,7 @@ def test_user_node_progress(db: Session, client: TestClient):
     for node in cur_course.nodes:
         # Due to how nodes are persistent across test cases, some nodes may be pre-existing and not have video/markdown
         # content. This could be fixed in the above node generation, but this is easier and achieves the same thing.
-        if node.videos is None or node.markdown_files is None:
+        if node.videos is None or node.rich_text_files is None:
             continue
         node_id_str = str(node.id)  # The DB does not support UUID-based keys
         for video in node.videos:
@@ -95,11 +95,11 @@ def test_user_node_progress(db: Session, client: TestClient):
             if random.choice([True, False]):
                 break
 
-        for markdown in node.markdown_files:
+        for rich_text in node.rich_text_files:
             if node_id_str in node_progress:
-                node_progress[node_id_str].append(str(markdown.id))
+                node_progress[node_id_str].append(str(rich_text.id))
             else:
-                node_progress[node_id_str] = [str(markdown.id)]
+                node_progress[node_id_str] = [str(rich_text.id)]
 
             if node_id_str in node_progress_test_check:
                 node_progress_test_check[node_id_str] += 1
