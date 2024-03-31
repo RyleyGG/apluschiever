@@ -37,6 +37,7 @@ import { HistoryService } from '../../core/services/history/history.service';
 import { Course, CourseFilters } from "../../core/models/course.interface";
 import { User } from "../../core/models/user.interface";
 import { UserService } from "../../core/services/user/user.service";
+import { CustomFileUploadDirective } from '../../core/directives/file-upload.directive';
 
 /**
  * The course view page component
@@ -46,7 +47,7 @@ import { UserService } from "../../core/services/user/user.service";
 @Component({
   selector: 'course-build-page',
   standalone: true,
-  imports: [CommonModule, GraphComponent, FileUploadModule, EditorModule, CardModule, ChipsModule, InputTextareaModule, DividerModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
+  imports: [CommonModule, GraphComponent, CustomFileUploadDirective, FileUploadModule, EditorModule, CardModule, ChipsModule, InputTextareaModule, DividerModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
   templateUrl: './course-builder.page.component.html',
   styleUrl: './course-builder.page.component.css'
 })
@@ -130,6 +131,7 @@ export class CourseBuilderPageComponent {
   addContentSidebarVisible: boolean = false;
   editorText: string = "";
   uploadedFiles: any[] = [];
+  assessmentFile: any[] = [];
   newURL: string = '';
   urls: any[] = [];
 
@@ -310,6 +312,7 @@ export class CourseBuilderPageComponent {
 
     // No special editing mode is enabled, so save info about the current node
     this.updateNodeData();
+    console.log(this.nodes);
 
     // Then pan and pull up the info about the node.
     this.selectedNode = node;
@@ -318,7 +321,11 @@ export class CourseBuilderPageComponent {
     this.selectedTags = node.data.tags || [];
     this.editorText = node.data.content.editorText || "";
     this.uploadedFiles = node.data.content.files || [];
+    this.uploadedFiles = [...this.uploadedFiles];
+    this.assessmentFile = node.data.content.assessmentFile || [];
+    this.assessmentFile = [...this.assessmentFile];
     this.urls = node.data.content.thirdPartyUrls || [];
+    console.log(this.uploadedFiles);
 
     this.graphComponent.panToNodeId(node.id);
     this.dialogVisible = true;
@@ -370,6 +377,20 @@ export class CourseBuilderPageComponent {
     }
   }
 
+  /**
+   * 
+   */
+  onFileSelect(event: any) {
+    this.uploadedFiles = [...this.uploadedFiles, ...event.files];
+  }
+
+  /**
+   * 
+   */
+  onAssessmentFileSelect(event: any) {
+    this.assessmentFile = [...event.currentFiles];
+  }
+
   updateNodeData() {
     this.selectedNode.label = this.selectedName || "";
     this.selectedNode.data.short_description = this.selectedDescription || "";
@@ -377,6 +398,7 @@ export class CourseBuilderPageComponent {
     this.selectedNode.data.content.editorText = this.editorText || "";
     this.selectedNode.data.content.files = this.uploadedFiles || [];
     this.selectedNode.data.content.thirdPartyUrls = this.urls || [];
+    this.selectedNode.data.content.assessmentFile = this.assessmentFile || [];
     const index = this.nodes.findIndex(node => node.id === this.selectedNode.id);
     if (index !== -1) {
       this.nodes[index] = Object.assign({}, this.nodes[index], this.selectedNode);
