@@ -1,6 +1,6 @@
 import { WritableSignal } from "@angular/core";
-import {Markdown, Video} from "../core/models/node-content.interface";
-import {Course} from "../core/models/course.interface";
+import { Markdown, Video } from "../core/models/node-content.interface";
+import { Course } from "../core/models/course.interface";
 
 /**
  * Represents the position of a node
@@ -39,8 +39,6 @@ export interface Node {
      *
      * If not set explicitly, then the GraphComponent will create a unique ID for it based on the date, time, and a large random number
      */
-
-
     id: string;
     parentId?: string;
 

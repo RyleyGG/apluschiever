@@ -152,6 +152,8 @@ export class CourseBuilderPageComponent {
    * Function which saves the current state of the course.
    */
   save(): void {
+    this.updateNodeData();
+
     const courseObj: Course = {
       id: !!this.existingCourse ? this.existingCourse?.id : '',
       title: this.courseName,
@@ -170,6 +172,8 @@ export class CourseBuilderPageComponent {
    * Function which saves and publishes the course in its current state.
    */
   publish(): void {
+    this.updateNodeData();
+
     const validationResult = this.hasCycle();
     if (validationResult.hasCycle == true) {
       this.setNodeColor(this.nodes.map((node) => node.id), "var(--text-color)");
@@ -238,7 +242,8 @@ export class CourseBuilderPageComponent {
       id: uid(),
       label: "Default Label",
       data: {
-        tags: []
+        tags: [],
+        content: {}
       },
       color: "var(--text-color)"
     };
@@ -302,10 +307,19 @@ export class CourseBuilderPageComponent {
       return;
     }
 
-    // No special editing mode is enabled, so we just pan and pull up the info about the node.
+
+    // No special editing mode is enabled, so save info about the current node
+    this.updateNodeData();
+
+    // Then pan and pull up the info about the node.
     this.selectedNode = node;
     this.selectedName = node.label || "";
+    this.selectedDescription = node.data.short_description || "";
     this.selectedTags = node.data.tags || [];
+    this.editorText = node.data.content.editorText || "";
+    this.uploadedFiles = node.data.content.files || [];
+    this.urls = node.data.content.thirdPartyUrls || [];
+
     this.graphComponent.panToNodeId(node.id);
     this.dialogVisible = true;
   }
@@ -336,19 +350,6 @@ export class CourseBuilderPageComponent {
     }
   }
 
-  updateSelectedNodeData(): void {
-    // TODO: add one for avatar URL
-    this.selectedNode.label = this.selectedName;
-    this.selectedNode.data.tags = this.selectedTags;
-    this.selectedNode.data.short_description = this.selectedDescription;
-
-    const index = this.nodes.findIndex(node => node.id === this.selectedNode.id);
-    if (index !== -1) {
-      this.nodes[index] = Object.assign({}, this.nodes[index], this.selectedNode);
-    }
-    this.nodes = [...this.nodes];
-  }
-
   /**
    * Adds a URL to the list of 3rd party content URLs.
    */
@@ -367,6 +368,20 @@ export class CourseBuilderPageComponent {
     if (index >= 0 && index < this.urls.length) {
       this.urls.splice(index, 1);
     }
+  }
+
+  updateNodeData() {
+    this.selectedNode.label = this.selectedName || "";
+    this.selectedNode.data.short_description = this.selectedDescription || "";
+    this.selectedNode.data.tags = this.selectedTags || [];
+    this.selectedNode.data.content.editorText = this.editorText || "";
+    this.selectedNode.data.content.files = this.uploadedFiles || [];
+    this.selectedNode.data.content.thirdPartyUrls = this.urls || [];
+    const index = this.nodes.findIndex(node => node.id === this.selectedNode.id);
+    if (index !== -1) {
+      this.nodes[index] = Object.assign({}, this.nodes[index], this.selectedNode);
+    }
+    this.nodes = [...this.nodes];
   }
 
   //#endregion UI Functions
