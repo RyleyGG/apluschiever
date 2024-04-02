@@ -2,6 +2,8 @@
     <h1 [routerLink]="['/dashboard']">A+chiever</h1>
     <!--User Menu Overlay Panel-->
     <p-toolbar>
+        <p-button label="Dashboard" [link]="true" [routerLink]="['/dashboard']"
+            [style]="{ 'color': 'var(--primary-color-text)', 'font-weight': '700' }" />
         <p-button icon="pi pi-user" [rounded]="true" [raised]="true" (click)="op.toggle($event)" />
         <p-overlayPanel #op [style]="{ 'min-width': '22rem' }">
             <!--A section for the user information-->
