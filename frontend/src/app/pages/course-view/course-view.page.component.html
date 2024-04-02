@@ -47,8 +47,8 @@
       <i class="pi pi-lock" style="font-size: 1.5rem"></i>
     </p-blockUI>
     <blockable-div #lessonButtonWrapper [style]="{display: 'inline-block'}">
-      <p-button [routerLink]="['/lesson', selectedNode.label]" icon="pi pi-book" (click)="dialogVisible = false"
-        label="View Lesson" pAutoFocus [autofocus]="false" [style]="{margin: '0'}" />
+      <p-button id="lessonButton" [routerLink]="['/lesson', selectedNode.label]" icon="pi pi-book"
+        (click)="dialogVisible = false" label="View Lesson" pAutoFocus [autofocus]="false" [style]="{margin: '0'}" />
     </blockable-div>
   </ng-template>
 </p-dialog>
@@ -106,6 +106,12 @@
     </div>
 
     <div style="margin-top: 2em; display: flex; align-items: center;">
+      <p-colorPicker [(ngModel)]="selectedColor" (onChange)="updateHighlights()"
+        inputId="selectedColorPicker"></p-colorPicker>
+      <label style="margin-left: 0.5em;" for="selectedColorPicker">Selected Node Color</label>
+    </div>
+
+    <div style="margin-top: 0.5em; display: flex; align-items: center;">
       <p-colorPicker [(ngModel)]="searchColor" (onChange)="updateHighlights()"
         inputId="searchColorPicker"></p-colorPicker>
       <label style="margin-left: 0.5em;" for="searchColorPicker">Search Node Results Color</label>

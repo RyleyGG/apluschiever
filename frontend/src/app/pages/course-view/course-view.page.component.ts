@@ -85,6 +85,7 @@ export class CourseViewPageComponent {
     showPreReqs: boolean = true;
     showComplete: boolean = true;
 
+    selectedColor: any;
     searchColor: any;
     completeColor: any;
     preReqColor: any;
@@ -157,14 +158,14 @@ export class CourseViewPageComponent {
             }, 1);
         });
 
+        /**
+         * Theres probably a more effecient way to get the course name, 
+         * but this will do for now...
+         */
         this.courseService.getCourses().subscribe((data: any[]) => {
-            console.log(data);
             for (let course of data) {
-                console.log(course);
                 if (course.id === this.courseid) {
                     this.courseName = course.title;
-                    console.log("HI");
-                    console.log(this.courseName);
                 }
             }
         })
@@ -175,6 +176,7 @@ export class CourseViewPageComponent {
         this.completeColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--green-700");
         this.preReqColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--yellow-700");
         this.searchColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--indigo-700");
+        this.selectedColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--purple-700");
     }
 
 
@@ -254,6 +256,7 @@ export class CourseViewPageComponent {
         this.highlightPreRequisites(this.selectedNode, this.preReqColor);
         this.highlightCompleted(this.completeColor);
         this.highlightSearched(this.searchColor);
+        this.setNodeColor([this.selectedNode.id], this.selectedColor);
     }
 
     /**

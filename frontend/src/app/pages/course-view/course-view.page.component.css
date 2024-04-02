@@ -70,11 +70,7 @@
     box-shadow: none !important;
 }
 
-:host ::ng-deep p-button#saveNodeButton>.p-button {
-    color: var(--primary-color-text) !important;
-}
-
-:host ::ng-deep p-button#addContentButton>.p-button {
+:host ::ng-deep p-button#lessonButton>.p-button {
     color: var(--primary-color-text) !important;
 }
 
