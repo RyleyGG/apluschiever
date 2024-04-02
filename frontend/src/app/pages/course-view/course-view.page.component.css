@@ -32,3 +32,52 @@
 :host {
     overflow: hidden;
 }
+
+
+
+/* Overrides for p-card, p-button, and toggleButton so the menu bars work. */
+
+:host {
+    position: relative;
+}
+
+:host ::ng-deep p-card .p-card-body,
+:host ::ng-deep p-card .p-card-content {
+    padding: 0;
+}
+
+:host ::ng-deep p-toggleButton>div {
+    border: none;
+    box-shadow: none !important;
+}
+
+:host ::ng-deep p-toggleButton>div[aria-checked="true"] {
+    background: var(--primary-color) !important;
+}
+
+:host ::ng-deep p-toggleButton>div>span {
+    border: none;
+    box-shadow: none !important;
+}
+
+:host ::ng-deep p-toggleButton>div[aria-checked="false"]>span {
+    color: var(--primary-color);
+}
+
+:host ::ng-deep p-button>.p-button {
+    border: none;
+    color: var(--primary-color);
+    box-shadow: none !important;
+}
+
+:host ::ng-deep p-button#saveNodeButton>.p-button {
+    color: var(--primary-color-text) !important;
+}
+
+:host ::ng-deep p-button#addContentButton>.p-button {
+    color: var(--primary-color-text) !important;
+}
+
+:host ::ng-deep p-sidebar p-button>.p-button {
+    color: var(--primary-color-text) !important;
+}

@@ -13,6 +13,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { TagModule } from 'primeng/tag';
 import { MenuItem } from 'primeng/api';
+import { CardModule } from 'primeng/card';
 import { ActivatedRoute } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
@@ -22,6 +23,7 @@ import { BlockableDiv } from '../../core/components/blockable-div/blockable-div.
 import { Node, Edge, Cluster } from '../../graph/graph.interface';
 import { CourseService } from '../../core/services/course/course.service';
 import { InputTextModule } from 'primeng/inputtext';
+import { DividerModule } from 'primeng/divider';
 import { uid } from '../../core/utils/unique-id';
 
 import { PanelModule } from 'primeng/panel';
@@ -35,7 +37,7 @@ import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
 @Component({
     selector: 'course-view-page',
     standalone: true,
-    imports: [CommonModule, GraphComponent, BlockableDiv, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
+    imports: [CommonModule, GraphComponent, CardModule, BlockableDiv, DividerModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
     templateUrl: './course-view.page.component.html',
     styleUrl: './course-view.page.component.css'
 })
@@ -66,29 +68,6 @@ export class CourseViewPageComponent {
      * Controls visibility of the filter options sidebar 
      */
     sidebarVisible: boolean = false;
-
-    /**
-     * Menu options for the '+' button 
-     */
-    dial_items: MenuItem[] = [
-        {
-            tooltipOptions: {
-                tooltipLabel: 'Add Filters'
-            },
-            icon: 'pi pi-filter-fill',
-            command: () => { this.sidebarVisible = true; }
-        },
-        {
-            tooltipOptions: {
-                tooltipLabel: 'Zoom to Fit'
-            },
-            icon: 'pi pi-money-bill',
-            command: () => {
-                this.graphComponent.zoomToFit();
-                this.graphComponent.panToCenter();
-            }
-        }
-    ];
 
     //#region Filtering & Searching Properties
 
@@ -123,12 +102,11 @@ export class CourseViewPageComponent {
     clusters: Cluster[] = [];
 
     courseid: string | any;
+    public courseName: string = "";
+
     constructor(private courseService: CourseService, private elementRef: ElementRef, private route: ActivatedRoute) {
         this.courseid = this.route.snapshot.paramMap.get('id');
-        //this.courseid = this.route.snapshot.paramMap.get('ID');
-        // On page load get the course information (id)
-        // will need to be a URL parameter probably
-        // TODO: Get the Course ID from another source (maybe route param, maybe a service?)
+
         this.courseService.getNodes(this.courseid).subscribe((data) => {
             this.nodes = [];
             this.edges = [];
@@ -178,6 +156,18 @@ export class CourseViewPageComponent {
                 this.graphComponent.panToCenter();
             }, 1);
         });
+
+        this.courseService.getCourses().subscribe((data: any[]) => {
+            console.log(data);
+            for (let course of data) {
+                console.log(course);
+                if (course.id === this.courseid) {
+                    this.courseName = course.title;
+                    console.log("HI");
+                    console.log(this.courseName);
+                }
+            }
+        })
     }
 
     // Set default colors as primeNG ones (todo: have this set in local storage)
@@ -383,6 +373,14 @@ export class CourseViewPageComponent {
         }
 
         return preReqs;
+    }
+
+    /**
+     * Zooms and fits the graph component to the screen.
+     */
+    zoomGraphToFit = (): void => {
+        this.graphComponent.zoomToFit();
+        this.graphComponent.panToCenter();
     }
 
     //#endregion Helper Functions
