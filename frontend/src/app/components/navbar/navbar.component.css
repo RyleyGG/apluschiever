@@ -3,8 +3,12 @@
   justify-content: space-between;
   flex-direction: row;
   align-items: center;
-  padding: 10px;
+  padding: 0.25em 1.5em;
   background-color: var(--primary-color);
+
+  background: var(--primary-color);
+  background: linear-gradient(120deg, var(--primary-200) 0%, var(--primary-700) 100%);
+
 }
 
 .navbarTitle {

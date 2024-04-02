@@ -1,9 +1,40 @@
 <div class="flex-container">
-    <h1 [routerLink]="['/dashboard']">A+chiever</h1> 
+    <h1 [routerLink]="['/dashboard']">A+chiever</h1>
+    <!--User Menu Overlay Panel-->
     <p-toolbar>
-        <p-button [rounded]="true" *ngIf="!loggedIn" label="Sign-Up" icon='pi pi-user' [routerLink]="['/signup']"></p-button>
-        <p-button [rounded]="true" *ngIf="!loggedIn" label="Sign-In" icon='pi pi-sign-in' [routerLink]="['/signin']"></p-button>
-        <p-button [rounded]="true" *ngIf="loggedIn" label="Sign-Out" icon='pi pi-sign-out' [routerLink]="['/signout']"></p-button>
-        <p-button [rounded]="true" label="Light" icon='pi pi-bolt' (click)="swapTheme()" onLabel="Dark" offLabel="Light"></p-button>
+        <p-button icon="pi pi-user" [rounded]="true" [raised]="true" (click)="op.toggle($event)" />
+        <p-overlayPanel #op [style]="{ 'min-width': '22rem' }">
+            <!--A section for the user information-->
+            <div *ngIf="loggedIn" style="display: flex; gap: 1em; align-items: center;">
+                <!--AN ICON HERE-->
+                <i class="pi pi-user" style="font-size: 2rem; color: var(--primary-color)"></i>
+
+                <div style="display: flex; flex-direction: column;">
+                    <p style="margin: 0; font-weight: 700; font-size: 1em;">
+                        {{loggedInUser?.first_name + ' ' + loggedInUser?.last_name}}
+                    </p>
+                    <p style="margin: 0; font-size: 1em;">
+                        {{loggedInUser?.email_address}}
+                    </p>
+                </div>
+            </div>
+
+            <p-divider *ngIf="loggedIn" />
+
+            <!--A section for light dark mode toggle, maybe in the future a language select goes here-->
+            <p-button [rounded]="true" [outlined]="true" label="Light" icon='pi pi-bolt' (click)="swapTheme()"
+                onLabel="Dark" offLabel="Light" />
+
+            <p-divider />
+            <!--A section for the register, login and logout buttons-->
+            <div style="display: flex; justify-content: space-between; gap: 1em;">
+                <p-button [rounded]="true" [outlined]="true" *ngIf="!loggedIn" label="Sign-Up" icon='pi pi-user'
+                    [routerLink]="['/signup']" />
+                <p-button [rounded]="true" [outlined]="true" *ngIf="!loggedIn" label="Sign-In" icon='pi pi-sign-in'
+                    [routerLink]="['/signin']" />
+                <p-button [rounded]="true" [outlined]="true" *ngIf="loggedIn" label="Sign-Out" icon='pi pi-sign-out'
+                    [routerLink]="['/signout']" />
+            </div>
+        </p-overlayPanel>
     </p-toolbar>
 </div>
