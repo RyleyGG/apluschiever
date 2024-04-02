@@ -1,42 +1,42 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { DialogModule } from 'primeng/dialog';
-import { AvatarModule } from 'primeng/avatar';
-import { ButtonModule } from 'primeng/button';
-import { SidebarModule } from 'primeng/sidebar';
-import { TooltipModule } from 'primeng/tooltip';
-import { SpeedDialModule } from 'primeng/speeddial';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { ColorPickerModule } from 'primeng/colorpicker';
-import { BlockUIModule } from 'primeng/blockui';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { TagModule } from 'primeng/tag';
-import { DividerModule } from 'primeng/divider';
-import { ContextMenuModule } from 'primeng/contextmenu';
-import { SelectButtonModule } from 'primeng/selectbutton';
-import { CardModule } from 'primeng/card';
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import { ChipsModule } from 'primeng/chips';
-import { FileUploadModule } from 'primeng/fileupload';
-import { EditorModule } from 'primeng/editor';
-import { ActivatedRoute } from '@angular/router';
+import {Component, ElementRef, ViewChild} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {DialogModule} from 'primeng/dialog';
+import {AvatarModule} from 'primeng/avatar';
+import {ButtonModule} from 'primeng/button';
+import {SidebarModule} from 'primeng/sidebar';
+import {TooltipModule} from 'primeng/tooltip';
+import {SpeedDialModule} from 'primeng/speeddial';
+import {MultiSelectModule} from 'primeng/multiselect';
+import {ColorPickerModule} from 'primeng/colorpicker';
+import {BlockUIModule} from 'primeng/blockui';
+import {AutoCompleteModule} from 'primeng/autocomplete';
+import {InputSwitchModule} from 'primeng/inputswitch';
+import {TagModule} from 'primeng/tag';
+import {DividerModule} from 'primeng/divider';
+import {ContextMenuModule} from 'primeng/contextmenu';
+import {SelectButtonModule} from 'primeng/selectbutton';
+import {CardModule} from 'primeng/card';
+import {ToggleButtonModule} from 'primeng/togglebutton';
+import {ChipsModule} from 'primeng/chips';
+import {FileUploadModule} from 'primeng/fileupload';
+import {EditorModule} from 'primeng/editor';
+import {ActivatedRoute} from '@angular/router';
 
-import { FormsModule } from '@angular/forms';
+import {FormsModule} from '@angular/forms';
 
-import { GraphComponent } from '../../graph/graph.component';
-import { Node, Edge, Cluster } from '../../graph/graph.interface';
-import { CourseService } from '../../core/services/course/course.service';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputTextareaModule } from 'primeng/inputtextarea';
+import {GraphComponent} from '../../graph/graph.component';
+import {Node, Edge, Cluster} from '../../graph/graph.interface';
+import {CourseService} from '../../core/services/course/course.service';
+import {InputTextModule} from 'primeng/inputtext';
+import {InputTextareaModule} from 'primeng/inputtextarea';
 
-import { PanelModule } from 'primeng/panel';
-import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
-import { uid } from '../../core/utils/unique-id';
-import { HistoryService } from '../../core/services/history/history.service';
-import { Course, CourseFilters } from "../../core/models/course.interface";
-import { User } from "../../core/models/user.interface";
-import { UserService } from "../../core/services/user/user.service";
+import {PanelModule} from 'primeng/panel';
+import {DagreSettings, Orientation} from '../../graph/layouts/dagreCluster';
+import {uid} from '../../core/utils/unique-id';
+import {HistoryService} from '../../core/services/history/history.service';
+import {Course, CourseFilters} from "../../core/models/course.interface";
+import {User} from "../../core/models/user.interface";
+import {UserService} from "../../core/services/user/user.service";
 
 /**
  * The course view page component
@@ -177,7 +177,7 @@ export class CourseBuilderPageComponent {
 
     const validationResult = this.hasCycle();
     if (validationResult.hasCycle == true) {
-      this.setNodeColor(this.nodes.map((node) => node.id), "var(--text-color)");
+      this.setNodeColor(this.nodes.map((node) => node.id!), "var(--text-color)");
       this.setEdgeColor(this.edges.map((edge) => edge.id!), "var(--text-color)");
 
       this.setNodeColor(validationResult.cycleNodes, "#FF0000");
@@ -291,8 +291,8 @@ export class CourseBuilderPageComponent {
       } else {
         this.edges = [...this.edges, {
           id: uid(),
-          source: this.edgeSourceNode.id,
-          target: node.id,
+          source: this.edgeSourceNode.id!,
+          target: node.id!,
           color: "var(--text-color)"
         }];
         this.edgeSourceNode = null;
@@ -315,7 +315,7 @@ export class CourseBuilderPageComponent {
 
     // Then pan and pull up the info about the node.
     this.selectedNode = node;
-    this.selectedName = node.label || "";
+    this.selectedName = node.title || "";
     this.selectedDescription = node.data.short_description || "";
     this.selectedTags = node.data.tags || [];
     this.editorText = node.data.content.editorText || "";
@@ -326,7 +326,7 @@ export class CourseBuilderPageComponent {
     this.urls = node.data.content.thirdPartyUrls || [];
     console.log(this.uploadedFiles);
 
-    this.graphComponent.panToNodeId(node.id);
+    this.graphComponent.panToNodeId(node.id!);
     this.dialogVisible = true;
   }
 
@@ -377,7 +377,7 @@ export class CourseBuilderPageComponent {
   }
 
   /**
-   * 
+   *
    */
   onFileSelect(event: any) {
     this.uploadedFiles = [...this.uploadedFiles, ...event.files];
@@ -393,7 +393,7 @@ export class CourseBuilderPageComponent {
   }
 
   /**
-   * Update the assessment file that is selected. 
+   * Update the assessment file that is selected.
    */
   onAssessmentFileSelect(event: any) {
     this.assessmentFile = [...event.currentFiles];
@@ -407,7 +407,7 @@ export class CourseBuilderPageComponent {
   }
 
   updateNodeData() {
-    this.selectedNode.label = this.selectedName || "";
+    this.selectedNode.title = this.selectedName || "";
     this.selectedNode.data.short_description = this.selectedDescription || "";
     this.selectedNode.data.tags = this.selectedTags || [];
     this.selectedNode.data.content.editorText = this.editorText || "";
@@ -418,6 +418,7 @@ export class CourseBuilderPageComponent {
     if (index !== -1) {
       this.nodes[index] = Object.assign({}, this.nodes[index], this.selectedNode);
     }
+
     this.nodes = [...this.nodes];
   }
 
@@ -457,7 +458,7 @@ export class CourseBuilderPageComponent {
       }
 
       if (nodeIds.includes(node.id)) {
-        return { ...node, color: color };
+        return {...node, color: color};
       }
       return node;
     });
@@ -476,7 +477,7 @@ export class CourseBuilderPageComponent {
       }
 
       if (edgeIds.includes(edge.id)) {
-        return { ...edge, color: color };
+        return {...edge, color: color};
       }
       return edge;
     });
@@ -495,7 +496,7 @@ export class CourseBuilderPageComponent {
   getPreRequisites = (sourceNode: Node): string[] => {
     // Does BFS in reverse in order to get all nodes before the source node.
     const preReqs: string[] = [];
-    const nodesToCheck: Set<string> = new Set([sourceNode.id]);
+    const nodesToCheck: Set<string> = new Set([sourceNode.id!]);
     const checkedNodes: Set<string> = new Set();
 
     while (nodesToCheck.size > 0) {
@@ -518,7 +519,7 @@ export class CourseBuilderPageComponent {
 
   /**
    * Performs DFS on the nodes in the graph to determine if there is a cycle.
-   * 
+   *
    * @returns an object containing information about the cycle and if it exists.
    */
   hasCycle = (): { hasCycle: boolean, cycleNodes: string[], cycleEdges: string[] } => {
@@ -554,13 +555,13 @@ export class CourseBuilderPageComponent {
 
     for (const node of this.nodes) {
       const nodeId = node.id;
-      if (!visited[nodeId]) {
-        if (dfs(nodeId, null)) {
-          return { hasCycle: true, cycleNodes, cycleEdges };
+      if (!visited[nodeId!]) {
+        if (dfs(nodeId!, null)) {
+          return {hasCycle: true, cycleNodes, cycleEdges};
         }
       }
     }
-    return { hasCycle: false, cycleNodes: [], cycleEdges: [] };
+    return {hasCycle: false, cycleNodes: [], cycleEdges: []};
   }
 
   //#endregion Helper Functions

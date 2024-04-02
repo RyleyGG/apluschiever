@@ -2,6 +2,7 @@ import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {Injectable} from "@angular/core";
 import {catchError, map, take, throwError} from "rxjs";
 import {Course, CourseFilters} from "../../models/course.interface";
+import {Node} from "../../../graph/graph.interface";
 
 /**
  * A service which interacts with the course endpoints.
@@ -68,7 +69,34 @@ export class CourseService {
    * @returns the updated course
    */
   addOrUpdateCourse(course: Course) {
-    return this.httpClient.post<Course>(this.REST_API_SERVER + `course/add_or_update/`, course).pipe(
+    const newNodes: Node[] = [];
+    console.log(course);
+    course.nodes.forEach((node) => {
+      let newNode: Node = {
+        title: node.title || "",
+        short_description: node.short_description || "",
+        course_id: node.course_id,
+        rich_text_files: [{content: node.data.content.editorText}],
+        third_party_resources: node.data.content.thirdPartyUrls.map((url: any) => ({
+          embed_link: url.embed_link,
+          video_source: 'YouTube' // TODO: Make this dynamic
+        })),
+        uploaded_files: node.data.content.assessmentFile.map((file: any) => ({
+          file_name: file.file_name,
+          file_content: file.file_content
+        })),
+      };
+
+      newNodes.push(newNode);
+    })
+    course.nodes = newNodes;
+
+    const {nodes, ...noNodeCourse} = course;
+
+    return this.httpClient.post<Course>(this.REST_API_SERVER + `course/add_or_update/`, {
+      course: noNodeCourse,
+      nodes: course.nodes
+    }).pipe(
       take(1),
       map((res: Course) => {
         return res;

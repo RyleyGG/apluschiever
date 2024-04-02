@@ -34,7 +34,8 @@ async def search_courses(filters: CourseFilters, db: Session = Depends(get_sessi
 
 
 @router.post('/add_or_update', response_model=Course, response_model_by_alias=False)
-async def add_or_update_course(course: Course, db: Session = Depends(get_session)):
+async def add_or_update_course(course: Course, nodes: List[Node], db: Session = Depends(get_session)):
+    course.nodes = nodes
     course_has_valid_id = False
     try:
         uuid.UUID(course.id)
@@ -48,6 +49,7 @@ async def add_or_update_course(course: Course, db: Session = Depends(get_session
         if existing_course:
             existing_course.title = course.title
             existing_course.short_description = course.short_description
+            # TODO: this causes an error, we need to update nodes separately
             existing_course.nodes = course.nodes
             existing_course.is_published = course.is_published
             db.add(existing_course)

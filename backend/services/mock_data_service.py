@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 from starlette import status
 
 from api import app
-from models.db_models import Course, Node, User, NodeParentLink
+from models.db_models import Course, Node, User, NodeParentLink, CourseStudentLink
 from models.dto_models import NodeTags, UserType
 from models.pydantic_models import Video, RichText
 from services.api_utility_service import dbUrl, get_session
@@ -160,6 +160,7 @@ def main():
 
     # Prep session
     session = Session(bind=connection)
+    session.exec(delete(CourseStudentLink))
     session.exec(delete(NodeParentLink))
     session.exec(delete(Node))
     session.exec(delete(Course))

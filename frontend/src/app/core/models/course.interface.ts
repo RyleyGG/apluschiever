@@ -1,5 +1,6 @@
 import {User} from "./user.interface";
 import {Node} from '../../graph/graph.interface';
+import {RichText, Video} from "./node-content.interface";
 
 /**
  * Represents a course, including its associated nodes and owner.
