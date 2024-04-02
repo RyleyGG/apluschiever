@@ -23,3 +23,12 @@
     background: var(--primary-color);
     color: var(--primary-color-text);
 }
+
+/* Turn off scrollbar for this page to prevent conflicts with graph component that is fullscreen. */
+:root {
+    overflow: hidden;
+}
+
+:host {
+    overflow: hidden;
+}
