@@ -30,4 +30,7 @@ export class VideoComponent {
   makefull(value: boolean) {
     this.value = value;
   }
+  onDragStart(event: any) {
+    console.log('Dragging started');
+  }
 }
