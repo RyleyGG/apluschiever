@@ -20,6 +20,7 @@ import { DragdropDirective } from '../../core/directives/dragdrop.directive';
 })
 export class FileviewerComponent {
   value = false;
+  minimize = false;
   makefull(value: boolean) {
     this.value = value;
   }

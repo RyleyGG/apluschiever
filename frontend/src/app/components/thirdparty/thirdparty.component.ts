@@ -21,6 +21,7 @@ import { DragdropDirective } from '../../core/directives/dragdrop.directive';
 })
 export class ThirdpartyComponent {
   @Input() param: string | any;
+  minimize = false;
   constructor(private sanitizer: DomSanitizer) {}
   getURL(): SafeUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(this.param);

@@ -19,6 +19,16 @@
           </button>
     </div>
     <div class="grid-container">
-        <ng-container #component></ng-container>
+        <div *ngFor="let component of lessonComponentArray; let i = index">
+            <div #elements pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)"  *ngIf="component.componentType === fileComp">
+                <app-fileviewer></app-fileviewer>
+            </div>
+            <div #elements pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)"  *ngIf="component.componentType === thirdComp">
+                <app-thirdparty [param]="component.input"></app-thirdparty>
+            </div>
+            <div #elements pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)" *ngIf="component.componentType === videoComp">
+                <app-video [param]="component.input"></app-video>
+            </div>
+        </div>
     </div>
 </div>

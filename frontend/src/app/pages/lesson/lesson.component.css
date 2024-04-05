@@ -9,10 +9,14 @@
 .fsbutton {
   margin-left: 5px;
 }
+.minimizedContent {
+  display: flex;
+  flex-direction: column;
+}
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: 500px 700px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: minmax(auto, auto);
   grid-column-gap: 30px;
   grid-row-gap: 50px;
   width: 98%;

@@ -17,12 +17,5 @@ export class DragdropDirective {
   onDrop(event: any) {
     event.preventDefault();
     event.stopPropagation();
-    const source = event.sourceElement;
-    const target = event.target;
-    //const temp = source;
-    //source.innerHTML = target.innerHTML;
-    //target.innerHTML = temp.innerHTML;
-    console.log("source" + source);
-    console.log("html" + source.innerHTML);
   }
 }

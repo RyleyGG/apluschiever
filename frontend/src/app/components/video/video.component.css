@@ -11,6 +11,6 @@
 .box { 
   border-radius: 15px;
   overflow: hidden;
-  height: 100%;
+  max-height: 400px;
 }
 
