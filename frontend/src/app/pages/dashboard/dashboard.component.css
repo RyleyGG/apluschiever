@@ -1,41 +1,90 @@
 .page-content {
-    width: 75%;
-    max-height: 90%;
-    display: flex;
-    justify-content: center;
-    margin-top: 2%;
-    padding: 1rem;
-    height: 100%;
-    position: relative;
-    flex-direction: column;
-    justify-content: space-between;
-    margin: auto;
+  width: 75%;
+  max-height: 90%;
+  display: flex;
+  justify-content: center;
+  margin-top: 2%;
+  padding: 1rem;
+  height: 100%;
+  position: relative;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: auto;
 }
 
 h1 {
-    font-size: 3.125rem;
-    cursor: pointer;
-    font-weight: 500;
-    line-height: 100%;
-    letter-spacing: -0.125rem;
-    margin: 0;
-    margin-left: 9px;
+  font-size: 3.125rem;
+  cursor: pointer;
+  font-weight: 500;
+  line-height: 100%;
+  letter-spacing: -0.125rem;
+  margin: 0;
+  margin-left: 9px;
 }
+
 .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    grid-gap: 10px;
-    overflow-y: auto;
-  }
-  .classDiv {
-    padding: 16px;
-    border: 1px solid var(--primary-color);
-    border-radius: 20px;
-    cursor: pointer;
-  }
-  .suggested {
-    border: 1px solid var(--primary-color);
-    margin: 8px;
-    border-radius: 20px;
-    padding: 6px;
-  }
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5em;
+  overflow-y: scroll;
+}
+
+
+.my-courses-container>* {
+  transition-duration: 250ms;
+}
+
+.my-courses-container>*:hover {
+  scale: 1.1;
+}
+
+.user-stats-container>* {
+  flex-grow: 1;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+/* Track */
+::-webkit-scrollbar-track {}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--primary-300);
+  border-radius: 0.25em;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-500);
+}
+
+/* width */
+::ng-deep ::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+/* Track */
+::ng-deep ::-webkit-scrollbar-track {}
+
+/* Handle */
+::ng-deep ::-webkit-scrollbar-thumb {
+  background: var(--primary-300);
+  border-radius: 0.25em;
+}
+
+/* Handle on hover */
+::ng-deep ::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-500);
+}
+
+:root {
+  overflow: hidden;
+}
+
+/* Override the default PrimeNG dialog component*/
+::ng-deep .p-dialog-content {
+  overflow: visible;
+}

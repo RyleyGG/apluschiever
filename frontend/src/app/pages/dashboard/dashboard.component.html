@@ -1,36 +1,164 @@
-<h1>{{title}}</h1>
-<div class="page-content">
-        <div>
-            <p-confirmDialog></p-confirmDialog>
-            <div class="grid" *ngIf="userCourses.length; else noCourses">
-                <ng-template ngFor [ngForOf]="userCourses" let-course>
-                    <div class="classDiv">
-                        <div [routerLink]="['/viewer', course.id]">
-                            <h4>{{ course.title }}</h4>
-                            <h6>{{ course.id }}</h6>
-                        </div>
-                            <p-button type="button" [rounded]="true" icon="pi pi-trash" (click)="confirm(course.id)"></p-button>
-                    </div>
-                </ng-template>
-            </div>
-            <ng-template #noCourses>
-                <h2>You are not currently enrolled in any courses.</h2>
+<div style="display: grid; grid-template-columns: 60% 40%; gap: 1.5em; padding: 1.5em; overflow-x: visible;">
+    <!--TODO: Add a general user stats section. #Lessons complete, #Courses Complete, etc. -->
+    <!--TODO: make a grid with two column layout one having 60% one with 40%-->
+
+    <section style="grid-column: 1 / 2;">
+        <p style="font-size: 2rem; font-weight: 700; margin: 0;">Dashboard</p>
+    </section>
+
+    <section style="grid-column: 1;">
+        <p-card>
+            <p style="margin: 0; padding: 0; font-weight: 700; font-size: 1.75rem;">Begin a new course today!</p>
+            <ng-template pTemplate="footer">
+                <p-button type="button" [rounded]="true" label="Enroll in a new course"
+                    (click)="sidebarVisible=true;" />
             </ng-template>
-            
+        </p-card>
+        <!--
+            Make this section a banner for enrolling in a new course...
+            Clicking might have a side menu pop-up or something?
+        -->
+    </section>
+
+    <section style="grid-column: 1; overflow-x: visible;">
+        <div style="display: flex; gap: 1.5em; align-items: center; justify-content: start; overflow-x: visible;">
+            <p style="font-size: 2rem; font-weight: 700; margin: 0;">My Courses</p>
+            <!-- TODO: add click handlers to filter shown courses based on clicks.-->
+            <p-button type="button" [rounded]="true" [outlined]="displayedCourses != userCourses" label="All"
+                (click)="displayedCourses = userCourses" />
+            <p-button type="button" [rounded]="true" [outlined]="displayedCourses != userInProgressCourses"
+                label="In Progress" (click)="displayedCourses = userInProgressCourses" />
+            <p-button type="button" [rounded]="true" [outlined]="displayedCourses != userCompletedCourses"
+                label="Completed" (click)="displayedCourses = userCompletedCourses" />
         </div>
-        <div class="footer">
-            <h1>Suggested Courses</h1>
-            <p-carousel [value]="allCourses" [numVisible]="4" [numScroll]="3" [responsiveOptions]="responsiveOptions">
-                <ng-template let-course pTemplate="item">
-                    <div class="suggested">
-                        <div [routerLink]="['/viewer', course.id]">
-                            <h4>{{ course.title }}</h4>
+
+        <p-confirmDialog></p-confirmDialog>
+
+        <div class="grid my-courses-container"
+            style="max-height: 500px; padding: 1em 2em 1em 1em; grid-auto-flow: row; overflow-x: visible;"
+            *ngIf="displayedCourses.length; else noCourses">
+            <ng-template ngFor [ngForOf]="displayedCourses" let-course>
+                <p-card [header]="course.title">
+                    <ng-template pTemplate="header">
+                        <!--
+                            TODO: alternate image here.
+                            Maybe let course creator pick this image?
+                            Maybe let it be randomized?
+                        -->
+                        <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
+                    </ng-template>
+                    <p>
+                        {{course.shortDescription}}
+                    </p>
+                    <p-progressBar [value]="course.progress" [style]="{ height: '0.5em'}">
+                        <ng-template pTemplate="content" let-value></ng-template>
+                    </p-progressBar>
+                    <ng-template pTemplate="footer">
+                        <div style="display: flex; justify-content: space-between;">
+                            <p-button type="button" [rounded]="true" [outlined]="true" icon="pi pi-trash"
+                                (click)="confirm(course.id)" />
+                            <p-button label="View" [rounded]="true" [outlined]="true"
+                                [routerLink]="['/viewer', course.id]" />
                         </div>
-                        <p-button type="button" [rounded]="true" icon="pi pi-plus" (click)="addCourse(course.id)" label="Add"></p-button>
-                    </div>
-                </ng-template>
-            </p-carousel>
+                    </ng-template>
+                </p-card>
+            </ng-template>
         </div>
+
+        <!--TODO: Pretty This Up -->
+        <ng-template #noCourses>
+            <h2>There are no courses to display.</h2>
+        </ng-template>
+    </section>
+
+    <!--For some reason padding and grid gap don't play nice, so I add the margin-right here to accomodate-->
+    <section style="grid-column: 2; grid-row: 2 / 4; margin-right: 1.5em;">
+        <p-card header="{{loggedInUser?.first_name + ' ' + loggedInUser?.last_name}}"
+            subheader="{{loggedInUser?.email_address}}">
+            <ng-template pTemplate="header">
+                <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
+            </ng-template>
+            <div class="user-stats-container" style="display: flex; flex-wrap: wrap; gap: 1.5em; ">
+                <p-card header="{{userCourses.length}}">
+                    Total courses
+                </p-card>
+                <p-card header="{{userCompletedCourses.length}}">
+                    Courses completed
+                </p-card>
+                <p-card header="{{userInProgressCourses.length}}">
+                    Courses in progress
+                </p-card>
+            </div>
+            <ng-template pTemplate="footer">
+                <p-button label="Edit Profile" [rounded]="true" [outlined]="true" icon="pi pi-pencil"
+                    (click)="editProfileDialogVisible=true;" />
+            </ng-template>
+        </p-card>
+    </section>
 </div>
 
 
+<p-sidebar [(visible)]="sidebarVisible" [style]="{ width: '100%' }" [modal]="true">
+    <ng-template pTemplate="header">
+        <h1 style="margin: 0;">
+            Enroll
+        </h1>
+    </ng-template>
+    <ng-template pTemplate="content">
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr 1fr 1fr; padding: 1em 0;" *ngIf="allCourses.length">
+            <ng-template ngFor [ngForOf]="allCourses" let-course>
+                <p-card [header]="course.title">
+                    <ng-template pTemplate="header">
+                        <!--
+                            TODO: alternate image here.
+                            Maybe let course creator pick this image?
+                            Maybe let it be randomized?
+                        -->
+                        <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
+                    </ng-template>
+                    <p>
+                        {{course.shortDescription}}
+                    </p>
+                    <ng-template pTemplate="footer">
+                        <div style="display: flex; justify-content: end;">
+                            <p-button label="Enroll" [rounded]="true" [outlined]="true"
+                                (click)="addCourse(course.id)" />
+                        </div>
+                    </ng-template>
+                </p-card>
+            </ng-template>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+
+    </ng-template>
+</p-sidebar>
+
+<div *ngIf="editProfileDialogVisible">
+    <p-dialog header="Edit Profile" [(visible)]="editProfileDialogVisible" [modal]="true" [style]="{ width: '50vw' }"
+        [draggable]="false" [resizable]="false">
+        <div style="display: flex; justify-content: space-between; align-content: center;">
+            <span class="p-float-label">
+                <input pInputText id="firstName" [(ngModel)]="updatedFirstName" />
+                <label for="firstName">First Name</label>
+            </span>
+            <span class="p-float-label">
+                <input pInputText id="lastName" [(ngModel)]="updatedLastName" />
+                <label for="lastName">Last Name</label>
+            </span>
+        </div>
+        <span class="p-float-label" style="margin-top: 1.5em; width: 100%;">
+            <input pInputText id="email" style="width: 100%;" [(ngModel)]="updatedEmail" />
+            <label for="email">Email</label>
+        </span>
+
+        <ng-template pTemplate="footer">
+            <div style="display: flex;">
+                <p-button icon="pi pi-times" label="Cancel" [rounded]="true" [outlined]="true"
+                    (click)="cancelUserUpdate();" />
+                <p-button icon="pi pi-save" label="Save" [rounded]="true" [outlined]="true"
+                    (click)="updateUserInformation();" />
+            </div>
+        </ng-template>
+    </p-dialog>
+</div>
