@@ -68,17 +68,6 @@ class Node(SQLModel, table=True):
     )
 
 
-# DTO models that have to be defined here because they rely on Node and therefore must init after
-class NodeOverview(BaseModel):
-    id: uuid.UUID
-    title: str
-    short_description: str
-    parent_nodes: List["Node"]
-    complete: bool
-    tags: List[str]
-    content_types: List[str]
-
-
 class Course(SQLModel, table=True):
     __tablename__ = 'Course'
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
@@ -89,3 +78,19 @@ class Course(SQLModel, table=True):
     enrolled_students: Optional[List[User]] = Relationship(back_populates='enrolled_courses', link_model=CourseStudentLink)
     nodes: Optional[List[Node]] = Relationship(back_populates="course")
     is_published: bool = Field(default=False)
+
+
+# DTO models that have to be defined here because they rely on Node or Course and therefore must init after
+class NodeOverview(BaseModel):
+    id: uuid.UUID
+    title: str
+    short_description: str
+    parent_nodes: List["Node"]
+    complete: bool
+    tags: List[str]
+    content_types: List[str]
+
+
+class UpdatedCourse(BaseModel):
+    course: Course
+    nodes: List[Node]

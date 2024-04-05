@@ -6,7 +6,7 @@ from typing import List
 from sqlmodel import select, Session
 from starlette import status
 
-from models.db_models import Course, User, Node, NodeOverview
+from models.db_models import Course, User, Node, NodeOverview, UpdatedCourse
 from models.dto_models import CourseFilters, NodeProgressDetails
 from services import auth_service
 from services.api_utility_service import get_session
@@ -33,35 +33,58 @@ async def search_courses(filters: CourseFilters, db: Session = Depends(get_sessi
     return return_obj
 
 
-@router.post('/add_or_update', response_model=Course, response_model_by_alias=False)
-async def add_or_update_course(course: Course, nodes: List[Node], db: Session = Depends(get_session)):
-    course.nodes = nodes
-    course_has_valid_id = False
-    try:
-        uuid.UUID(course.id)
-        course_has_valid_id = True
-    except ValueError:
-        pass
-
-    if course_has_valid_id:
+@router.post('/add_or_update', response_model=UpdatedCourse, response_model_by_alias=False)
+async def add_or_update_course(course: Course, nodes: List[Node], db: Session = Depends(get_session), user: User = Depends(auth_service.validate_token)):
+    existing_course = None
+    if course.id:
         existing_course = db.exec(select(Course).where(Course.id == course.id)).first()
 
-        if existing_course:
-            existing_course.title = course.title
-            existing_course.short_description = course.short_description
-            # TODO: this causes an error, we need to update nodes separately
-            existing_course.nodes = course.nodes
-            existing_course.is_published = course.is_published
-            db.add(existing_course)
-            db.commit()
-            db.refresh(existing_course)
-            return existing_course
+    if existing_course:
+        existing_course.title = course.title
+        existing_course.short_description = course.short_description
+        existing_course.is_published = course.is_published
+        db.add(existing_course)
+        db.commit()
+        db.refresh(existing_course)
+        cur_course_id = existing_course.id
     else:
         course.id = None
+        course.course_owner_id = user.id
         db.add(course)
         db.commit()
         db.refresh(course)
-        return course
+        cur_course_id = course.id
+
+    # After updating the course, update passed in nodes
+    for node in nodes:
+        existing_node = None
+        if existing_course and node.id:
+            existing_node = db.exec(select(Node).where(Node.id == node.id)).first()
+
+        if existing_node:
+            existing_node = db.exec(select(Node).where(Node.id == node.id)).first()
+            existing_node.course_id = cur_course_id
+            existing_node.title = node.title
+            existing_node.short_description = node.short_description
+            existing_node.tags = node.tags
+            existing_node.videos = node.videos
+            existing_node.rich_text_files = node.rich_text_files
+            existing_node.uploaded_files = node.uploaded_files
+            existing_node.third_party_resources = node.third_party_resources
+            # TODO: Also need to handle changes in parents/children lists
+            db.add(existing_node)
+            db.commit()
+            db.refresh(existing_node)
+        else:
+            node.id = None
+            node.course_id = cur_course_id
+            db.add(node)
+            db.commit()
+            db.refresh(node)
+
+    ret_course = db.exec(select(Course).where(Course.id == cur_course_id)).first()
+    ret_course.nodes = nodes
+    return UpdatedCourse(course=ret_course, nodes=ret_course.nodes)
 
 
 @router.get('/nodes/{course_id}', response_model=List[NodeOverview], response_model_by_alias=False)
