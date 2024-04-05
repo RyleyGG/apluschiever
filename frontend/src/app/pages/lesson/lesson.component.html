@@ -1,23 +1,4 @@
-<div class="page-content">
-    
-    <!--<button (click)="addDynamicComponent()">Add Dynamic Component</button>
-    <div #video></div>-->
-    <div class="lessonInfo" style="padding: 1rem;">
-        <h1>{{title}}</h1>
-        <div class="objectives" *ngIf="showObjectives">
-            <!--TODO remove hardcoded objectives-->
-            <h2>Lesson Objectives</h2>
-            <ul>
-                <li>Understand the Pythagorean theorem</li>
-                <li>Learn how to apply the Pythagorean theorem correctly</li>
-                <li>Explore different variations of the pythagorean theorem</li>
-                <li>Practice solving problems using the pythagorean theorem</li>
-            </ul>
-          </div>
-          <button pButton class="p-button-sm" type="button" (click)="seeMore()">
-            {{ showObjectives ? 'See Less' : 'View Lesson Objectives' }}
-          </button>
-    </div>
+<div *ngIf="false" class="page-content">
     <div class="grid-container">
         <div *ngFor="let component of lessonComponentArray; let i = index">
             <div #elements pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)"  *ngIf="component.componentType === fileComp">
@@ -31,4 +12,83 @@
             </div>
         </div>
     </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 60% 40%; gap: 1.5em; padding: 1.5em; overflow-x: visible;">
+    <!--TODO: Add a general user stats section. #Lessons complete, #Courses Complete, etc. -->
+    <!--TODO: make a grid with two column layout one having 60% one with 40%-->
+
+    <section style="grid-column: 1 / 2;">
+        <p style="font-size: 2rem; font-weight: 700; margin: 0;">{{title}}</p>
+    </section>
+    
+    <section style="grid-column: 1; overflow-x: visible;">
+        <div style="display: flex; gap: 1.5em; align-items: center; justify-content: start; overflow-x: visible;">
+            <p style="font-size: 2rem; font-weight: 700; margin: 0;">My content</p>
+        </div>
+
+        <div class="grid my-courses-container"
+            style="max-height: 650px; padding: 1em 2em 1em 1em; grid-auto-flow: row; overflow-x: visible;"
+            *ngIf="lessonComponentArray.length; else noCourses">
+                <div *ngFor="let component of lessonComponentArray; let i = index">
+                    <div #elements pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)"  *ngIf="component.componentType === fileComp">
+                        <app-fileviewer></app-fileviewer>
+                    </div>
+                    <div #elements pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)"  *ngIf="component.componentType === thirdComp">
+                        <app-thirdparty [param]="component.input"></app-thirdparty>
+                    </div>
+                    <div #elements pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)" *ngIf="component.componentType === videoComp">
+                        <app-video [param]="component.input"></app-video>
+                    </div>
+                </div>
+        </div>
+
+        <!--TODO: Pretty This Up -->
+        <ng-template #noCourses>
+            <h2>There is no content to display.</h2>
+        </ng-template>
+    </section>
+
+    <!--For some reason padding and grid gap don't play nice, so I add the margin-right here to accomodate-->
+    <section style="grid-column: 2; grid-row: 2 / 4; padding: 1rem;">
+        <p-card>
+                <div style="padding: 1rem;">
+                    <h1>{{title}}</h1>
+                    <p>{{desc}}</p>
+                    <p-button [rounded]="true" type="button" (click)="showObjectives=!showObjectives">
+                        {{ showObjectives ? 'See Less' : 'View Lesson Objectives' }}
+                        <i *ngIf="!showObjectives" style="margin-top: 2px; margin-left:4px;" class="pi pi-angle-down" ></i>
+                    <i *ngIf="showObjectives" style="margin-top: 1px; margin-left:4px;" class="pi pi-angle-up" ></i>
+                    </p-button>
+                    <div class="objectives" *ngIf="showObjectives">
+                        <!--TODO remove hardcoded objectives-->
+                        <h2 style="margin-left: 5px; ">Lesson Objectives</h2>
+                        <ul>
+                            <li>Understand the Pythagorean theorem</li>
+                            <li>Learn how to apply the Pythagorean theorem correctly</li>
+                            <li>Explore different variations of the pythagorean theorem</li>
+                            <li>Practice solving problems using the pythagorean theorem</li>
+                        </ul>
+                    </div>
+                </div>
+            
+                <div pDroppable="lessonContent" (onDrop)="focus()">
+                    <div style="height: 450px;" *ngIf="focusComponent; else emptyBlock">
+                        <div style="height: 450px;"  *ngIf="focusComponent.componentType === fileComp">
+                            <app-fileviewer></app-fileviewer>
+                        </div>
+                        <div style="height: 450px;"  *ngIf="focusComponent.componentType === thirdComp">
+                            <app-thirdparty [param]="focusComponent.input"></app-thirdparty>
+                        </div>
+                        <div *ngIf="focusComponent.componentType === videoComp">
+                            <app-video [param]="focusComponent.input"></app-video>
+                        </div>
+                    </div>
+                    <ng-template  #emptyBlock>
+                        <div class="box">drop item here to focus</div>
+                    </ng-template>
+                </div>
+
+        </p-card>
+    </section>
 </div>

@@ -13,11 +13,15 @@ import { FullscreenComponent } from '../../components/fullscreen/fullscreen.comp
 import { ThirdpartyComponent } from '../../components/thirdparty/thirdparty.component';
 import { SplitterModule } from 'primeng/splitter';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { CardModule } from 'primeng/card';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-lesson',
   standalone: true,
-  imports: [CommonModule, DragDropModule, ThirdpartyComponent, SplitterModule, ButtonModule, VideoComponent, FileviewerComponent, FullscreenComponent],
+  imports: [CommonModule, DragDropModule, ConfirmDialogModule, CardModule, ThirdpartyComponent, SplitterModule, ButtonModule, VideoComponent, FileviewerComponent, FullscreenComponent],
   templateUrl: './lesson.component.html',
   styleUrl: './lesson.component.css'
 })
@@ -28,7 +32,7 @@ export class LessonComponent implements AfterViewInit {
   videoComp = VideoComponent;
   thirdComp = ThirdpartyComponent;
   componentRefs: any[] = [];
-
+  focusComponent: any;
   lessonComponentArray: { componentType: any, input: any , size: any}[] = [
     { componentType: FileviewerComponent, input: null, size: '100'},
     { componentType: ThirdpartyComponent, input: 'https://www.mathsisfun.com/pythagoras.html' , size: '100'},
@@ -54,6 +58,7 @@ export class LessonComponent implements AfterViewInit {
   title = "";
   node_id: string | any; 
   lesson: any;
+  desc: any;
   indexTarget: any;
   indexSource: any;
   drop(index: any) {
@@ -64,10 +69,14 @@ export class LessonComponent implements AfterViewInit {
     console.log(this.lessonComponentArray);
     this.cdr.detectChanges();
   }
-  showObjectives = false;
-  seeMore() {
-    this.showObjectives = !this.showObjectives;
+  focus() {
+    this.focusComponent = {
+      componentType: this.lessonComponentArray[this.indexSource].componentType,
+      input: this.lessonComponentArray[this.indexSource].input,
+      size: this.lessonComponentArray[this.indexSource].size
+    }
   }
+  showObjectives = false;
   dragStart(index: any) {
     this.indexSource = index;
   }
@@ -76,6 +85,7 @@ export class LessonComponent implements AfterViewInit {
     this.nodeService.getNode(this.node_id).subscribe((data: any) => {
       this.title = data.title;
       this.lesson = data;
+      this.desc = data.short_descriptioon
     });
   }
 }
