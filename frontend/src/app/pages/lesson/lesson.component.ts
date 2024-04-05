@@ -23,13 +23,15 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 })
 export class LessonComponent implements AfterViewInit {
   @ViewChild('component', { read: ViewContainerRef }) component: ViewContainerRef | any;
+  
+  componentRefs: any[] = [];
 
   lessonComponentArray: { componentType: any, input: any }[] = [
     { componentType: FileviewerComponent, input: null},
     { componentType: ThirdpartyComponent, input: 'https://www.mathsisfun.com/pythagoras.html' },
     { componentType: ThirdpartyComponent, input: 'https://www.calculator.net/pythagorean-theorem-calculator.html' },
     { componentType: VideoComponent, input: 'https://www.youtube.com/embed/vbG_YBTiN38?si=vnI_tJ4xFaqiMnlz' },
-    { componentType: ThirdpartyComponent, input: 'https://primeng.org/' },
+    { componentType: ThirdpartyComponent, input: 'https://www.mathplanet.com/education/pre-algebra/right-triangles-and-algebra/the-pythagorean-theorem' },
     { componentType: VideoComponent, input: 'https://www.youtube.com/embed/uthjpYKD7Ng?si=CrgWvB8aSgHVGJmr' },
   ];
   ngAfterViewInit(): void {
@@ -37,12 +39,17 @@ export class LessonComponent implements AfterViewInit {
       const factory = this.resolver.resolveComponentFactory(componentData.componentType);
       const componentRef = this.component.createComponent(factory);
       componentRef.instance.param = componentData.input;
+      this.componentRefs.push(componentRef);
     });
   }
   title = "";
   node_id: string | any; 
   lesson: any;
-  
+  swap() {
+    const temp = this.lessonComponentArray[0];
+    this.lessonComponentArray[0] = this.lessonComponentArray[2];
+    this.lessonComponentArray[2] = temp;
+  }
   test(component: any) {
     console.log("click!" + component);
   }

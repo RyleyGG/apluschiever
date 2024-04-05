@@ -12,11 +12,13 @@ import { Node } from "../../graph/graph.interface";
 import { NodeService } from '../../core/services/node/node.service';
 import { ThirdpartyComponent } from '../../components/thirdparty/thirdparty.component';
 import { SplitterModule } from 'primeng/splitter';
+import { DragdropDirective } from '../../core/directives/dragdrop.directive';
+
 
 @Component({
   selector: 'app-video',
   standalone: true,
-  imports: [ButtonModule, FullscreenComponent, CommonModule, DragDropModule],
+  imports: [ButtonModule, FullscreenComponent, DragdropDirective, CommonModule, DragDropModule],
   templateUrl: './video.component.html',
   styleUrl: './video.component.css'
 })

@@ -9,11 +9,12 @@ import { DragDropModule } from 'primeng/dragdrop';
 import {Markdown, Video} from "../../core/models/node-content.interface";
 import { Node } from "../../graph/graph.interface";
 import { NodeService } from '../../core/services/node/node.service';
+import { DragdropDirective } from '../../core/directives/dragdrop.directive';
 
 @Component({
   selector: 'app-fileviewer',
   standalone: true,
-  imports: [ButtonModule, FullscreenComponent, CommonModule, DragDropModule],
+  imports: [ButtonModule, FullscreenComponent, DragdropDirective, CommonModule, DragDropModule],
   templateUrl: './fileviewer.component.html',
   styleUrl: './fileviewer.component.css'
 })
