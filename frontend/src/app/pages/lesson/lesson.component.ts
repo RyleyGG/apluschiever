@@ -33,14 +33,23 @@ export class LessonComponent implements AfterViewInit {
   thirdComp = ThirdpartyComponent;
   componentRefs: any[] = [];
   focusComponent: any;
-  lessonComponentArray: { componentType: any, input: any , size: any}[] = [
-    { componentType: FileviewerComponent, input: null, size: '100'},
-    { componentType: ThirdpartyComponent, input: 'https://www.mathsisfun.com/pythagoras.html' , size: '100'},
-    { componentType: ThirdpartyComponent, input: 'https://www.calculator.net/pythagorean-theorem-calculator.html' , size: '100'},
-    { componentType: VideoComponent, input: 'https://www.youtube.com/embed/vbG_YBTiN38?si=vnI_tJ4xFaqiMnlz' , size: '100'},
-    { componentType: ThirdpartyComponent, input: 'https://www.mathplanet.com/education/pre-algebra/right-triangles-and-algebra/the-pythagorean-theorem' , size: '100'},
-    { componentType: VideoComponent, input: 'https://www.youtube.com/embed/uthjpYKD7Ng?si=CrgWvB8aSgHVGJmr' , size: '100'},
+  fullScreen: any;
+  maximize(componentType: any, input: string) {
+    this.fullScreen = {
+      componentType: componentType,
+      input: input,
+      size: '100'
+    }
+  }
+  lessonComponentArray: { componentType: any, input: any , size: any, minimize: any}[] = [
+    { componentType: FileviewerComponent, input: null, size: '100', minimize: false},
+    { componentType: ThirdpartyComponent, input: 'https://www.mathsisfun.com/pythagoras.html' , size: '100', minimize: false},
+    { componentType: ThirdpartyComponent, input: 'https://www.calculator.net/pythagorean-theorem-calculator.html' , size: '100', minimize: false},
+    { componentType: VideoComponent, input: 'https://www.youtube.com/embed/vbG_YBTiN38?si=vnI_tJ4xFaqiMnlz' , size: '100', minimize: false},
+    { componentType: ThirdpartyComponent, input: 'https://www.mathplanet.com/education/pre-algebra/right-triangles-and-algebra/the-pythagorean-theorem' , size: '100', minimize: false},
+    { componentType: VideoComponent, input: 'https://www.youtube.com/embed/uthjpYKD7Ng?si=CrgWvB8aSgHVGJmr' , size: '100', minimize: false},
   ];
+
   @HostListener('document:click', ['$event'])
   onClick(event: MouseEvent) {
     this.checkHeight();
@@ -53,7 +62,13 @@ export class LessonComponent implements AfterViewInit {
     });
   }
   ngAfterViewInit(): void {
-    
+    if (this.lessonComponentArray.length > 0) {
+      this.focusComponent= {
+        componentType: this.lessonComponentArray[0].componentType,
+        input: this.lessonComponentArray[0].input,
+        size: this.lessonComponentArray[0].size
+      }
+    }
   }
   title = "";
   node_id: string | any; 

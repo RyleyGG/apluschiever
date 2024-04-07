@@ -13,6 +13,7 @@ import { NodeService } from '../../core/services/node/node.service';
 import { ThirdpartyComponent } from '../../components/thirdparty/thirdparty.component';
 import { SplitterModule } from 'primeng/splitter';
 import { DragdropDirective } from '../../core/directives/dragdrop.directive';
+import { LessonComponent } from '../../pages/lesson/lesson.component';
 
 
 @Component({
@@ -25,13 +26,15 @@ import { DragdropDirective } from '../../core/directives/dragdrop.directive';
 export class VideoComponent {
   @Input() param: string | any;
   minimize = false;
-  constructor(private sanitizer: DomSanitizer) {}
+  fullScreen = false;
+  constructor(private sanitizer: DomSanitizer, private LessonComponent: LessonComponent) {}
   getURL(): SafeUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(this.param);
   }
   value = false;
-  makefull(value: boolean) {
-    this.value = value;
+  makefull() {
+    this.fullScreen = true;
+    this.LessonComponent.maximize(VideoComponent, this.param);
   }
   onDragStart(event: any) {
     console.log('Dragging started');

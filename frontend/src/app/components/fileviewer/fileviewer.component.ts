@@ -10,6 +10,7 @@ import {Markdown, Video} from "../../core/models/node-content.interface";
 import { Node } from "../../graph/graph.interface";
 import { NodeService } from '../../core/services/node/node.service';
 import { DragdropDirective } from '../../core/directives/dragdrop.directive';
+import { LessonComponent } from '../../pages/lesson/lesson.component';
 
 @Component({
   selector: 'app-fileviewer',
@@ -21,7 +22,10 @@ import { DragdropDirective } from '../../core/directives/dragdrop.directive';
 export class FileviewerComponent {
   value = false;
   minimize = false;
-  makefull(value: boolean) {
-    this.value = value;
+  fullScreen = false;
+  constructor(private LessonComponent: LessonComponent) {}
+  makefull() {
+    this.fullScreen = true;
+    this.LessonComponent.maximize(FileviewerComponent, "");
   }
 }

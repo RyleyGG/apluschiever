@@ -10,6 +10,7 @@ import {Markdown, Video} from "../../core/models/node-content.interface";
 import { Node } from "../../graph/graph.interface";
 import { NodeService } from '../../core/services/node/node.service';
 import { DragdropDirective } from '../../core/directives/dragdrop.directive';
+import { LessonComponent } from '../../pages/lesson/lesson.component';
 
 
 @Component({
@@ -22,12 +23,14 @@ import { DragdropDirective } from '../../core/directives/dragdrop.directive';
 export class ThirdpartyComponent {
   @Input() param: string | any;
   minimize = false;
-  constructor(private sanitizer: DomSanitizer) {}
+  fullScreen = false;
+  constructor(private sanitizer: DomSanitizer, private LessonComponent: LessonComponent) {}
   getURL(): SafeUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(this.param);
   }
   value = false;
-  makefull(value: boolean) {
-    this.value = value;
+  makefull() {
+    this.fullScreen = true;
+    this.LessonComponent.maximize(ThirdpartyComponent, this.param);
   }
 }

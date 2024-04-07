@@ -1,23 +1,2 @@
-<div class="box">
-    <div style="background-color: var(--primary-color); color: white; height: 50px; display:flex; justify-content:space-between; padding: 7px;">
-        <div style="margin-top: 10px;">
-          Third Party Content
-        </div>
-        <div style="justify-content: flex-end;">
-          <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="makefull(true)"></p-button>
-          <p-button *ngIf="minimize" type="button" class="fsbutton" [rounded]="true" icon="pi pi-angle-down" (click)="minimize = !minimize"></p-button>
-          <p-button *ngIf="!minimize" type="button" class="fsbutton" [rounded]="true" icon="pi pi-angle-up" (click)="minimize = !minimize"></p-button>
-        </div>
-      </div>
-    <iframe *ngIf="!minimize" [src]="getURL()" width="100%" height="400px" frameborder="0"></iframe>
-</div>
+<iframe [src]="getURL()" width="100%" height="100%" frameborder="0"></iframe>
 
-<div *ngIf="value">
-    <app-fullscreen>
-        <p-button type="button" class="exitbutton" [rounded]="true" icon="pi pi-times" (click)="makefull(false)"></p-button>
-        <div style="height: 95%;">
-            <iframe [src]="getURL()" width="100%" height="100%" frameborder="0"></iframe>
-        </div>
-        <div>Note: Students should focus on problems 1, 6, and 10 in particular</div>
-    </app-fullscreen>
-</div>
