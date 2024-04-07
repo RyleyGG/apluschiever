@@ -150,6 +150,7 @@ export class CourseBuilderPageComponent {
     private historyService: HistoryService,
     private elementRef: ElementRef,
     private messageService: MessageService) {
+
     this.userService.getCurrentUser().subscribe((res) => {
       this.courseOwner = res;
     });
@@ -174,12 +175,8 @@ export class CourseBuilderPageComponent {
     this.courseService.addOrUpdateCourse(courseObj)
       .subscribe((res) => {
         this.existingCourse = res;
-
-        this.msgs.push({ severity: 'success', summary: 'Success', detail: 'Your request was successful' });
-        setTimeout(() => {
-          this.msgs = [];
-        }, 5000);
-      })
+        this.addMessage({ severity: 'success', summary: 'Success', detail: 'Course saved successfully.' });
+      });
   }
 
   /**
@@ -197,7 +194,7 @@ export class CourseBuilderPageComponent {
       this.setEdgeColor(validationResult.cycleEdges, "#FF0000");
 
       // some way to alert the user that there is a cycle
-      alert('There is at least one cycle in the course structure. Remove it before publishing!');
+      this.addMessage({ severity: 'error', summary: 'Error', detail: 'There is an cycle in the course structure.' });
       return;
     }
 
@@ -213,6 +210,7 @@ export class CourseBuilderPageComponent {
       .subscribe((res) => {
         this.existingCourse = res;
         console.log(res);
+        this.addMessage({ severity: 'success', summary: 'Success', detail: 'Course published successfully.' });
       })
   }
 
@@ -418,6 +416,7 @@ export class CourseBuilderPageComponent {
   }
 
   updateNodeData() {
+    console.log(this.selectedNode);
     this.selectedNode.title = this.selectedName || "";
     this.selectedNode.data.short_description = this.selectedDescription || "";
     this.selectedNode.data.tags = this.selectedTags || [];
@@ -431,6 +430,15 @@ export class CourseBuilderPageComponent {
     }
 
     this.nodes = [...this.nodes];
+  }
+
+  private addMessage(msg: Message) {
+    this.msgs.push(msg);
+    setTimeout(() => {
+      this.msgs.shift();
+      this.msgs = [...this.msgs];
+    }, 5000);
+    this.msgs = [...this.msgs];
   }
 
   //#endregion UI Functions
