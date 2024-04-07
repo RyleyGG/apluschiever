@@ -8,3 +8,54 @@ body {
     margin: 0;
     padding: 0;
 }
+
+html.side-panel-open {
+    overflow: hidden;
+}
+
+/*
+Because we want scrollbars consistent across the application the styles for it will go here.
+*/
+
+/* width */
+::-webkit-scrollbar {
+    width: 0.5em;
+}
+
+/* Track */
+::-webkit-scrollbar-track {}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: var(--primary-300);
+    border-radius: 0.25em;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-500);
+}
+
+/* width */
+::ng-deep ::-webkit-scrollbar {
+    width: 0.5em;
+}
+
+/* Track */
+::ng-deep ::-webkit-scrollbar-track {}
+
+/* Handle */
+::ng-deep ::-webkit-scrollbar-thumb {
+    background: var(--primary-300);
+    border-radius: 0.25em;
+}
+
+/* Handle on hover */
+::ng-deep ::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-500);
+}
+
+/* Override the default PrimeNG dialog component*/
+::ng-deep .p-dialog-content {
+    overflow: visible;
+}
