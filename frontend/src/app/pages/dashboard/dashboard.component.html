@@ -1,7 +1,4 @@
 <div style="display: grid; grid-template-columns: 60% 40%; gap: 1.5em; padding: 1.5em; overflow-x: visible;">
-    <!--TODO: Add a general user stats section. #Lessons complete, #Courses Complete, etc. -->
-    <!--TODO: make a grid with two column layout one having 60% one with 40%-->
-
     <section style="grid-column: 1 / 2;">
         <p style="font-size: 2rem; font-weight: 700; margin: 0;">Dashboard</p>
     </section>
@@ -10,8 +7,13 @@
         <p-card>
             <p style="margin: 0; padding: 0; font-weight: 700; font-size: 1.75rem;">Begin a new course today!</p>
             <ng-template pTemplate="footer">
-                <p-button type="button" [rounded]="true" label="Enroll in a new course"
-                    (click)="sidebarVisible=true;" />
+                <div style="display: flex; gap: 1em;">
+                    <p-button type="button" [rounded]="true" label="Enroll in a new course"
+                        (click)="sidebarVisible=true;" />
+
+                    <p-button *ngIf="loggedInUser?.user_type === 'Teacher'" type="button" [rounded]="true"
+                        label="Create a new course" [routerLink]="['/builder']" />
+                </div>
             </ng-template>
         </p-card>
         <!--
@@ -23,7 +25,6 @@
     <section style="grid-column: 1; overflow-x: visible;">
         <div style="display: flex; gap: 1.5em; align-items: center; justify-content: start; overflow-x: visible;">
             <p style="font-size: 2rem; font-weight: 700; margin: 0;">My Courses</p>
-            <!-- TODO: add click handlers to filter shown courses based on clicks.-->
             <p-button type="button" [rounded]="true" [outlined]="displayedCourses != userCourses" label="All"
                 (click)="displayedCourses = userCourses" />
             <p-button type="button" [rounded]="true" [outlined]="displayedCourses != userInProgressCourses"
@@ -65,7 +66,6 @@
             </ng-template>
         </div>
 
-        <!--TODO: Pretty This Up -->
         <ng-template #noCourses>
             <h2>There are no courses to display.</h2>
         </ng-template>
