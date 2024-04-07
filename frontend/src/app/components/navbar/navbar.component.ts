@@ -13,6 +13,7 @@ import { DividerModule } from 'primeng/divider';
 import { firstValueFrom } from 'rxjs';
 import { UserService } from '../../core/services/user/user.service';
 import { User } from '../../core/models/user.interface';
+import { LocalStorageService } from '../../core/services/local-storage/local-storage.service';
 
 @Component({
   selector: 'app-navbar',
@@ -38,12 +39,13 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  constructor(private oauthService: OAuth2Service, private themeService: ThemeService, private userService: UserService, private internetConnection: InternetConnectionService) {
+  constructor(private oauthService: OAuth2Service, private themeService: ThemeService, private localStorageService: LocalStorageService, private userService: UserService, private internetConnection: InternetConnectionService) {
     console.log(this.internetConnection.isOnline());
   }
 
   swapTheme(): void {
     const newTheme = this.themeService.theme() == 'arya-blue' ? 'saga-blue' : 'arya-blue';
     this.themeService.setTheme(newTheme);
+    this.localStorageService.set("theme", newTheme);
   }
 }

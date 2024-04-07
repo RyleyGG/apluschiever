@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ThemeService } from './core/services/theme/theme.service';
-import { InternetConnectionService } from './core/services/internet-connection/internet-connection.service';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { MenubarModule } from 'primeng/menubar';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { LocalStorageService } from './core/services/local-storage/local-storage.service';
 /**
  * The main application component, currently the sample hello world page.
  */
@@ -23,7 +23,9 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 export class AppComponent {
   title = 'apluschiever';
 
-  constructor(private internetConnection: InternetConnectionService) {
-    console.log(this.internetConnection.isOnline());
+  constructor(private themeService: ThemeService, private localStorageService: LocalStorageService) {
+    // Set theme based on users preference from local storage, else use default light theme. 
+    const localStorageTheme = this.localStorageService.get("theme");
+    this.themeService.setTheme(localStorageTheme !== null ? localStorageTheme : 'saga-blue');
   }
 }

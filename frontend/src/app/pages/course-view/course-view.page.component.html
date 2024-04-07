@@ -1,5 +1,26 @@
-<!--This contains the graph control menu options.-->
-<p-speedDial [model]="dial_items" [radius]="75" direction="down-right" type="quarter-circle"></p-speedDial>
+<p-card [style]="{
+  position: 'absolute',
+  top: '0.75em',
+  left: '0.75em',
+}">
+  <div style="
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.5em;
+  ">
+    <!-- Course Name, Filter, Zoom To Fit -->
+    <p style="margin: 0 0 0 0.35em; font-weight: 700; font-size: 1.25em;">{{courseName}}</p>
+
+    <p-divider layout="vertical" [style]="{ margin: '0 0.25em', padding: '12px 0.25em' }"></p-divider>
+
+    <p-button styleClass="p-togglebutton" icon="pi pi-filter-fill" (onClick)="sidebarVisible = true;"
+      pTooltip="Apply Filters" tooltipPosition="bottom" />
+
+    <p-button styleClass="p-togglebutton" icon="pi pi-money-bill" (onClick)="zoomGraphToFit()" pTooltip="Zoom to Fit"
+      tooltipPosition="bottom" />
+  </div>
+</p-card>
 
 <!--This displays the graph of the course.-->
 <graph #graphComponent class="course-view-graph-container" [edges]="this.edges" [nodes]="this.nodes"
@@ -26,8 +47,8 @@
       <i class="pi pi-lock" style="font-size: 1.5rem"></i>
     </p-blockUI>
     <blockable-div #lessonButtonWrapper [style]="{display: 'inline-block'}">
-      <p-button [routerLink]="['/lesson', selectedNode.label]" icon="pi pi-book" (click)="dialogVisible = false"
-        label="View Lesson" pAutoFocus [autofocus]="false" [style]="{margin: '0'}" />
+      <p-button id="lessonButton" [routerLink]="['/lesson', selectedNode.label]" icon="pi pi-book"
+        (click)="dialogVisible = false" label="View Lesson" pAutoFocus [autofocus]="false" [style]="{margin: '0'}" />
     </blockable-div>
   </ng-template>
 </p-dialog>
@@ -85,6 +106,12 @@
     </div>
 
     <div style="margin-top: 2em; display: flex; align-items: center;">
+      <p-colorPicker [(ngModel)]="selectedColor" (onChange)="updateHighlights()"
+        inputId="selectedColorPicker"></p-colorPicker>
+      <label style="margin-left: 0.5em;" for="selectedColorPicker">Selected Node Color</label>
+    </div>
+
+    <div style="margin-top: 0.5em; display: flex; align-items: center;">
       <p-colorPicker [(ngModel)]="searchColor" (onChange)="updateHighlights()"
         inputId="searchColorPicker"></p-colorPicker>
       <label style="margin-left: 0.5em;" for="searchColorPicker">Search Node Results Color</label>
