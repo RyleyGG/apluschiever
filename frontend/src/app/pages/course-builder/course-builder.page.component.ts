@@ -1,42 +1,47 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {DialogModule} from 'primeng/dialog';
-import {AvatarModule} from 'primeng/avatar';
-import {ButtonModule} from 'primeng/button';
-import {SidebarModule} from 'primeng/sidebar';
-import {TooltipModule} from 'primeng/tooltip';
-import {SpeedDialModule} from 'primeng/speeddial';
-import {MultiSelectModule} from 'primeng/multiselect';
-import {ColorPickerModule} from 'primeng/colorpicker';
-import {BlockUIModule} from 'primeng/blockui';
-import {AutoCompleteModule} from 'primeng/autocomplete';
-import {InputSwitchModule} from 'primeng/inputswitch';
-import {TagModule} from 'primeng/tag';
-import {DividerModule} from 'primeng/divider';
-import {ContextMenuModule} from 'primeng/contextmenu';
-import {SelectButtonModule} from 'primeng/selectbutton';
-import {CardModule} from 'primeng/card';
-import {ToggleButtonModule} from 'primeng/togglebutton';
-import {ChipsModule} from 'primeng/chips';
-import {FileUploadModule} from 'primeng/fileupload';
-import {EditorModule} from 'primeng/editor';
-import {ActivatedRoute} from '@angular/router';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
+import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
+import { SidebarModule } from 'primeng/sidebar';
+import { TooltipModule } from 'primeng/tooltip';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ColorPickerModule } from 'primeng/colorpicker';
+import { BlockUIModule } from 'primeng/blockui';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { TagModule } from 'primeng/tag';
+import { DividerModule } from 'primeng/divider';
+import { ContextMenuModule } from 'primeng/contextmenu';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { CardModule } from 'primeng/card';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { ChipsModule } from 'primeng/chips';
+import { FileUploadModule } from 'primeng/fileupload';
+import { EditorModule } from 'primeng/editor';
 
-import {FormsModule} from '@angular/forms';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
 
-import {GraphComponent} from '../../graph/graph.component';
-import {Node, Edge, Cluster} from '../../graph/graph.interface';
-import {CourseService} from '../../core/services/course/course.service';
-import {InputTextModule} from 'primeng/inputtext';
-import {InputTextareaModule} from 'primeng/inputtextarea';
+import { ActivatedRoute } from '@angular/router';
 
-import {PanelModule} from 'primeng/panel';
-import {DagreSettings, Orientation} from '../../graph/layouts/dagreCluster';
-import {uid} from '../../core/utils/unique-id';
-import {HistoryService} from '../../core/services/history/history.service';
-import {Course, CourseFilters} from "../../core/models/course.interface";
-import {User} from "../../core/models/user.interface";
-import {UserService} from "../../core/services/user/user.service";
+import { FormsModule } from '@angular/forms';
+
+import { GraphComponent } from '../../graph/graph.component';
+import { Node, Edge, Cluster } from '../../graph/graph.interface';
+import { CourseService } from '../../core/services/course/course.service';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+
+import { PanelModule } from 'primeng/panel';
+import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
+import { uid } from '../../core/utils/unique-id';
+import { HistoryService } from '../../core/services/history/history.service';
+import { Course, CourseFilters } from "../../core/models/course.interface";
+import { User } from "../../core/models/user.interface";
+import { UserService } from "../../core/services/user/user.service";
+import { Message, MessageService } from 'primeng/api';
 
 /**
  * The course view page component
@@ -46,7 +51,7 @@ import {UserService} from "../../core/services/user/user.service";
 @Component({
   selector: 'course-build-page',
   standalone: true,
-  imports: [CommonModule, GraphComponent, FileUploadModule, EditorModule, CardModule, ChipsModule, InputTextareaModule, DividerModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
+  imports: [CommonModule, GraphComponent, MessagesModule, MessageModule, FileUploadModule, EditorModule, CardModule, ChipsModule, InputTextareaModule, DividerModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
   templateUrl: './course-builder.page.component.html',
   styleUrl: './course-builder.page.component.css'
 })
@@ -137,11 +142,14 @@ export class CourseBuilderPageComponent {
 
   courseName: string = "Course Name";
 
+  msgs: Message[] = [];
+
   constructor(
     private courseService: CourseService,
     private userService: UserService,
     private historyService: HistoryService,
-    private elementRef: ElementRef) {
+    private elementRef: ElementRef,
+    private messageService: MessageService) {
     this.userService.getCurrentUser().subscribe((res) => {
       this.courseOwner = res;
     });
@@ -166,6 +174,11 @@ export class CourseBuilderPageComponent {
     this.courseService.addOrUpdateCourse(courseObj)
       .subscribe((res) => {
         this.existingCourse = res;
+
+        this.msgs.push({ severity: 'success', summary: 'Success', detail: 'Your request was successful' });
+        setTimeout(() => {
+          this.msgs = [];
+        }, 5000);
       })
   }
 
@@ -242,6 +255,7 @@ export class CourseBuilderPageComponent {
     const newNode = {
       id: uid(),
       label: "Default Label",
+      title: "Default Label",
       data: {
         tags: [],
         content: {}
@@ -308,10 +322,8 @@ export class CourseBuilderPageComponent {
       return;
     }
 
-
     // No special editing mode is enabled, so save info about the current node
     this.updateNodeData();
-    console.log(this.nodes);
 
     // Then pan and pull up the info about the node.
     this.selectedNode = node;
@@ -324,7 +336,6 @@ export class CourseBuilderPageComponent {
     this.assessmentFile = node.data.content.assessmentFile || [];
     this.assessmentFile = [...this.assessmentFile];
     this.urls = node.data.content.thirdPartyUrls || [];
-    console.log(this.uploadedFiles);
 
     this.graphComponent.panToNodeId(node.id!);
     this.dialogVisible = true;
@@ -458,7 +469,7 @@ export class CourseBuilderPageComponent {
       }
 
       if (nodeIds.includes(node.id)) {
-        return {...node, color: color};
+        return { ...node, color: color };
       }
       return node;
     });
@@ -477,7 +488,7 @@ export class CourseBuilderPageComponent {
       }
 
       if (edgeIds.includes(edge.id)) {
-        return {...edge, color: color};
+        return { ...edge, color: color };
       }
       return edge;
     });
@@ -557,11 +568,11 @@ export class CourseBuilderPageComponent {
       const nodeId = node.id;
       if (!visited[nodeId!]) {
         if (dfs(nodeId!, null)) {
-          return {hasCycle: true, cycleNodes, cycleEdges};
+          return { hasCycle: true, cycleNodes, cycleEdges };
         }
       }
     }
-    return {hasCycle: false, cycleNodes: [], cycleEdges: []};
+    return { hasCycle: false, cycleNodes: [], cycleEdges: [] };
   }
 
   //#endregion Helper Functions
