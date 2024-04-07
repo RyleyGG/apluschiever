@@ -144,15 +144,66 @@ export class CourseBuilderPageComponent {
 
   msgs: Message[] = [];
 
+  courseid: string | null = null;
+
   constructor(
     private courseService: CourseService,
     private userService: UserService,
     private historyService: HistoryService,
+    private route: ActivatedRoute,
     private elementRef: ElementRef) {
 
     this.userService.getCurrentUser().subscribe((res) => {
       this.courseOwner = res;
     });
+
+    this.courseid = this.route.snapshot.paramMap.get('id');
+    if (this.courseid == null) { return; }
+
+    this.courseService.getNodes(this.courseid).subscribe((data) => {
+      this.nodes = [];
+      this.edges = [];
+      this.clusters = [];
+
+      // Pass to create the nodes (NEEDS UPDATING BUT SHOULD BE MOSTLY RIGHT. TEST ONCE WE CAN LOAD COURSES AGAIN)
+      data.forEach((element: any) => {
+        const newNode = {
+          id: element.id,
+          label: element.title,
+          title: element.title,
+          color: "var(--text-color)",
+          data: {
+            short_description: element.short_description,
+            complete: element.complete,
+            tags: [...element.tags],
+            content_types: [...element.content_types],
+            content: element.content
+          }
+        }
+        this.nodes = [...this.nodes, newNode];
+      });
+
+      // Pass to create the edges
+      data.forEach((element: any) => {
+        const newEdges: Edge[] = [];
+        element.parent_nodes.forEach((parent: any) => {
+          newEdges.push({
+            id: uid(),
+            source: parent.id,
+            target: element.id,
+            color: "var(--text-color)"
+          });
+        });
+        this.edges = [...this.edges, ...newEdges];
+      });
+
+      // For some reason this needs to be 1 millisecond delayed at minimum for the zoom and center to apply. Probably for the CSS to update/apply
+      setTimeout(() => {
+        this.graphComponent.zoomToFit();
+        this.graphComponent.panToCenter();
+      }, 1);
+    });
+
   }
 
   //#region UI Functions

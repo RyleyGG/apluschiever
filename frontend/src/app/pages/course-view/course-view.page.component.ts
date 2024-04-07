@@ -168,7 +168,7 @@ export class CourseViewPageComponent {
           this.courseName = course.title;
         }
       }
-    })
+    });
   }
 
   // Set default colors as primeNG ones (todo: have this set in local storage)
