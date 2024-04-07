@@ -41,25 +41,36 @@ export interface Node {
    */
   id?: string;
 
+  // graphing specific attributes
   position?: NodePosition;
   dimension?: NodeDimension;
   transform?: string;
+  color?: string; // Hex string for a color.
+  meta?: any;
+  hidden?: boolean;
+  complete?: boolean; // whether the currently logged in user has completed the node or not
 
+  // attributes pertaining to node data
   title?: string;
   short_description?: string;
+  tags?: string[];
   videos?: Video[];
   rich_text_files?: RichText[];
   uploaded_files?: UploadFile[];
   third_party_resources?: ThirdPartyResource[]
+  assessment_files?: any;
   course_id?: string;
-
-  color?: string; // Hex string for a color.
-
-  meta?: any;
-  data?: any; // catch all object.
-
-  hidden?: boolean;
 };
+
+export interface NodeOverview {
+  id?: string;
+  title: string;
+  short_description: string;
+  parent_nodes: Node[];
+  complete: boolean;
+  tags: string[];
+  content_types: string[];
+}
 
 /**
  * Represents an edge in the graph. Edges are directed.

@@ -14,7 +14,7 @@ class Content(SQLModel, table=False):
 
 class Video(Content, table=False):
     embed_link: str
-    video_source: str
+    video_source: SupportedThirdParties
 
 
 class RichText(Content, table=False):
@@ -28,4 +28,4 @@ class UploadFile(Content, table=False):
 
 class ThirdPartyResource(Content, table=False):
     embed_link: str
-    video_source: SupportedThirdParties
+    resource_source: SupportedThirdParties

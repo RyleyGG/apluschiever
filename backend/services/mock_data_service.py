@@ -11,10 +11,11 @@ from starlette import status
 
 from api import app
 from models.db_models import Course, Node, User, NodeParentLink, CourseStudentLink
-from models.dto_models import NodeTags, UserType
+from models.dto_models import NodeTags, UserType, SupportedThirdParties
 from models.pydantic_models import Video, RichText
 from services.api_utility_service import dbUrl, get_session
 from services.config_service import config
+
 
 
 def generate_mock_users(db: Session, client: TestClient):
@@ -100,7 +101,7 @@ def generate_mock_nodes(db: Session, client: TestClient):
                 new_node.videos = []
                 new_node.rich_text_files = []
                 for n in range(10):
-                    new_node.videos.append(Video(title='wasd', embed_link='wasd', video_source='wasd'))
+                    new_node.videos.append(Video(title='wasd', embed_link='wasd', video_source=SupportedThirdParties.YOUTUBE))
                     if random.choice([True, False]):
                         break
 

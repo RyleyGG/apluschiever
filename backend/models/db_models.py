@@ -39,7 +39,7 @@ class Node(SQLModel, table=True):
     __tablename__ = 'Node'
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     title: str
-    short_description: str
+    short_description: Optional[str] = Field(default=None)
     tags: Optional[List[NodeTags]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[NodeTags]])))
     # SQLModel doesn't currently support polymorphism within attributes, meaning we can't have a generic abstract
     # Content class from which we actually use Video, Markdown, etc. classes when storing data.

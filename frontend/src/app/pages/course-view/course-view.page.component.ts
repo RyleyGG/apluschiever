@@ -31,7 +31,7 @@ import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
 
 /**
  * The course view page component
- * 
+ *
  * Right now it has a graph of dummy data being displayed.
  */
 @Component({
@@ -65,7 +65,7 @@ export class CourseViewPageComponent {
   dialogVisible: boolean = false;
 
   /**
-   * Controls visibility of the filter options sidebar 
+   * Controls visibility of the filter options sidebar
    */
   sidebarVisible: boolean = false;
 
@@ -78,7 +78,7 @@ export class CourseViewPageComponent {
   tags: any[] = ["chip"];
   selectedTags: any[] = [];
 
-  contentTypes: any[] = ["video", "text", "quiz"];
+  contentTypes: any[] = ["Video", "Text", "Files", "Assessment"];
   selectedContentTypes: any[] = [];
 
   // view options
@@ -101,6 +101,7 @@ export class CourseViewPageComponent {
   nodes: Node[] = [];
   edges: Edge[] = [];
   clusters: Cluster[] = [];
+  nodeNames: string[] = [];
 
   courseid: string | any;
   public courseName: string = "";
@@ -108,27 +109,12 @@ export class CourseViewPageComponent {
   constructor(private courseService: CourseService, private elementRef: ElementRef, private route: ActivatedRoute) {
     this.courseid = this.route.snapshot.paramMap.get('id');
 
+    this.nodes = [];
+    this.edges = [];
+    this.clusters = [];
     this.courseService.getNodes(this.courseid).subscribe((data) => {
-      this.nodes = [];
-      this.edges = [];
-      this.clusters = [];
-
-      // Pass to create the nodes
-      data.forEach((element: any) => {
-        const newNode = {
-          id: element.id,
-          label: element.title,
-          color: "var(--text-color)",
-          data: {
-            short_description: element.short_description,
-            complete: element.complete,
-            tags: [...element.tags],
-            content_types: [...element.content_types]
-          }
-        }
-        this.nodes = [...this.nodes, newNode];
-      });
-
+      this.nodes = data;
+      this.nodeNames = data.map((n) => n.title);
       // Pass to create the edges
       data.forEach((element: any) => {
         const newEdges: Edge[] = [];
@@ -144,10 +130,10 @@ export class CourseViewPageComponent {
       });
 
       // Grab all unique tags
-      this.tags = Array.from(new Set<string>(this.nodes.flatMap((node: any) => node.data.tags)));
+      this.tags = Array.from(new Set<string>(this.nodes.flatMap((node: any) => node.tags)));
 
       // Grab all unique content types
-      this.contentTypes = Array.from(new Set<string>(this.nodes.flatMap((node: any) => node.data.content_types)));
+      this.contentTypes = Array.from(new Set<string>(this.nodes.flatMap((node: any) => node.content_types)));
 
       this.updateHighlights();
 
@@ -159,15 +145,11 @@ export class CourseViewPageComponent {
     });
 
     /**
-     * Theres probably a more effecient way to get the course name, 
+     * Theres probably a more effecient way to get the course name,
      * but this will do for now...
      */
-    this.courseService.getCourses().subscribe((data: any[]) => {
-      for (let course of data) {
-        if (course.id === this.courseid) {
-          this.courseName = course.title;
-        }
-      }
+    this.courseService.getCourses({ids: [this.courseid]}).subscribe((courses) => {
+      this.courseName = courses[0].title;
     });
   }
 
@@ -185,7 +167,7 @@ export class CourseViewPageComponent {
   /**
    * This function fires whenever a node (or cluster) is clicked.
    * It updates the selected node, pans to that node and opens the dialog component.
-   * 
+   *
    * @param node The node that was clicked in the graph component.
    */
   onNodeClick(node: Node) {
@@ -231,11 +213,22 @@ export class CourseViewPageComponent {
 
     // then add on searches by tags
     const tagResults = this.nodes
-      .filter((node) => this.selectedTags.some((tag: any) => node.data.tags.includes(tag)));
+      .filter((node) => this.selectedTags.some((tag: any) => node.tags && node.tags.includes(tag)));
 
     // then add on searches by content types
     const contentTypeResults = this.nodes
-      .filter((node) => this.selectedContentTypes.some((contentType: any) => node.data.content_types.includes(contentType)));
+      .filter((node) => this.selectedContentTypes.some((contentType: any) => {
+        switch (contentType) {
+          case (contentType === 'Video'):
+            return node.videos && node.videos?.length > 0;
+          case (contentType === 'Text'):
+            return node.rich_text_files && node.rich_text_files?.length > 0;
+          case (contentType === 'Files'):
+            return node.uploaded_files && node.uploaded_files?.length > 0;
+          case (contentType === 'Assessment'):
+            return node.assessment_files && node.assessment_files?.length > 0;
+        }
+      }));
 
     // take the results of the above into one big array (this.searchResults) and remove all duplicates
     this.searchResults = [...new Set([...nameResults, ...tagResults, ...contentTypeResults])];
@@ -253,28 +246,31 @@ export class CourseViewPageComponent {
     this.setNodeColor(this.nodes.map(node => node.id!), "var(--text-color)");
     this.setEdgeColor(this.edges.map(edge => edge.id!), "var(--text-color)");
 
-    this.highlightPreRequisites(this.selectedNode, this.preReqColor);
+    if (!!this.selectedNode) {
+      this.highlightPreRequisites(this.selectedNode, this.preReqColor);
+      this.setNodeColor([this.selectedNode.id!], this.selectedColor);
+    }
+
     this.highlightCompleted(this.completeColor);
     this.highlightSearched(this.searchColor);
-    this.setNodeColor([this.selectedNode.id!], this.selectedColor);
   }
 
   /**
    * Highlights the searched nodes to a given color.
-   * 
-   * @param color 
+   *
+   * @param color
    */
   highlightSearched = (color: string): void => this.setNodeColor(this.searchResults.map((node) => node.id!), color);
 
   /**
    * Highlight all the completed nodes with the given color.
-   * 
-   * @param color 
+   *
+   * @param color
    */
   highlightCompleted = (color: string): void => {
     if (!this.showComplete) { return; }
     // Use filters and maps to get completed node and edge ids
-    const completedNodes = this.nodes.filter((node) => node.data.complete == true).map((node) => node.id!);
+    const completedNodes = this.nodes.filter((node) => node.complete === true).map((node) => node.id!);
     const completedEdges = this.edges.filter((edge) => completedNodes.includes(edge.source)).map((edge) => edge.id!);
 
     this.setNodeColor(completedNodes, color);
@@ -283,8 +279,8 @@ export class CourseViewPageComponent {
 
   /**
    * Highlight all the pre-requisites of a given node with the given color.
-   * 
-   * @param selectedNode 
+   *
+   * @param selectedNode
    * @param color
    */
   highlightPreRequisites = (selectedNode: Node, color: string): void => {
@@ -300,7 +296,7 @@ export class CourseViewPageComponent {
 
   /**
    * Set color of all given nodes with matching IDs to the given color string.
-   * 
+   *
    * @param {string[]} nodeIds list of IDs of nodes to update
    * @param {string} color the new color to use for all these nodes
    */
@@ -317,7 +313,7 @@ export class CourseViewPageComponent {
 
   /**
    * Set color of all given edges with matching IDs to the given color string.
-   * 
+   *
    * @param {string[]} edgeIds list of IDs of edges to update
    * @param {string} color the new color to use for all these edges
    */
@@ -338,24 +334,24 @@ export class CourseViewPageComponent {
 
   /**
    * Determine if the pre-requisites for a node are satisfied or not.
-   * 
-   * @param sourceNode 
-   * @returns 
+   *
+   * @param sourceNode
+   * @returns
    */
   preRequisitesSatisfied = (sourceNode: Node): boolean => {
     const preReqs: string[] = this.getPreRequisites(sourceNode);
     // Filter for all pre-req nodes that are not complete, if we get exactly 0 then we are satisfied.
-    return this.nodes.filter((node) => preReqs.includes(node.id!) && !node.data.complete).length == 0;
+    return this.nodes.filter((node) => preReqs.includes(node.id!) && !node.complete).length == 0;
   }
 
   /**
    * Gets a list of all pre-requisites of a node (as an array of node ids).
-   * 
-   * @param sourceNode 
+   *
+   * @param sourceNode
    * @returns the node ids for the pre-requisites of the node.
    */
   getPreRequisites = (sourceNode: Node): string[] => {
-    // Does BFS in reverse in order to get all nodes before the source node. 
+    // Does BFS in reverse in order to get all nodes before the source node.
     const preReqs: string[] = [];
     const nodesToCheck: Set<string> = new Set([sourceNode.id!]);
     const checkedNodes: Set<string> = new Set();

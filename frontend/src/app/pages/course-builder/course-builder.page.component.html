@@ -100,7 +100,7 @@
       </span>
     </ng-container>
     <ng-container *ngIf="!enableEdits">
-      <p-tag *ngFor="let tag of selectedNode?.data.tags" value="{{tag}}"></p-tag>
+      <p-tag *ngFor="let tag of selectedNode?.tags" value="{{tag}}"></p-tag>
     </ng-container>
   </div>
   <p class="m-0">
@@ -113,7 +113,7 @@
       </span>
     </ng-container>
     <ng-container *ngIf="!enableEdits">
-      {{ selectedNode?.data.short_description }}
+      {{ selectedNode?.short_description }}
     </ng-container>
 
   </p>

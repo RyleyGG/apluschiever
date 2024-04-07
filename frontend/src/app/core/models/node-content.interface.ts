@@ -3,8 +3,8 @@
  */
 export interface Video {
   id?: string;
-  embedLink: string;
-  videoSource: string;
+  embed_link: string;
+  video_source: string;
 }
 
 /**
@@ -21,8 +21,8 @@ export interface RichText {
  */
 export interface ThirdPartyResource {
   id?: string;
-  embedLink: string;
-  resourceSource: string;
+  embed_link: string;
+  resource_source: string;
 }
 
 

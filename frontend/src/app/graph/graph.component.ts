@@ -472,14 +472,12 @@ export class GraphComponent {
 
     this.graph.nodes.map((n: Node) => {
       n.transform = `translate(${n.position!.x - (this.centerNodesOnPositionChange ? n.dimension!.width / 2 : 0) || 0}, ${n.position!.y - (this.centerNodesOnPositionChange ? n.dimension!.height / 2 : 0) || 0})`;
-      n.data ??= {};
       n.color ??= '#000000';
       oldNodes.add(n.id!);
     });
 
     (this.graph.clusters || []).map((c: Cluster) => {
       c.transform = `translate(${c.position!.x - (this.centerNodesOnPositionChange ? c.dimension!.width / 2 : 0) || 0}, ${c.position!.y - (this.centerNodesOnPositionChange ? c.dimension!.height / 2 : 0) || 0})`;
-      c.data ??= {};
       c.color ??= '#000000';
       oldClusters.add(c.id!);
     });

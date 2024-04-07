@@ -165,23 +165,23 @@ export class CourseBuilderPageComponent {
       this.edges = [];
       this.clusters = [];
 
-      // Pass to create the nodes (NEEDS UPDATING BUT SHOULD BE MOSTLY RIGHT. TEST ONCE WE CAN LOAD COURSES AGAIN)
-      data.forEach((element: any) => {
-        const newNode = {
-          id: element.id,
-          label: element.title,
-          title: element.title,
-          color: "var(--text-color)",
-          data: {
-            short_description: element.short_description,
-            complete: element.complete,
-            tags: [...element.tags],
-            content_types: [...element.content_types],
-            content: element.content
-          }
-        }
-        this.nodes = [...this.nodes, newNode];
-      });
+      // TODO: Pass to create the nodes (NEEDS UPDATING BUT SHOULD BE MOSTLY RIGHT.
+      this.nodes = data;
+      // data.forEach((element: any) => {
+      //   const newNode = {
+      //     id: element.id,
+      //     title: element.title,
+      //     color: "var(--text-color)",
+      //     // data: {
+      //     //   short_description: element.short_description,
+      //     //   complete: element.complete,
+      //     //   tags: [...element.tags],
+      //     //   content_types: [...element.content_types],
+      //     //   content: element.content
+      //     // }
+      //   }
+      //   this.nodes = [...this.nodes, newNode];
+      // });
 
       // Pass to create the edges
       data.forEach((element: any) => {
@@ -306,10 +306,7 @@ export class CourseBuilderPageComponent {
       id: uid(),
       label: "Default Label",
       title: "Default Label",
-      data: {
-        tags: [],
-        content: {}
-      },
+      tags: [],
       color: "var(--text-color)"
     };
     this.nodes = [...this.nodes, newNode];
@@ -323,7 +320,7 @@ export class CourseBuilderPageComponent {
 
     this.selectedNode = newNode;
     this.selectedName = newNode.label || "";
-    this.selectedTags = newNode.data.tags;
+    this.selectedTags = newNode.tags;
     this.graphComponent.panToNodeId(newNode.id);
     this.dialogVisible = true;
   }
@@ -378,14 +375,13 @@ export class CourseBuilderPageComponent {
     // Then pan and pull up the info about the node.
     this.selectedNode = node;
     this.selectedName = node.title || "";
-    this.selectedDescription = node.data.short_description || "";
-    this.selectedTags = node.data.tags || [];
-    this.editorText = node.data.content.editorText || "";
-    this.uploadedFiles = node.data.content.files || [];
-    this.uploadedFiles = [...this.uploadedFiles];
-    this.assessmentFile = node.data.content.assessmentFile || [];
+    this.selectedDescription = node.short_description || "";
+    this.selectedTags = node.tags || [];
+    this.editorText = node.rich_text_files && node.rich_text_files?.length > 0 ? node.rich_text_files[0].content : "";
+    this.uploadedFiles = node.uploaded_files && node.uploaded_files ? node.uploaded_files : [];
+    this.assessmentFile = node.assessment_files && node.assessment_files.length > 0 ? node.assessment_files : [];
     this.assessmentFile = [...this.assessmentFile];
-    this.urls = node.data.content.thirdPartyUrls || [];
+    this.urls = node.third_party_resources && node.third_party_resources.length > 0 ? node.third_party_resources.map((tpr) => tpr.embed_link) : [];
 
     this.graphComponent.panToNodeId(node.id!);
     this.dialogVisible = true;
@@ -470,12 +466,12 @@ export class CourseBuilderPageComponent {
   updateNodeData() {
     console.log(this.selectedNode);
     this.selectedNode.title = this.selectedName || "";
-    this.selectedNode.data.short_description = this.selectedDescription || "";
-    this.selectedNode.data.tags = this.selectedTags || [];
-    this.selectedNode.data.content.editorText = this.editorText || "";
-    this.selectedNode.data.content.files = this.uploadedFiles || [];
-    this.selectedNode.data.content.thirdPartyUrls = this.urls || [];
-    this.selectedNode.data.content.assessmentFile = this.assessmentFile || [];
+    this.selectedNode.short_description = this.selectedDescription || "";
+    this.selectedNode.tags = this.selectedTags || [];
+    this.selectedNode.rich_text_files = [{content: this.editorText}] || [""];
+    this.selectedNode.uploaded_files = this.uploadedFiles || [];
+    this.selectedNode.third_party_resources = this.urls.map((url) => {return {embed_link: url, resource_source: ''}});
+    this.selectedNode.assessment_files = this.assessmentFile || [];
     const index = this.nodes.findIndex(node => node.id === this.selectedNode.id);
     if (index !== -1) {
       this.nodes[index] = Object.assign({}, this.nodes[index], this.selectedNode);
@@ -591,8 +587,8 @@ export class CourseBuilderPageComponent {
 
   /**
    * Performs DFS lookup to find ALL cycles in the graph. Also, utilizes filters to determine all cycles
-   * of length 2 and all self-edges. Returns this data in an object. 
-   * 
+   * of length 2 and all self-edges. Returns this data in an object.
+   *
    * @returns An object representing the cycles in the graph.
    */
   detectAllCycles = (): { hasCycle: boolean, cycles: { node_ids: string[], edge_ids: string[] }[] } => {
