@@ -41,7 +41,7 @@ import { HistoryService } from '../../core/services/history/history.service';
 import { Course, CourseFilters } from "../../core/models/course.interface";
 import { User } from "../../core/models/user.interface";
 import { UserService } from "../../core/services/user/user.service";
-import { Message, MessageService } from 'primeng/api';
+import { Message } from 'primeng/api';
 
 /**
  * The course view page component
@@ -148,8 +148,7 @@ export class CourseBuilderPageComponent {
     private courseService: CourseService,
     private userService: UserService,
     private historyService: HistoryService,
-    private elementRef: ElementRef,
-    private messageService: MessageService) {
+    private elementRef: ElementRef) {
 
     this.userService.getCurrentUser().subscribe((res) => {
       this.courseOwner = res;
@@ -209,9 +208,8 @@ export class CourseBuilderPageComponent {
     this.courseService.addOrUpdateCourse(courseObj)
       .subscribe((res) => {
         this.existingCourse = res;
-        console.log(res);
         this.addMessage({ severity: 'success', summary: 'Success', detail: 'Course published successfully.' });
-      })
+      });
   }
 
   /**
