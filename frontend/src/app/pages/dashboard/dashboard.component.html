@@ -98,7 +98,8 @@
 </div>
 
 
-<p-sidebar [(visible)]="sidebarVisible" [style]="{ width: '100%' }" [modal]="true">
+<p-sidebar [(visible)]="sidebarVisible" (visibleChange)="onSidebarVisibilityChange($event)"
+    [style]="{ width: '100%', overflow: 'none' }" [modal]="true">
     <ng-template pTemplate="header">
         <h1 style="margin: 0;">
             Enroll

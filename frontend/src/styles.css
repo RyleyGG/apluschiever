@@ -9,6 +9,10 @@ body {
     padding: 0;
 }
 
+html.side-panel-open {
+    overflow: hidden;
+}
+
 /*
 Because we want scrollbars consistent across the application the styles for it will go here.
 */
