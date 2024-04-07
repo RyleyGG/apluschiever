@@ -146,7 +146,18 @@ export class DashboardComponent {
     });
   }
 
-
+  /**
+   * Used to prevent a duplicate scrollbar from appearing in the register for classes panel. 
+   * 
+   * @param event true if open sidebar, false if closed
+   */
+  onSidebarVisibilityChange(event: any) {
+    if (event) {
+      document.documentElement.classList.add('side-panel-open');
+    } else {
+      document.documentElement.classList.remove('side-panel-open');
+    }
+  }
 
   //#region Updating User Info
 
