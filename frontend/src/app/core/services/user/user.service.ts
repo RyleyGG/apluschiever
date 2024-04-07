@@ -1,7 +1,7 @@
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {Injectable} from "@angular/core";
-import {catchError, map, take, throwError} from "rxjs";
-import {User} from "../../models/user.interface";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { catchError, map, take, throwError } from "rxjs";
+import { User } from "../../models/user.interface";
 
 @Injectable({
   providedIn: "root"
@@ -13,14 +13,46 @@ export class UserService {
   private REST_API_SERVER = "http://localhost:8000/";
 
   /**
-   *
+   * 
    */
   constructor(private httpClient: HttpClient) {
 
   }
 
   /**
-   * Get all courses
+   * Get the logged in user's information
+   */
+  getCurrentUser() {
+    return this.httpClient.get<any>(this.REST_API_SERVER + `user/me`, {}).pipe(
+      take(1),
+      map((res: any) => {
+        console.log(res);
+        return res;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        // Something went really wrong
+        return throwError(() => error);
+      })
+    )
+  }
+
+  updateCurrentUser(new_user_data: User) {
+    console.log(new_user_data)
+    return this.httpClient.post<any>(this.REST_API_SERVER + `user/update_user`, new_user_data).pipe(
+      take(1),
+      map((res: any) => {
+        console.log(res);
+        return res;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        // Something went really wrong
+        return throwError(() => error);
+      })
+    )
+  }
+
+  /**
+   * Get all courses the user is enrolled in
    * @returns
    */
   getUserCourses() {
@@ -37,19 +69,23 @@ export class UserService {
     );
   }
 
-  getCurrentUser() {
-    return this.httpClient.get<User>(this.REST_API_SERVER + `user/me`).pipe(
+  getUserCoursesProgress(course_ids: string[]) {
+    return this.httpClient.post<any>(this.REST_API_SERVER + `user/course_progress`, course_ids).pipe(
       take(1),
-      map((res: User) => {
+      map((res: any) => {
+        console.log(res);
         return res;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        // Something went really wrong
+        return throwError(() => error);
       })
-    )
+    );
   }
 
   /**
-   * Get all courses
-   * @param course_id
-   *
+   * Add the user to a course
+   * @param course_id the course id of the course to enroll in
    */
   addCourse(course_id: string) {
     return this.httpClient.get<any>(this.REST_API_SERVER + `user/add_course/${course_id}`, {}).pipe(
@@ -66,9 +102,8 @@ export class UserService {
   }
 
   /**
-   * Get all courses
-   * @param course_id
-   *
+   * Remove the user from a course
+   * @param course_id the course id of the course to remove the user from
    */
   removeCourse(course_id: string) {
     return this.httpClient.get<any>(this.REST_API_SERVER + `user/remove_course/${course_id}`, {}).pipe(

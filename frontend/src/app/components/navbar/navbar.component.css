@@ -3,8 +3,12 @@
   justify-content: space-between;
   flex-direction: row;
   align-items: center;
-  padding: 10px;
+  padding: 0.25em 1.5em;
   background-color: var(--primary-color);
+
+  background: var(--primary-color);
+  background: linear-gradient(120deg, var(--primary-500) 0%, var(--primary-300) 100%);
+
 }
 
 .navbarTitle {
@@ -30,7 +34,6 @@
 h1 {
   font-size: 3.125rem;
   cursor: pointer;
-  font-weight: 500;
   line-height: 100%;
   letter-spacing: -0.125rem;
   color: var(--primary-color-text);

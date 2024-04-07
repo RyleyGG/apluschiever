@@ -1,41 +1,43 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {DialogModule} from 'primeng/dialog';
-import {AvatarModule} from 'primeng/avatar';
-import {ButtonModule} from 'primeng/button';
-import {SidebarModule} from 'primeng/sidebar';
-import {TooltipModule} from 'primeng/tooltip';
-import {SpeedDialModule} from 'primeng/speeddial';
-import {MultiSelectModule} from 'primeng/multiselect';
-import {ColorPickerModule} from 'primeng/colorpicker';
-import {BlockUIModule} from 'primeng/blockui';
-import {AutoCompleteModule} from 'primeng/autocomplete';
-import {InputSwitchModule} from 'primeng/inputswitch';
-import {TagModule} from 'primeng/tag';
-import {MenuItem} from 'primeng/api';
-import {ActivatedRoute} from '@angular/router';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
+import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
+import { SidebarModule } from 'primeng/sidebar';
+import { TooltipModule } from 'primeng/tooltip';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ColorPickerModule } from 'primeng/colorpicker';
+import { BlockUIModule } from 'primeng/blockui';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { TagModule } from 'primeng/tag';
+import { MenuItem } from 'primeng/api';
+import { CardModule } from 'primeng/card';
+import { ActivatedRoute } from '@angular/router';
 
-import {FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
-import {GraphComponent} from '../../graph/graph.component';
-import {BlockableDiv} from '../../core/components/blockable-div/blockable-div.component';
-import {Node, Edge, Cluster} from '../../graph/graph.interface';
-import {CourseService} from '../../core/services/course/course.service';
-import {InputTextModule} from 'primeng/inputtext';
-import {uid} from '../../core/utils/unique-id';
+import { GraphComponent } from '../../graph/graph.component';
+import { BlockableDiv } from '../../core/components/blockable-div/blockable-div.component';
+import { Node, Edge, Cluster } from '../../graph/graph.interface';
+import { CourseService } from '../../core/services/course/course.service';
+import { InputTextModule } from 'primeng/inputtext';
+import { DividerModule } from 'primeng/divider';
+import { uid } from '../../core/utils/unique-id';
 
-import {PanelModule} from 'primeng/panel';
-import {DagreSettings, Orientation} from '../../graph/layouts/dagreCluster';
+import { PanelModule } from 'primeng/panel';
+import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
 
 /**
  * The course view page component
- *
+ * 
  * Right now it has a graph of dummy data being displayed.
  */
 @Component({
   selector: 'course-view-page',
   standalone: true,
-  imports: [CommonModule, GraphComponent, BlockableDiv, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
+  imports: [CommonModule, GraphComponent, CardModule, BlockableDiv, DividerModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
   templateUrl: './course-view.page.component.html',
   styleUrl: './course-view.page.component.css'
 })
@@ -63,34 +65,9 @@ export class CourseViewPageComponent {
   dialogVisible: boolean = false;
 
   /**
-   * Controls visibility of the filter options sidebar
+   * Controls visibility of the filter options sidebar 
    */
   sidebarVisible: boolean = false;
-
-  /**
-   * Menu options for the '+' button
-   */
-  dial_items: MenuItem[] = [
-    {
-      tooltipOptions: {
-        tooltipLabel: 'Add Filters'
-      },
-      icon: 'pi pi-filter-fill',
-      command: () => {
-        this.sidebarVisible = true;
-      }
-    },
-    {
-      tooltipOptions: {
-        tooltipLabel: 'Zoom to Fit'
-      },
-      icon: 'pi pi-money-bill',
-      command: () => {
-        this.graphComponent.zoomToFit();
-        this.graphComponent.panToCenter();
-      }
-    }
-  ];
 
   //#region Filtering & Searching Properties
 
@@ -108,6 +85,7 @@ export class CourseViewPageComponent {
   showPreReqs: boolean = true;
   showComplete: boolean = true;
 
+  selectedColor: any;
   searchColor: any;
   completeColor: any;
   preReqColor: any;
@@ -125,13 +103,11 @@ export class CourseViewPageComponent {
   clusters: Cluster[] = [];
 
   courseid: string | any;
+  public courseName: string = "";
 
   constructor(private courseService: CourseService, private elementRef: ElementRef, private route: ActivatedRoute) {
     this.courseid = this.route.snapshot.paramMap.get('id');
-    //this.courseid = this.route.snapshot.paramMap.get('ID');
-    // On page load get the course information (id)
-    // will need to be a URL parameter probably
-    // TODO: Get the Course ID from another source (maybe route param, maybe a service?)
+
     this.courseService.getNodes(this.courseid).subscribe((data) => {
       this.nodes = [];
       this.edges = [];
@@ -181,6 +157,18 @@ export class CourseViewPageComponent {
         this.graphComponent.panToCenter();
       }, 1);
     });
+
+    /**
+     * Theres probably a more effecient way to get the course name, 
+     * but this will do for now...
+     */
+    this.courseService.getCourses().subscribe((data: any[]) => {
+      for (let course of data) {
+        if (course.id === this.courseid) {
+          this.courseName = course.title;
+        }
+      }
+    })
   }
 
   // Set default colors as primeNG ones (todo: have this set in local storage)
@@ -188,13 +176,16 @@ export class CourseViewPageComponent {
     this.completeColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--green-700");
     this.preReqColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--yellow-700");
     this.searchColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--indigo-700");
+    this.selectedColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--purple-700");
   }
+
+
 
 
   /**
    * This function fires whenever a node (or cluster) is clicked.
    * It updates the selected node, pans to that node and opens the dialog component.
-   *
+   * 
    * @param node The node that was clicked in the graph component.
    */
   onNodeClick(node: Node) {
@@ -265,24 +256,23 @@ export class CourseViewPageComponent {
     this.highlightPreRequisites(this.selectedNode, this.preReqColor);
     this.highlightCompleted(this.completeColor);
     this.highlightSearched(this.searchColor);
+    this.setNodeColor([this.selectedNode.id!], this.selectedColor);
   }
 
   /**
    * Highlights the searched nodes to a given color.
-   *
-   * @param color
+   * 
+   * @param color 
    */
   highlightSearched = (color: string): void => this.setNodeColor(this.searchResults.map((node) => node.id!), color);
 
   /**
    * Highlight all the completed nodes with the given color.
-   *
-   * @param color
+   * 
+   * @param color 
    */
   highlightCompleted = (color: string): void => {
-    if (!this.showComplete) {
-      return;
-    }
+    if (!this.showComplete) { return; }
     // Use filters and maps to get completed node and edge ids
     const completedNodes = this.nodes.filter((node) => node.data.complete == true).map((node) => node.id!);
     const completedEdges = this.edges.filter((edge) => completedNodes.includes(edge.source)).map((edge) => edge.id!);
@@ -293,17 +283,13 @@ export class CourseViewPageComponent {
 
   /**
    * Highlight all the pre-requisites of a given node with the given color.
-   *
-   * @param selectedNode
+   * 
+   * @param selectedNode 
    * @param color
    */
   highlightPreRequisites = (selectedNode: Node, color: string): void => {
-    if (!this.showPreReqs) {
-      return;
-    }
-    if (!selectedNode) {
-      return;
-    }
+    if (!this.showPreReqs) { return; }
+    if (!selectedNode) { return; }
     const preReqs: string[] = this.getPreRequisites(selectedNode);
     this.setNodeColor(preReqs, color);
 
@@ -314,18 +300,16 @@ export class CourseViewPageComponent {
 
   /**
    * Set color of all given nodes with matching IDs to the given color string.
-   *
+   * 
    * @param {string[]} nodeIds list of IDs of nodes to update
    * @param {string} color the new color to use for all these nodes
    */
   setNodeColor = (nodeIds: string[], color: string): void => {
     this.nodes = this.nodes.map(node => {
-      if (!node.id) {
-        return node;
-      }
+      if (!node.id) { return node; }
 
       if (nodeIds.includes(node.id)) {
-        return {...node, color: color};
+        return { ...node, color: color };
       }
       return node;
     });
@@ -333,18 +317,16 @@ export class CourseViewPageComponent {
 
   /**
    * Set color of all given edges with matching IDs to the given color string.
-   *
+   * 
    * @param {string[]} edgeIds list of IDs of edges to update
    * @param {string} color the new color to use for all these edges
    */
   setEdgeColor = (edgeIds: string[], color: string): void => {
     this.edges = this.edges.map(edge => {
-      if (!edge.id) {
-        return edge;
-      }
+      if (!edge.id) { return edge; }
 
       if (edgeIds.includes(edge.id)) {
-        return {...edge, color: color};
+        return { ...edge, color: color };
       }
       return edge;
     });
@@ -356,9 +338,9 @@ export class CourseViewPageComponent {
 
   /**
    * Determine if the pre-requisites for a node are satisfied or not.
-   *
-   * @param sourceNode
-   * @returns
+   * 
+   * @param sourceNode 
+   * @returns 
    */
   preRequisitesSatisfied = (sourceNode: Node): boolean => {
     const preReqs: string[] = this.getPreRequisites(sourceNode);
@@ -368,12 +350,12 @@ export class CourseViewPageComponent {
 
   /**
    * Gets a list of all pre-requisites of a node (as an array of node ids).
-   *
-   * @param sourceNode
+   * 
+   * @param sourceNode 
    * @returns the node ids for the pre-requisites of the node.
    */
   getPreRequisites = (sourceNode: Node): string[] => {
-    // Does BFS in reverse in order to get all nodes before the source node.
+    // Does BFS in reverse in order to get all nodes before the source node. 
     const preReqs: string[] = [];
     const nodesToCheck: Set<string> = new Set([sourceNode.id!]);
     const checkedNodes: Set<string> = new Set();
@@ -394,6 +376,14 @@ export class CourseViewPageComponent {
     }
 
     return preReqs;
+  }
+
+  /**
+   * Zooms and fits the graph component to the screen.
+   */
+  zoomGraphToFit = (): void => {
+    this.graphComponent.zoomToFit();
+    this.graphComponent.panToCenter();
   }
 
   //#endregion Helper Functions
