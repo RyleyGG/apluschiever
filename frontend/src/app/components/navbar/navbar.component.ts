@@ -8,41 +8,41 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToolbarModule } from 'primeng/toolbar';
 import { MenubarModule } from 'primeng/menubar';
 import { OAuth2Service } from "../../auth/oauth2.service";
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { DividerModule } from 'primeng/divider';
 import { firstValueFrom } from 'rxjs';
+import { UserService } from '../../core/services/user/user.service';
+import { User } from '../../core/models/user.interface';
 import { LocalStorageService } from '../../core/services/local-storage/local-storage.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [ButtonModule, RouterLink, ToolbarModule, MenubarModule, RouterOutlet, ToolbarModule, RouterLinkActive, ToggleButtonModule, CommonModule],
+  imports: [ButtonModule, RouterLink, OverlayPanelModule, DividerModule, ToolbarModule, MenubarModule, RouterOutlet, ToolbarModule, RouterLinkActive, ToggleButtonModule, CommonModule],
   templateUrl: './navbar.component.html',
   styleUrl: 'navbar.component.css'
 })
 export class NavbarComponent implements OnInit {
-  title = 'apluschiever';
   loggedIn: boolean = false;
-
-  constructor(private oauthService: OAuth2Service, private themeService: ThemeService, private localStorageService: LocalStorageService, private internetConnection: InternetConnectionService) {
-    console.log(this.internetConnection.isOnline());
-  }
+  loggedInUser: User | null = null;
 
   async ngOnInit() {
     try {
       const isUserAuthenticated = await firstValueFrom(this.oauthService.validate_token());
-      if (isUserAuthenticated) {
-        this.loggedIn = true;
-      }
-      else {
-        this.loggedIn = false;
-      }
+      this.loggedIn = isUserAuthenticated;
     } catch (error) {
       console.error('Error checking user login status:', error);
     }
+
+    this.userService.getCurrentUser().subscribe((data) => {
+      this.loggedInUser = data;
+    });
   }
 
-  /**
-   * Updates the in use theme for the application (light vs dark).
-   */
+  constructor(private oauthService: OAuth2Service, private themeService: ThemeService, private localStorageService: LocalStorageService, private userService: UserService, private internetConnection: InternetConnectionService) {
+    console.log(this.internetConnection.isOnline());
+  }
+
   swapTheme(): void {
     const newTheme = this.themeService.theme() == 'arya-blue' ? 'saga-blue' : 'arya-blue';
     this.themeService.setTheme(newTheme);
