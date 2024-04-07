@@ -235,13 +235,16 @@ export class CourseBuilderPageComponent {
   publish(): void {
     this.updateNodeData();
 
-    const validationResult = this.hasCycle();
+    const validationResult = this.detectAllCycles();
+    console.log(validationResult)
     if (validationResult.hasCycle == true) {
       this.setNodeColor(this.nodes.map((node) => node.id!), "var(--text-color)");
       this.setEdgeColor(this.edges.map((edge) => edge.id!), "var(--text-color)");
 
-      this.setNodeColor(validationResult.cycleNodes, "#FF0000");
-      this.setEdgeColor(validationResult.cycleEdges, "#FF0000");
+      validationResult.cycles.forEach((data: { node_ids: string[], edge_ids: string[] }) => {
+        this.setNodeColor(data.node_ids, "#FF0000");
+        this.setEdgeColor(data.edge_ids, "#FF0000");
+      });
 
       // some way to alert the user that there is a cycle
       this.addMessage({ severity: 'error', summary: 'Error', detail: 'There is an cycle in the course structure.' });
@@ -585,51 +588,79 @@ export class CourseBuilderPageComponent {
     return preReqs;
   }
 
+
   /**
-   * Performs DFS on the nodes in the graph to determine if there is a cycle.
-   *
-   * @returns an object containing information about the cycle and if it exists.
+   * Performs DFS lookup to find ALL cycles in the graph. Also, utilizes filters to determine all cycles
+   * of length 2 and all self-edges. Returns this data in an object. 
+   * 
+   * @returns An object representing the cycles in the graph.
    */
-  hasCycle = (): { hasCycle: boolean, cycleNodes: string[], cycleEdges: string[] } => {
+  detectAllCycles = (): { hasCycle: boolean, cycles: { node_ids: string[], edge_ids: string[] }[] } => {
+    const cycles: { node_ids: string[]; edge_ids: string[] }[] = [];
     const visited: { [key: string]: boolean } = {};
     const recursionStack: { [key: string]: boolean } = {};
-    const cycleNodes: string[] = [];
-    const cycleEdges: string[] = [];
 
-    const dfs = (currentNodeId: string, parentNodeId: string | null): boolean => {
-      visited[currentNodeId] = true;
-      recursionStack[currentNodeId] = true;
-      cycleNodes.push(currentNodeId);
+
+    const dfs = (currentNode: string, parentNode: string | null, path: string[], edgeIds: string[]) => {
+      visited[currentNode] = true;
+      recursionStack[currentNode] = true;
+      path.push(currentNode);
 
       for (const edge of this.edges) {
-        if (edge.source === currentNodeId) {
-          const targetNodeId = edge.target;
-          if (!visited[targetNodeId]) {
-            if (dfs(targetNodeId, currentNodeId)) {
-              cycleEdges.push(edge.id!);
-              return true;
+        if (edge.source === currentNode || edge.target === currentNode) {
+          const nextNode = edge.target;
+
+          if (!visited[nextNode]) {
+            dfs(nextNode, currentNode, path, [...edgeIds, edge.id || ""]);
+          } else if (recursionStack[nextNode] && nextNode !== parentNode) {
+            const cycleStartIndex = path.indexOf(nextNode);
+            const cycleNodes = path.slice(cycleStartIndex);
+            const cycleEdges = edgeIds.slice(cycleStartIndex);
+
+            // Check if the last edge connects back to the first node in the cycle
+            if (cycleNodes.includes(cycleNodes[0])) {
+              const lastEdge = this.edges.find((e: Edge) => (e.source === cycleNodes[cycleNodes.length - 1] && e.target === cycleNodes[0]) || (e.source === cycleNodes[0] && e.target === cycleNodes[cycleNodes.length - 1]));
+              if (lastEdge) {
+                cycleEdges.push(lastEdge.id!);
+                cycles.push({ node_ids: cycleNodes, edge_ids: cycleEdges });
+              }
             }
-          } else if (recursionStack[targetNodeId] && targetNodeId !== parentNodeId) {
-            cycleEdges.push(edge.id!);
-            return true;
           }
         }
       }
 
-      recursionStack[currentNodeId] = false;
-      cycleNodes.pop(); // Remove the node from cycleNodes if it's not part of the cycle
-      return false;
-    };
+      // Remove the node from the recursion stack after exploring its neighbors
+      recursionStack[currentNode] = false;
+      path.pop();
+    }
 
+    // Perform the DFS algorithm above to get all cycles length 3 or more
     for (const node of this.nodes) {
-      const nodeId = node.id;
-      if (!visited[nodeId!]) {
-        if (dfs(nodeId!, null)) {
-          return { hasCycle: true, cycleNodes, cycleEdges };
-        }
+      if (!visited[node.id!]) {
+        dfs(node.id!, null, [], []);
       }
     }
-    return { hasCycle: false, cycleNodes: [], cycleEdges: [] };
+
+    // Use a set and a repeated lookup to get the cycles of length 2 and 1.
+    const shortCycleEdges = this.edges.filter((edge1, index1) => {
+      return this.edges.some((edge2, index2) => {
+        // Check if there exists another edge where the source is the target of the current edge
+        return index1 !== index2 && edge1.source === edge2.target && edge1.target === edge2.source;
+      });
+    });
+
+    // Push in the short cycles that were found.
+    shortCycleEdges.forEach((e: Edge) => {
+      if (e.source === e.target) {
+        cycles.push({ node_ids: [e.source], edge_ids: [e.id!] });
+      } else {
+        const match = this.edges.filter((e2: Edge) => { e2.source === e.target && e2.target === e.source }).map((e2: Edge) => e2.id!);
+
+        cycles.push({ node_ids: [e.source, e.target], edge_ids: [e.id!, ...match] });
+      }
+    });
+
+    return { hasCycle: cycles.length > 0, cycles };
   }
 
   //#endregion Helper Functions
