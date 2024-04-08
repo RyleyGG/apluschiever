@@ -65,7 +65,7 @@
     <!--Need wrapping spans in order for label to animate up-->
 
     <span class="p-float-label" style="margin-top: 2em;">
-      <p-multiSelect [options]="nodeNames" [(ngModel)]="selectedNodes" [selectAll]="selectAllNodes"
+      <p-multiSelect [options]="nodes" optionLabel="title" [(ngModel)]="selectedNodes" [selectAll]="selectAllNodes"
         (onChange)="updateSelectedNodes(); updateHighlights();" (onClear)="updateSelectedNodes(); updateHighlights();"
         (onSelectAllChange)="onSelectAllNodesChange($event);" display="chip" inputId="searchByNameInput" [filter]="true"
         dataKey="id" [style]="{'width':'100%'}" />

@@ -101,7 +101,6 @@ export class CourseViewPageComponent {
   nodes: Node[] = [];
   edges: Edge[] = [];
   clusters: Cluster[] = [];
-  nodeNames: string[] = [];
 
   courseid: string | any;
   public courseName: string = "";
@@ -114,7 +113,7 @@ export class CourseViewPageComponent {
     this.clusters = [];
     this.courseService.getNodes(this.courseid).subscribe((data) => {
       this.nodes = data;
-      this.nodeNames = data.map((n) => n.title);
+
       // Pass to create the edges
       data.forEach((element: any) => {
         const newEdges: Edge[] = [];
@@ -148,7 +147,7 @@ export class CourseViewPageComponent {
      * Theres probably a more effecient way to get the course name,
      * but this will do for now...
      */
-    this.courseService.getCourses({ids: [this.courseid]}).subscribe((courses) => {
+    this.courseService.getCourses({ ids: [this.courseid] }).subscribe((courses) => {
       this.courseName = courses[0].title;
     });
   }
