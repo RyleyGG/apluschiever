@@ -35,6 +35,7 @@ async def search_courses(filters: CourseFilters, db: Session = Depends(get_sessi
 
 @router.post('/add_or_update', response_model=UpdatedCourse, response_model_by_alias=False)
 async def add_or_update_course(course: Course, nodes: List[Node], db: Session = Depends(get_session), user: User = Depends(auth_service.validate_token)):
+    print(course)
     existing_course = None
     if course.id:
         existing_course = db.exec(select(Course).where(Course.id == course.id)).first()
@@ -71,6 +72,7 @@ async def add_or_update_course(course: Course, nodes: List[Node], db: Session = 
             existing_node.rich_text_files = node.rich_text_files
             existing_node.uploaded_files = node.uploaded_files
             existing_node.third_party_resources = node.third_party_resources
+            existing_node.parents = node.parents
             # TODO: Also need to handle changes in parents/children lists
             db.add(existing_node)
             db.commit()

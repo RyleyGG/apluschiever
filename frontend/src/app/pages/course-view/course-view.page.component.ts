@@ -20,7 +20,7 @@ import { FormsModule } from '@angular/forms';
 
 import { GraphComponent } from '../../graph/graph.component';
 import { BlockableDiv } from '../../core/components/blockable-div/blockable-div.component';
-import { Node, Edge, Cluster } from '../../graph/graph.interface';
+import { Node, Edge, Cluster, NodeOverview } from '../../graph/graph.interface';
 import { CourseService } from '../../core/services/course/course.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { DividerModule } from 'primeng/divider';
@@ -111,22 +111,29 @@ export class CourseViewPageComponent {
     this.nodes = [];
     this.edges = [];
     this.clusters = [];
-    this.courseService.getNodes(this.courseid).subscribe((data) => {
+
+    /**
+     * 
+     */
+    this.courseService.getCourses({ ids: [this.courseid] }).subscribe((courses) => {
+      this.courseName = courses[0].title;
+    });
+
+    this.courseService.getNodes(this.courseid).subscribe((data: NodeOverview[]) => {
       this.nodes = data;
 
       // Pass to create the edges
-      data.forEach((element: any) => {
-        const newEdges: Edge[] = [];
+      data.forEach((element: NodeOverview) => {
         element.parent_nodes.forEach((parent: any) => {
-          newEdges.push({
+          this.edges.push({
             id: uid(),
             source: parent.id,
-            target: element.id,
+            target: element.id!,
             color: "var(--text-color)"
           });
         });
-        this.edges = [...this.edges, ...newEdges];
       });
+      this.edges = [...this.edges];
 
       // Grab all unique tags
       this.tags = Array.from(new Set<string>(this.nodes.flatMap((node: any) => node.tags)));
@@ -141,14 +148,6 @@ export class CourseViewPageComponent {
         this.graphComponent.zoomToFit();
         this.graphComponent.panToCenter();
       }, 1);
-    });
-
-    /**
-     * Theres probably a more effecient way to get the course name,
-     * but this will do for now...
-     */
-    this.courseService.getCourses({ ids: [this.courseid] }).subscribe((courses) => {
-      this.courseName = courses[0].title;
     });
   }
 

@@ -104,12 +104,6 @@ export class CourseBuilderPageComponent {
   courseOwner?: User;
 
   /**
-   * If the course being edited has been saved or previously existed, this
-   * will be populated
-   */
-  existingCourse?: Course;
-
-  /**
    * The nodes of the displayed graph
    */
   nodes: Node[] = [];
@@ -144,6 +138,9 @@ export class CourseBuilderPageComponent {
 
   msgs: Message[] = [];
 
+  /**
+   * The id of the course that is being built. Set to null or '' if the course being built is not already in the database.
+   */
   courseid: string | null = null;
 
   constructor(
@@ -174,18 +171,17 @@ export class CourseBuilderPageComponent {
       this.nodes = [...this.nodes];
 
       // Pass to create the edges
-      data.forEach((element: any) => {
-        const newEdges: Edge[] = [];
+      data.forEach((element: NodeOverview) => {
         element.parent_nodes.forEach((parent: any) => {
-          newEdges.push({
+          this.edges.push({
             id: uid(),
             source: parent.id,
-            target: element.id,
+            target: element.id!,
             color: "var(--text-color)"
           });
         });
-        this.edges = [...this.edges, ...newEdges];
       });
+      this.edges = [...this.edges];
 
       // For some reason this needs to be 1 millisecond delayed at minimum for the zoom and center to apply. Probably for the CSS to update/apply
       setTimeout(() => {
@@ -196,7 +192,7 @@ export class CourseBuilderPageComponent {
 
     // Set the existingCourse variable
     this.courseService.getCourses({ ids: [this.courseid] }).subscribe((data: Course[]) => {
-      this.existingCourse = data[0];
+      this.courseName = data[0].title;
     });
   }
 
@@ -208,8 +204,20 @@ export class CourseBuilderPageComponent {
   save(): void {
     this.updateNodeData();
 
+    // Loop through the nodes to set the edges properly...
+    this.nodes.forEach((node: any): any => {
+      node.course_id = this.courseid;
+      node.parents = [];
+      this.edges.forEach((edge: Edge) => {
+        if (edge.target == node.id!) {
+          node.parents.push(this.nodes.find((n: Node) => n.id! == edge.source) as Node);
+        }
+      });
+    });
+    this.nodes = [...this.nodes];
+
     const courseObj: Course = {
-      id: !!this.existingCourse ? this.existingCourse?.id : '',
+      id: this.courseid ? (this.courseid) : '',
       title: this.courseName,
       course_owner_id: this.courseOwner!.id,
       nodes: this.nodes,
@@ -217,8 +225,8 @@ export class CourseBuilderPageComponent {
     };
 
     this.courseService.addOrUpdateCourse(courseObj)
-      .subscribe((res) => {
-        this.existingCourse = res;
+      .subscribe((res: any) => {
+        this.courseid = res.course.id;
         this.addMessage({ severity: 'success', summary: 'Success', detail: 'Course saved successfully.' });
       });
   }
@@ -246,7 +254,7 @@ export class CourseBuilderPageComponent {
     }
 
     const courseObj: Course = {
-      id: !!this.existingCourse ? this.existingCourse?.id : '',
+      id: this.courseid ? this.courseid : '',
       title: this.courseName,
       course_owner_id: this.courseOwner!.id,
       nodes: this.nodes,
@@ -254,8 +262,8 @@ export class CourseBuilderPageComponent {
     };
 
     this.courseService.addOrUpdateCourse(courseObj)
-      .subscribe((res) => {
-        this.existingCourse = res;
+      .subscribe((res: any) => {
+        this.courseid = res.course.id;
         this.addMessage({ severity: 'success', summary: 'Success', detail: 'Course published successfully.' });
       });
   }
