@@ -29,7 +29,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { GraphComponent } from '../../graph/graph.component';
-import { Node, Edge, Cluster } from '../../graph/graph.interface';
+import { Node, Edge, Cluster, NodeOverview } from '../../graph/graph.interface';
 import { CourseService } from '../../core/services/course/course.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
@@ -165,23 +165,13 @@ export class CourseBuilderPageComponent {
       this.edges = [];
       this.clusters = [];
 
-      // TODO: Pass to create the nodes (NEEDS UPDATING BUT SHOULD BE MOSTLY RIGHT.
-      this.nodes = data;
-      // data.forEach((element: any) => {
-      //   const newNode = {
-      //     id: element.id,
-      //     title: element.title,
-      //     color: "var(--text-color)",
-      //     // data: {
-      //     //   short_description: element.short_description,
-      //     //   complete: element.complete,
-      //     //   tags: [...element.tags],
-      //     //   content_types: [...element.content_types],
-      //     //   content: element.content
-      //     // }
-      //   }
-      //   this.nodes = [...this.nodes, newNode];
-      // });
+      data.forEach((node: NodeOverview) => {
+        this.nodes.push({
+          ...node,
+          color: "var(--text-color)"
+        })
+      });
+      this.nodes = [...this.nodes];
 
       // Pass to create the edges
       data.forEach((element: any) => {
@@ -204,6 +194,10 @@ export class CourseBuilderPageComponent {
       }, 1);
     });
 
+    // Set the existingCourse variable
+    this.courseService.getCourses({ ids: [this.courseid] }).subscribe((data: Course[]) => {
+      this.existingCourse = data[0];
+    });
   }
 
   //#region UI Functions
@@ -464,13 +458,13 @@ export class CourseBuilderPageComponent {
   }
 
   updateNodeData() {
-    console.log(this.selectedNode);
+    if (!this.selectedNode) { return; }
     this.selectedNode.title = this.selectedName || "";
     this.selectedNode.short_description = this.selectedDescription || "";
     this.selectedNode.tags = this.selectedTags || [];
-    this.selectedNode.rich_text_files = [{content: this.editorText}] || [""];
+    this.selectedNode.rich_text_files = [{ content: this.editorText }] || [""];
     this.selectedNode.uploaded_files = this.uploadedFiles || [];
-    this.selectedNode.third_party_resources = this.urls.map((url) => {return {embed_link: url, resource_source: ''}});
+    this.selectedNode.third_party_resources = this.urls.map((url) => { return { embed_link: url, resource_source: '' } });
     this.selectedNode.assessment_files = this.assessmentFile || [];
     const index = this.nodes.findIndex(node => node.id === this.selectedNode.id);
     if (index !== -1) {

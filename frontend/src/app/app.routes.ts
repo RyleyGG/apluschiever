@@ -23,7 +23,7 @@ export const routes: Routes = [
     { path: "lesson/:id", component: LessonComponent, canActivate: [signedInGuard] },
 
     // Routes for creating content
-    { path: "builder", component: CourseBuilderPageComponent },
+    { path: "builder/:id", component: CourseBuilderPageComponent },
 
     // General
     { path: "landing", component: LandingPageComponent },
