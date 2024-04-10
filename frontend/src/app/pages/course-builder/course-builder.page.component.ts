@@ -205,13 +205,16 @@ export class CourseBuilderPageComponent {
     this.updateNodeData();
 
     // Loop through the nodes to set the edges properly...
-    this.nodes.forEach((node: any): any => {
-      node.course_id = this.courseid;
-      node.parents = [];
-      node.children = [];
+    this.nodes.forEach((node: Node): any => {
+      node.course_id = this.courseid || '';
+      node.parent_ids = [];
+      this.edges.forEach((edge: Edge) => {
+        if (edge.target === node.id!) {
+          node.parent_ids!.push(edge.source);
+        }
+      });
     });
     this.nodes = [...this.nodes];
-    console.log(this.nodes);
 
     const courseObj: Course = {
       id: this.courseid ? (this.courseid) : '',
