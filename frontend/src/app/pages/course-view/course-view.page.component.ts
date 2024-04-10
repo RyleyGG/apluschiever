@@ -118,6 +118,14 @@ export class CourseViewPageComponent {
     this.courseService.getCourses({ ids: [this.courseid] }).subscribe((courses) => {
       this.courseName = courses[0].title;
     });
+  }
+
+  // Set default colors as primeNG ones (todo: have this set in local storage)
+  ngOnInit() {
+    this.completeColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--green-700");
+    this.preReqColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--yellow-700");
+    this.searchColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--indigo-700");
+    this.selectedColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--purple-700");
 
     this.courseService.getNodes(this.courseid).subscribe((data: NodeOverview[]) => {
       this.nodes = data;
@@ -147,16 +155,9 @@ export class CourseViewPageComponent {
       setTimeout(() => {
         this.graphComponent.zoomToFit();
         this.graphComponent.panToCenter();
-      }, 1);
+        console.log('done');
+      }, 10);
     });
-  }
-
-  // Set default colors as primeNG ones (todo: have this set in local storage)
-  ngOnInit() {
-    this.completeColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--green-700");
-    this.preReqColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--yellow-700");
-    this.searchColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--indigo-700");
-    this.selectedColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--purple-700");
   }
 
 

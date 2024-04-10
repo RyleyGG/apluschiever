@@ -208,13 +208,10 @@ export class CourseBuilderPageComponent {
     this.nodes.forEach((node: any): any => {
       node.course_id = this.courseid;
       node.parents = [];
-      this.edges.forEach((edge: Edge) => {
-        if (edge.target == node.id!) {
-          node.parents.push(this.nodes.find((n: Node) => n.id! == edge.source) as Node);
-        }
-      });
+      node.children = [];
     });
     this.nodes = [...this.nodes];
+    console.log(this.nodes);
 
     const courseObj: Course = {
       id: this.courseid ? (this.courseid) : '',
