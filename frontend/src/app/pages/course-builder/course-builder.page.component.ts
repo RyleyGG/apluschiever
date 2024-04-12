@@ -243,8 +243,8 @@ export class CourseBuilderPageComponent {
     });
 
     this.courseService.addOrUpdateCourse(courseObj)
-      .subscribe((res: any) => {
-        this.courseid = res.course.id;
+      .subscribe((res: Course) => {
+        this.courseid = res.id;
         this.addMessage({ severity: 'success', summary: 'Success', detail: 'Course saved successfully.' });
       });
   }
@@ -281,8 +281,8 @@ export class CourseBuilderPageComponent {
     };
 
     this.courseService.addOrUpdateCourse(courseObj)
-      .subscribe((res: any) => {
-        this.courseid = res.course.id;
+      .subscribe((res: Course) => {
+        this.courseid = res.id;
         this.addMessage({ severity: 'success', summary: 'Success', detail: 'Course published successfully.' });
       });
   }

@@ -6,7 +6,7 @@ from typing import List
 from sqlmodel import select, Session
 from starlette import status
 
-from models.db_models import Course, User, Node, NodeOverview, UpdatedCourse
+from models.db_models import Course, User, Node, NodeOverview
 from models.dto_models import CourseFilters, CreateCourse, NodeProgressDetails
 from services import auth_service
 from services.api_utility_service import get_session
@@ -33,7 +33,7 @@ async def search_courses(filters: CourseFilters, db: Session = Depends(get_sessi
     return return_obj
 
 
-@router.post('/add_or_update', response_model=UpdatedCourse, response_model_by_alias=False)
+@router.post('/add_or_update', response_model=Course, response_model_by_alias=False)
 async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_session), user: User = Depends(auth_service.validate_token)):
     # TODO: We will utilise the new model to get everything working.
     print(course)
@@ -76,7 +76,7 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
                 existing_node.rich_text_files = node.rich_text_files
                 existing_node.uploaded_files = node.uploaded_files
                 existing_node.third_party_resources = node.third_party_resources
-                existing_node.parents = []
+                existing_node.parents = [] # Reset all edges
                 db.add(existing_node)
                 db.commit()
                 db.refresh(existing_node)
@@ -98,10 +98,7 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
             db.delete(node_to_delete)
             db.commit()
 
-
-    # Then we create/update all the links between parent/children, also deleting any that are not found.
-    # To do this, we map our edge indices to the IDs of the nodes.
-
+    # Then we create/update all the links between parent/children.
     for edge in course.edges:
         child_node = updated_nodes[edge.target]
         parent_node = updated_nodes[edge.source]
@@ -111,9 +108,8 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
         db.commit()
         db.refresh(child_node)
 
-    # ret_course = db.exec(select(Course).where(Course.id == cur_course_id)).first()
-    # ret_course.nodes = nodes
-    # return UpdatedCourse(course=ret_course, nodes=ret_course.nodes)
+    ret_course = db.exec(select(Course).where(Course.id == cur_course_id)).first()
+    return ret_course
 
 
 @router.get('/nodes/{course_id}', response_model=List[NodeOverview], response_model_by_alias=False)

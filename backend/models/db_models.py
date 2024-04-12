@@ -125,8 +125,3 @@ class NodeOverview(BaseModel):
     complete: bool
     tags: List[str]
     content_types: List[str]
-
-
-class UpdatedCourse(BaseModel):
-    course: Course
-    nodes: List[Node]
