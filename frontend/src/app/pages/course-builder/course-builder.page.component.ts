@@ -42,6 +42,7 @@ import { Course, CourseFilters, CreateCourse } from "../../core/models/course.in
 import { User } from "../../core/models/user.interface";
 import { UserService } from "../../core/services/user/user.service";
 import { Message } from 'primeng/api';
+import { BlockableDiv } from '../../core/components/blockable-div/blockable-div.component';
 
 /**
  * The course view page component
@@ -51,7 +52,7 @@ import { Message } from 'primeng/api';
 @Component({
   selector: 'course-build-page',
   standalone: true,
-  imports: [CommonModule, GraphComponent, MessagesModule, MessageModule, FileUploadModule, EditorModule, CardModule, ChipsModule, InputTextareaModule, DividerModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
+  imports: [CommonModule, GraphComponent, BlockUIModule, BlockableDiv, MessagesModule, MessageModule, FileUploadModule, EditorModule, CardModule, ChipsModule, InputTextareaModule, DividerModule, SelectButtonModule, ToggleButtonModule, ContextMenuModule, TagModule, FormsModule, PanelModule, BlockUIModule, ColorPickerModule, InputTextModule, MultiSelectModule, AutoCompleteModule, DialogModule, AvatarModule, ButtonModule, SidebarModule, TooltipModule, SpeedDialModule, InputSwitchModule],
   templateUrl: './course-builder.page.component.html',
   styleUrl: './course-builder.page.component.css'
 })

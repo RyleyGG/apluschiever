@@ -10,7 +10,9 @@
     padding: 0.5em;
   ">
     <!-- Course Name, Save, Publish, Increase Zoom, Decrease Zoom, Undo, Redo, -->
-    <input pInputText type="text" id="nameInput" [(ngModel)]="courseName" />
+    <p *ngIf="!enableEdits" style="margin: 0 0 0 0.35em; font-weight: 700; font-size: 1.25em;">{{courseName}}</p>
+    <input *ngIf="enableEdits" pInputText type="text" id="nameInput" [(ngModel)]="courseName" />
+
     <p-divider layout="vertical" [style]="{ margin: '0 0.25em', padding: '12px 0.25em' }"></p-divider>
     <p-button styleClass="p-togglebutton" icon="pi pi-save" (click)="save(false)" pTooltip="Save"
       tooltipPosition="bottom" />
@@ -119,8 +121,13 @@
 
   </p>
   <ng-template pTemplate="footer">
-    <p-button id="addContentButton" icon="pi pi-book" label="Add Content" (click)="addContentSidebarVisible=true;"
-      [style]="{ color: '--primary-color-text'}" />
+    <p-blockUI [target]="addContentButtonWrapper" [blocked]="!enableEdits">
+      <i class="pi pi-lock" style="font-size: 1.5rem"></i>
+    </p-blockUI>
+    <blockable-div #addContentButtonWrapper [style]="{display: 'inline-block'}">
+      <p-button id="addContentButton" icon="pi pi-book" label="Add Content" (click)="addContentSidebarVisible=true;"
+        [style]="{ color: '--primary-color-text', margin: '0'}" />
+    </blockable-div>
   </ng-template>
 </p-dialog>
 
@@ -136,7 +143,7 @@
   Assessment Questions Upload/Creation Section
 -->
 
-<p-sidebar [(visible)]="addContentSidebarVisible" [style]="{ width: '33vw' }" [modal]="false">
+<p-sidebar [(visible)]="addContentSidebarVisible && enableEdits" [style]="{ width: '33vw' }" [modal]="false">
   <ng-template pTemplate="header">
     <h1 style="margin: 0;">
       Add Lesson Content
