@@ -4,24 +4,24 @@
         <h1>{{title}}</h1>
             <div style="margin-top: 15px;" *ngIf="fullScreen">
                 <div style="background-color: var(--primary-color);  width: 95%; margin: auto; color: white; height: 50px; display:flex; border-top-left-radius: 20px; border-top-right-radius: 20px; justify-content:space-between; padding: 7px;">
-                    <div style="margin-top: 10px;">
-                      title
-                    </div>
+                    <h2 style="margin-top: 7px;">
+                      {{ fullScreen.title }}
+                    </h2>
                     <div style="justify-content: flex-end;">
                       <p-button *ngIf="fullScreen" type="button" class="fsbutton" [rounded]="true" icon="pi pi-times" (click)="fullScreen = false"></p-button>
                     </div>
                   </div>
-                <div style="height: 540px; width: 95%; margin: auto;"  *ngIf="fullScreen.componentType === fileComp">
+                <div style="height: 630px; width: 95%; margin: auto;"  *ngIf="fullScreen.componentType === fileComp">
                     <app-fileviewer></app-fileviewer>
                 </div>
-                <div style="height: 540px;"  *ngIf="fullScreen.componentType === thirdComp">
+                <div style="height: 630px; width: 95%; margin: auto;"  *ngIf="fullScreen.componentType === thirdComp">
                     <app-thirdparty [param]="fullScreen.input"></app-thirdparty>
                 </div>
-                <div style="height: 540px;" *ngIf="fullScreen.componentType === videoComp">
-                    <app-video [param]="fullScreen.input"></app-video>
+                <div style="height: 630px; width: 95%; margin: auto;"  *ngIf="fullScreen.componentType === quizComp">
+                    <quiz></quiz>
                 </div>
             </div>
-            <div class="leftSide">
+            <div *ngIf="!fullScreen" class="leftSide">
                 <div class="description">
                     <p style="font-size: 1.5rem; font-weight: 600; margin: 0;">Lesson Description</p>
                         <p>{{desc}}</p>
@@ -33,7 +33,7 @@
                         <div class="objectives" *ngIf="showObjectives">
                             <!--TODO remove hardcoded objectives-->
                             <h2 style="margin-left: 5px; ">Lesson Objectives</h2>
-                            <ul>
+                            <ul >
                                 <li>Understand the Pythagorean theorem</li>
                                 <li>Learn how to apply the Pythagorean theorem correctly</li>
                                 <li>Explore different variations of the pythagorean theorem</li>
@@ -41,35 +41,33 @@
                             </ul>
                         </div>
                 </div>
-        <div class="grid my-courses-container" *ngIf="lessonComponentArray.length && !fullScreen">
-            
+        <div class="grid my-courses-container" *ngIf="lessonComponentArray.length">
                 <div *ngFor="let component of lessonComponentArray; let i = index">
                     <div pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)"  style="background-color: var(--primary-color); color: white; height: 50px; display:flex; border-top-left-radius: 20px; border-top-right-radius: 20px; justify-content:space-between; padding: 7px;">
-                        <div style="margin-top: 10px;">
-                          File Content
-                        </div>
+                        <h3 style="margin-top: 9px;">
+                          {{ component.title }}
+                        </h3>
                         <div style="justify-content: flex-end;">
-                          <p-button *ngIf="!fullScreen" type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="maximize(fileComp, component.input)"></p-button>
+                            <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-link" (click)="link(component.input)"></p-button>
+                          <p-button *ngIf="!fullScreen" type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="maximize(component.componentType, component.input, component.title)"></p-button>
                           <p-button *ngIf="fullScreen" type="button" class="fsbutton" [rounded]="true" icon="pi pi-times" (click)="fullScreen = false"></p-button>
                           <p-button *ngIf="component.minimize" type="button" class="fsbutton" [rounded]="true" icon="pi pi-angle-down" (click)="component.minimize = !component.minimize"></p-button>
                           <p-button *ngIf="!component.minimize" type="button" class="fsbutton" [rounded]="true" icon="pi pi-angle-up" (click)="component.minimize = !component.minimize"></p-button>
                         </div>
                       </div>
-                    <div #elements *ngIf="component.componentType === fileComp">
+                    <div *ngIf="component.componentType === fileComp">
                           <div style="height: 400px;" *ngIf="!component.minimize">
                             <app-fileviewer></app-fileviewer>
                           </div>
                     </div>
-                    <div #elements pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)"  *ngIf="component.componentType === thirdComp">
-                        
+                    <div *ngIf="component.componentType === quizComp">
+                        <div style="height: 400px;" *ngIf="!component.minimize">
+                      <quiz></quiz>
+                      </div>
+                  </div>
+                    <div *ngIf="component.componentType === thirdComp">
                           <div style="height: 400px;" *ngIf="!component.minimize">
                         <app-thirdparty [param]="component.input"></app-thirdparty>
-                        </div>
-                    </div>
-                    <div #elements pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)" *ngIf="component.componentType === videoComp">
-                        
-                          <div style="height: 400px;" *ngIf="!component.minimize">
-                        <app-video [param]="component.input"></app-video>
                         </div>
                     </div>
                 </div>
@@ -85,13 +83,12 @@
     <!--For some reason padding and grid gap don't play nice, so I add the margin-right here to accomodate-->
     <section style="grid-column: 2;  padding: 1rem;">
         <p-card>
-            
                 <div pDroppable="lessonContent" (onDrop)="focus()">
                     <div *ngIf="focusComponent; else emptyBlock">
                         <div style="background-color: var(--primary-color); color: white; height: 50px; display:flex; justify-content: space-between; border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 7px;">
-                            <div style="margin-top: 10px;">
-                                title
-                              </div>
+                            <h2 style="margin-top: 7px;">
+                                {{ focusComponent.title}}
+                            </h2>
                               <p-button *ngIf="focusComponent" type="button" class="fsbutton" [rounded]="true" icon="pi pi-times" (click)="focusComponent = false"></p-button>
                           </div>
                         <div class="focusBox" *ngIf="focusComponent.componentType === fileComp">
@@ -100,9 +97,9 @@
                         <div class="focusBox" *ngIf="focusComponent.componentType === thirdComp">
                             <app-thirdparty [param]="focusComponent.input"></app-thirdparty>
                         </div>
-                        <div class="focusBox" *ngIf="focusComponent.componentType === videoComp">
-                            <app-video [param]="focusComponent.input"></app-video>
-                        </div>
+                        <div class="focusBox" *ngIf="focusComponent.componentType === quizComp">
+                          <quiz></quiz>
+                      </div>
                     </div>
                     <ng-template  #emptyBlock>
                         <div class="box">drop item here to focus</div>

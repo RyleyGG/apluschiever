@@ -24,19 +24,10 @@ import { LessonComponent } from '../../pages/lesson/lesson.component';
   styleUrl: './video.component.css'
 })
 export class VideoComponent {
+  //accepts youtube
   @Input() param: string | any;
-  minimize = false;
-  fullScreen = false;
-  constructor(private sanitizer: DomSanitizer, private LessonComponent: LessonComponent) {}
+  constructor(private sanitizer: DomSanitizer) {}
   getURL(): SafeUrl {
     return this.sanitizer.bypassSecurityTrustResourceUrl(this.param);
-  }
-  value = false;
-  makefull() {
-    this.fullScreen = true;
-    this.LessonComponent.maximize(VideoComponent, this.param);
-  }
-  onDragStart(event: any) {
-    console.log('Dragging started');
   }
 }

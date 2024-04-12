@@ -11,6 +11,10 @@ import { Node } from "../../graph/graph.interface";
 import { NodeService } from '../../core/services/node/node.service';
 import { DragdropDirective } from '../../core/directives/dragdrop.directive';
 import { LessonComponent } from '../../pages/lesson/lesson.component';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+
+import { catchError, map, take, throwError } from "rxjs";
 
 @Component({
   selector: 'app-fileviewer',
@@ -20,12 +24,7 @@ import { LessonComponent } from '../../pages/lesson/lesson.component';
   styleUrl: './fileviewer.component.css'
 })
 export class FileviewerComponent {
-  value = false;
-  minimize = false;
-  fullScreen = false;
-  constructor(private LessonComponent: LessonComponent) {}
-  makefull() {
-    this.fullScreen = true;
-    this.LessonComponent.maximize(FileviewerComponent, "");
-  }
+  //pdf, images, microsoft doc
+  constructor(private LessonComponent: LessonComponent, private httpClient: HttpClient) {}
+  
 }
