@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, map, take, throwError } from "rxjs";
-import { Course, CourseFilters } from "../../models/course.interface";
+import { Course, CourseFilters, CreateCourse } from "../../models/course.interface";
 import { Node, NodeOverview } from "../../../graph/graph.interface";
 
 /**
@@ -68,16 +68,10 @@ export class CourseService {
    * Updates a given course
    * @returns the updated course
    */
-  addOrUpdateCourse(course: Course) {
-    console.log(course);
+  addOrUpdateCourse(newCourse: CreateCourse) {
+    console.log(newCourse);
 
-    // TODO: might be unneeded with model changes
-    const { nodes, ...noNodeCourse } = course;
-
-    return this.httpClient.post<Course>(this.REST_API_SERVER + `course/add_or_update/`, {
-      course: noNodeCourse,
-      nodes: nodes
-    }).pipe(
+    return this.httpClient.post<Course>(this.REST_API_SERVER + `course/add_or_update/`, newCourse).pipe(
       take(1),
       map((res: Course) => {
         return res;

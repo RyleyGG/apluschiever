@@ -7,7 +7,7 @@ from sqlmodel import select, Session
 from starlette import status
 
 from models.db_models import Course, User, Node, NodeOverview, UpdatedCourse
-from models.dto_models import CourseFilters, NodeProgressDetails
+from models.dto_models import CourseFilters, CreateCourse, NodeProgressDetails
 from services import auth_service
 from services.api_utility_service import get_session
 
@@ -34,61 +34,86 @@ async def search_courses(filters: CourseFilters, db: Session = Depends(get_sessi
 
 
 @router.post('/add_or_update', response_model=UpdatedCourse, response_model_by_alias=False)
-async def add_or_update_course(course: Course, nodes: List[Node], db: Session = Depends(get_session), user: User = Depends(auth_service.validate_token)):
-    # Make new route for adding new node, then we would call this function. 
-    # We will need to send node connection data separetly via a List of Edges or an adjacency list representation.
-    # Will need a new DTO for back and maybe frontend
-    
-    existing_course = None
-    if course.id:
-        existing_course = db.exec(select(Course).where(Course.id == course.id)).first()
+async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_session), user: User = Depends(auth_service.validate_token)):
+    # TODO: We will utilise the new model to get everything working.
+    print(course)
 
-    if existing_course:
-        existing_course.title = course.title
-        existing_course.short_description = course.short_description
-        existing_course.is_published = course.is_published
-        db.add(existing_course)
-        db.commit()
-        db.refresh(existing_course)
-        cur_course_id = existing_course.id
-    else:
-        course.id = None
-        course.course_owner_id = user.id
-        db.add(course)
-        db.commit()
-        db.refresh(course)
-        cur_course_id = course.id
+    # Get reference to an existing course (if any)
+    existing_course = db.exec(select(Course).where(Course.id == course.id)).first() if course.id else None
 
-    # After updating the course, update passed in nodes
-    for node in nodes:
-        existing_node = None
-        if existing_course and node.id:
+    if existing_course is None:
+        # If existing_course is none then we are making a new course...
+        existing_course = Course()
+        existing_course.id = None
+        existing_course.course_owner_id = user.id
+
+    existing_course.title = course.title
+    existing_course.short_description = course.short_description
+    existing_course.is_published = course.is_published
+    db.add(existing_course)
+    db.commit()
+    db.refresh(existing_course)
+    cur_course_id = existing_course.id
+
+    existing_node_ids = set([node.id for node in existing_course.nodes])
+
+    # After updating the course, we create/update all the nodes, deleting any that are not found.
+    # Also, put all the updated nodes within an array for later. 
+    updated_nodes = []
+    for node in course.nodes:
+        try:
+            node_id = (uuid.UUID)(node.id)
+        except:
+            node_id = None
+        if node_id is not None and node_id in existing_node_ids:
             existing_node = db.exec(select(Node).where(Node.id == node.id)).first()
-
-        if existing_node:
-            existing_node = db.exec(select(Node).where(Node.id == node.id)).first()
-            existing_node.course_id = cur_course_id
-            existing_node.title = node.title
-            existing_node.short_description = node.short_description
-            existing_node.tags = node.tags
-            existing_node.videos = node.videos
-            existing_node.rich_text_files = node.rich_text_files
-            existing_node.uploaded_files = node.uploaded_files
-            existing_node.third_party_resources = node.third_party_resources
-            # TODO: Also need to handle changes in parents/children lists
-            db.add(existing_node)
-            db.commit()
-            db.refresh(existing_node)
+            if existing_node:
+                existing_node.course_id = cur_course_id
+                existing_node.title = node.title
+                existing_node.short_description = node.short_description
+                existing_node.tags = node.tags
+                existing_node.videos = node.videos
+                existing_node.rich_text_files = node.rich_text_files
+                existing_node.uploaded_files = node.uploaded_files
+                existing_node.third_party_resources = node.third_party_resources
+                existing_node.parents = []
+                db.add(existing_node)
+                db.commit()
+                db.refresh(existing_node)
+                updated_nodes.append(existing_node)
         else:
-            node.id = None
-            node.course_id = cur_course_id
-            db.add(node)
+            # Create new node
+            new_node = Node(**node.model_dump(exclude={"id"}))
+            new_node.course_id = cur_course_id
+            db.add(new_node)
             db.commit()
-            db.refresh(node)
+            db.refresh(new_node)
+            updated_nodes.append(new_node)
 
-    ret_course = db.exec(select(Course).where(Course.id == cur_course_id)).first()
-    ret_course.nodes = nodes
-    return UpdatedCourse(course=ret_course, nodes=ret_course.nodes)
+    # Delete nodes that are not present in the passed-in course object
+    # Error with this typecast when node.id is None
+    for node_id in (existing_node_ids) - {(uuid.UUID)(node.id) for node in course.nodes}:
+        node_to_delete = db.exec(select(Node).where(Node.id == node_id)).first()
+        if node_to_delete:
+            db.delete(node_to_delete)
+            db.commit()
+
+
+    # Then we create/update all the links between parent/children, also deleting any that are not found.
+    # To do this, we map our edge indices to the IDs of the nodes.
+
+    for edge in course.edges:
+        child_node = updated_nodes[edge.target]
+        parent_node = updated_nodes[edge.source]
+
+        child_node.parents.append(parent_node)
+        db.add(child_node)
+        db.commit()
+        db.refresh(child_node)
+
+    # ret_course = db.exec(select(Course).where(Course.id == cur_course_id)).first()
+    # ret_course.nodes = nodes
+    # return UpdatedCourse(course=ret_course, nodes=ret_course.nodes)
 
 
 @router.get('/nodes/{course_id}', response_model=List[NodeOverview], response_model_by_alias=False)

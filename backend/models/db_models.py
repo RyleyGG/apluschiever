@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Optional, List, Dict
 import uuid
 
@@ -6,17 +7,32 @@ from sqlalchemy import JSON, Column
 from sqlmodel import SQLModel, Field, Relationship
 
 from models.pydantic_models import Video, UploadFile, ThirdPartyResource, RichText
-from models.dto_models import UserType, NodeTags
 from services.api_utility_service import pydantic_column_type
+
+#region User Related Database Models & Tables
+
+class UserType(Enum):
+    """
+    An enum for user types. 
+    """
+    STUDENT = 'Student'
+    ADMIN = 'Administrator'
+    TEACHER = 'Teacher'
 
 
 class CourseStudentLink(SQLModel, table=True):
+    """
+    A linking between a student and a course. A student may enroll in a course. 
+    """
     __tablename__ = 'CourseStudentLink'
     student_id: uuid.UUID = Field(foreign_key="User.id", primary_key=True)
     course_id: uuid.UUID = Field(foreign_key="Course.id", primary_key=True)
 
 
 class User(SQLModel, table=True):
+    """
+    Data representing a user. 
+    """
     __tablename__ = 'User'
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     first_name: str
@@ -28,19 +44,28 @@ class User(SQLModel, table=True):
     enrolled_courses: Optional[List["Course"]] = Relationship(back_populates='enrolled_students', link_model=CourseStudentLink)
     node_progress: Dict[uuid.UUID, List[uuid.UUID]] = Field(sa_column=Column(JSON), default={})  # Key-value of {Node ID: [Completed Content IDs]}
 
+#endregion
+
+#region Course Related Database Models & Tables
 
 class NodeParentLink(SQLModel, table=True):
+    """
+    A linking between nodes. A node may have a 'child' meaning there is an edge from the 'parent' to the 'child'
+    """
     __tablename__ = 'NodeParentLink'
     parent_id: uuid.UUID = Field(foreign_key="Node.id", primary_key=True)
     child_id: uuid.UUID = Field(foreign_key="Node.id", primary_key=True)
 
 
 class Node(SQLModel, table=True):
+    """
+    Data representing a node.
+    """
     __tablename__ = 'Node'
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     title: str
     short_description: Optional[str] = Field(default=None)
-    tags: Optional[List[NodeTags]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[NodeTags]])))
+    tags: Optional[List[str]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[str]])))
     # SQLModel doesn't currently support polymorphism within attributes, meaning we can't have a generic abstract
     # Content class from which we actually use Video, Markdown, etc. classes when storing data.
     # Instead, we supply one attribute per content type we support.
@@ -67,18 +92,29 @@ class Node(SQLModel, table=True):
         ),
     )
 
+    def __hash__(self):
+        """
+        So that we can make sets of nodes in the course creation route
+        """
+        return hash(self.id)
 
 class Course(SQLModel, table=True):
+    """
+    Data representing a course. A Course is composed of many nodes.
+    """
     __tablename__ = 'Course'
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True, index=True)
     title: str = Field(nullable=False)
     short_description: Optional[str]
+
     course_owner_id: uuid.UUID = Field(foreign_key='User.id')
     course_owner: User = Relationship(back_populates='owned_courses')
     enrolled_students: Optional[List[User]] = Relationship(back_populates='enrolled_courses', link_model=CourseStudentLink)
+    
     nodes: Optional[List[Node]] = Relationship(back_populates="course")
     is_published: bool = Field(default=False)
 
+#endregion
 
 # DTO models that have to be defined here because they rely on Node or Course and therefore must init after
 class NodeOverview(BaseModel):

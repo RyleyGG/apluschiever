@@ -1,3 +1,4 @@
+from enum import Enum
 import uuid
 from typing import List, Optional
 
@@ -5,12 +6,11 @@ from pydantic import Field
 from sqlmodel import SQLModel
 from sqlalchemy import LargeBinary, Column
 
-from models.dto_models import SupportedThirdParties
-
-
 class Content(SQLModel, table=False):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4)
 
+class SupportedThirdParties(Enum):
+    YOUTUBE = 'YouTube'
 
 class Video(Content, table=False):
     embed_link: str
