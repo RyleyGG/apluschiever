@@ -200,8 +200,10 @@ export class CourseBuilderPageComponent {
 
   /**
    * Function which saves the current state of the course.
+   * 
+   * @param {boolean} and_publish should we also publish the course?
    */
-  save(): void {
+  save(and_publish: boolean): void {
     this.updateNodeData();
 
     // Loop through the nodes to set the edges properly...
@@ -216,13 +218,13 @@ export class CourseBuilderPageComponent {
     });
     this.nodes = [...this.nodes];
 
-
+    // Create the object to be sent to the database
     const courseObj: CreateCourse = {
       ...(this.courseid ? { id: this.courseid } : {}),
       title: this.courseName,
 
       course_owner_id: this.courseOwner!.id,
-      is_published: false,
+      is_published: and_publish,
 
       nodes: [...this.nodes],
       edges: []
@@ -242,49 +244,10 @@ export class CourseBuilderPageComponent {
       }
     });
 
-    this.courseService.addOrUpdateCourse(courseObj)
-      .subscribe((res: Course) => {
-        this.courseid = res.id;
-        this.addMessage({ severity: 'success', summary: 'Success', detail: 'Course saved successfully.' });
-      });
-  }
-
-  /**
-   * Function which saves and publishes the course in its current state.
-   */
-  publish(): void {
-    this.updateNodeData();
-
-    const validationResult = this.detectAllCycles();
-    console.log(validationResult)
-    if (validationResult.hasCycle == true) {
-      this.setNodeColor(this.nodes.map((node) => node.id!), "var(--text-color)");
-      this.setEdgeColor(this.edges.map((edge) => edge.id!), "var(--text-color)");
-
-      validationResult.cycles.forEach((data: { node_ids: string[], edge_ids: string[] }) => {
-        this.setNodeColor(data.node_ids, "#FF0000");
-        this.setEdgeColor(data.edge_ids, "#FF0000");
-      });
-
-      // some way to alert the user that there is a cycle
-      this.addMessage({ severity: 'error', summary: 'Error', detail: 'There is an cycle in the course structure.' });
-      return;
-    }
-
-    const courseObj: CreateCourse = {
-      id: this.courseid ? this.courseid : '',
-      title: this.courseName,
-      course_owner_id: this.courseOwner!.id,
-      nodes: this.nodes,
-      is_published: true,
-      edges: []
-    };
-
-    this.courseService.addOrUpdateCourse(courseObj)
-      .subscribe((res: Course) => {
-        this.courseid = res.id;
-        this.addMessage({ severity: 'success', summary: 'Success', detail: 'Course published successfully.' });
-      });
+    this.courseService.addOrUpdateCourse(courseObj).subscribe((res: Course) => {
+      this.courseid = res.id;
+      this.addMessage({ severity: 'success', summary: 'Success', detail: 'Course saved successfully.' });
+    });
   }
 
   /**

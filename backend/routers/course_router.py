@@ -108,6 +108,7 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
         db.commit()
         db.refresh(child_node)
 
+    # Return the created course
     ret_course = db.exec(select(Course).where(Course.id == cur_course_id)).first()
     return ret_course
 

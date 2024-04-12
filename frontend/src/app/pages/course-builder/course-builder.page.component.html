@@ -12,8 +12,9 @@
     <!-- Course Name, Save, Publish, Increase Zoom, Decrease Zoom, Undo, Redo, -->
     <input pInputText type="text" id="nameInput" [(ngModel)]="courseName" />
     <p-divider layout="vertical" [style]="{ margin: '0 0.25em', padding: '12px 0.25em' }"></p-divider>
-    <p-button styleClass="p-togglebutton" icon="pi pi-save" (click)="save()" pTooltip="Save" tooltipPosition="bottom" />
-    <p-button styleClass="p-togglebutton" icon="pi pi-upload" (click)="publish()" pTooltip="Publish"
+    <p-button styleClass="p-togglebutton" icon="pi pi-save" (click)="save(false)" pTooltip="Save"
+      tooltipPosition="bottom" />
+    <p-button styleClass="p-togglebutton" icon="pi pi-upload" (click)="save(true)" pTooltip="Publish"
       tooltipPosition="bottom" />
     <p-button styleClass="p-togglebutton" icon="pi pi-undo" (click)="undo()" pTooltip="Undo" tooltipPosition="bottom" />
     <p-button styleClass="p-togglebutton" icon="pi pi-refresh" (click)="redo()" pTooltip="Redo"
@@ -113,7 +114,7 @@
       </span>
     </ng-container>
     <ng-container *ngIf="!enableEdits">
-      {{ selectedNode?.short_description }}
+      {{ selectedNode.short_description }}
     </ng-container>
 
   </p>
