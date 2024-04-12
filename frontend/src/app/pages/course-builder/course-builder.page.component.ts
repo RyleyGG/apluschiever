@@ -220,6 +220,8 @@ export class CourseBuilderPageComponent {
         }));
         node.uploaded_files = newFileUploads;
       }
+
+      // TODO: Setup the assessment file stuff.
     }));
     this.nodes = [...this.nodes];
 
