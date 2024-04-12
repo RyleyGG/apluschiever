@@ -1,5 +1,6 @@
 import { Component, ViewChildren, QueryList, HostListener, ChangeDetectorRef, Injector, ViewChild, OnInit, ElementRef, ComponentRef, AfterViewInit, ViewContainerRef, ComponentFactoryResolver} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragDropModule } from 'primeng/dragdrop';
@@ -14,11 +15,12 @@ import { SplitterModule } from 'primeng/splitter';
 import { CardModule } from 'primeng/card';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-lesson',
   standalone: true,
-  imports: [CommonModule, DragDropModule, QuizComponent, ConfirmDialogModule, CardModule, ThirdpartyComponent, SplitterModule, ButtonModule, VideoComponent, FileviewerComponent, FullscreenComponent],
+  imports: [CommonModule, DragDropModule, RouterLink, QuizComponent, ConfirmDialogModule, CardModule, ThirdpartyComponent, SplitterModule, ButtonModule, VideoComponent, FileviewerComponent, FullscreenComponent],
   templateUrl: './lesson.component.html',
   styleUrl: './lesson.component.css'
 })
@@ -76,6 +78,7 @@ export class LessonComponent implements AfterViewInit {
       input: this.lessonComponentArray[this.indexSource].input
     }
   }
+  courseId: string | any;
   link(url: any) {
     window.open(url, '_blank');
   }
@@ -83,12 +86,16 @@ export class LessonComponent implements AfterViewInit {
   dragStart(index: any) {
     this.indexSource = index;
   }
-  constructor( private cdr: ChangeDetectorRef, private nodeService: NodeService, private route : ActivatedRoute) {
+  goBack(): void {
+    this.location.back();
+  }
+  constructor( private location: Location, private cdr: ChangeDetectorRef, private nodeService: NodeService, private route : ActivatedRoute) {
     this.node_id = this.route.snapshot.paramMap.get('id');
     this.nodeService.getNode(this.node_id).subscribe((data: any) => {
       this.title = data.title;
       this.lesson = data;
-      this.desc = data.short_descriptioon
+      this.desc = data.short_description
+      this.courseId = data.course_id;
     });
   }
 }

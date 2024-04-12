@@ -48,7 +48,7 @@
                           {{ component.title }}
                         </h3>
                         <div style="justify-content: flex-end;">
-                            <p-button type="button" class="fsbutton" [rounded]="true" icon="pi pi-link" (click)="link(component.input)"></p-button>
+                            <p-button *ngIf="component.componentType == thirdComp" type="button" class="fsbutton" [rounded]="true" icon="pi pi-link" (click)="link(component.input)"></p-button>
                           <p-button *ngIf="!fullScreen" type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="maximize(component.componentType, component.input, component.title)"></p-button>
                           <p-button *ngIf="fullScreen" type="button" class="fsbutton" [rounded]="true" icon="pi pi-times" (click)="fullScreen = false"></p-button>
                           <p-button *ngIf="component.minimize" type="button" class="fsbutton" [rounded]="true" icon="pi pi-angle-down" (click)="component.minimize = !component.minimize"></p-button>
@@ -107,5 +107,11 @@
                 </div>
 
         </p-card>
+        <div class="navButton">
+            <p-button [rounded]="true" type="button" [routerLink]="['/viewer', courseId]">
+                <i  style="margin-top: 2px; margin-right :8px;" class="pi pi-arrow-left" ></i> Go Back to Course Page
+            </p-button>
+        </div>
+        
     </section>
 </div>

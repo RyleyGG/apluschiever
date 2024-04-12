@@ -6,6 +6,9 @@
     padding: 1rem;
     overflow: auto;
 }
+.navButton {
+  margin-top: 15px;
+}
 .fsbutton {
   margin-left: 5px;
 }
