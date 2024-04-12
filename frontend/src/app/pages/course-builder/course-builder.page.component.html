@@ -131,19 +131,8 @@
   </ng-template>
 </p-dialog>
 
-<!--
-  TODO: make a side panel for adding content to this node
 
-  Markdown/Text Section
-
-  File Upload Section
-
-  Third Party Content URL Section
-
-  Assessment Questions Upload/Creation Section
--->
-
-<p-sidebar [(visible)]="addContentSidebarVisible && enableEdits" [style]="{ width: '33vw' }" [modal]="false">
+<p-sidebar [(visible)]="addContentSidebarVisible" [style]="{ width: '33vw' }" [modal]="false">
   <ng-template pTemplate="header">
     <h1 style="margin: 0;">
       Add Lesson Content
@@ -192,7 +181,7 @@
 
     <!--
       Assessment Questions
-      TODO: update file formats allowed.
+      TODO: add saving of this to the backend and update file formats allowed.
     -->
     <h2 style="margin: 0.5em 0;">Upload Assessment File</h2>
     <p-fileUpload (onSelect)="onAssessmentFileSelect($event)" name="uploadAssessmentFileUpload" accept="image/*"

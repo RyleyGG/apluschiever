@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, map, take, throwError } from "rxjs";
-import { Course, CourseFilters, CreateCourse } from "../../models/course.interface";
+import { Course, CourseFilters, CreateCourse, CreateCourseResponse } from "../../models/course.interface";
 import { Node, NodeOverview } from "../../../graph/graph.interface";
 
 /**
@@ -64,6 +64,20 @@ export class CourseService {
     );
   }
 
+  getCourse(course_id: string) {
+    return this.httpClient.post<CreateCourseResponse>(this.REST_API_SERVER + `course/get/${course_id}`, {}).pipe(
+      take(1),
+      map((res: CreateCourseResponse) => {
+        console.log(res);
+        return res;
+      }),
+      catchError((error: HttpErrorResponse) => {
+        // Something went really wrong
+        return throwError(() => error);
+      })
+    );
+  }
+
   /**
    * Updates a given course
    * @returns the updated course
@@ -71,9 +85,9 @@ export class CourseService {
   addOrUpdateCourse(newCourse: CreateCourse) {
     console.log(newCourse);
 
-    return this.httpClient.post<Course>(this.REST_API_SERVER + `course/add_or_update/`, newCourse).pipe(
+    return this.httpClient.post<CreateCourseResponse>(this.REST_API_SERVER + `course/add_or_update/`, newCourse).pipe(
       take(1),
-      map((res: Course) => {
+      map((res: CreateCourseResponse) => {
         return res;
       })
     )

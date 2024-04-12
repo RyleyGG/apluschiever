@@ -31,8 +31,10 @@ export interface ThirdPartyResource {
  */
 export interface UploadFile {
   id?: string;
-  fileName: string;
-  fileContent: Blob;
+  name: string;
+  size: number;
+  type: string;
+  content: string;
 }
 
 

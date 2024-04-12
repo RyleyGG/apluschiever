@@ -1,6 +1,7 @@
 from pydantic import BaseModel, UUID4
 from typing import Optional, List
 
+from models.db_models import Course, Node, NodeParentLink
 from models.pydantic_models import RichText, ThirdPartyResource, UploadFile, Video
 
 #region Authentication DTO Models
@@ -116,7 +117,16 @@ class CreateCourse(BaseModel):
 
     nodes: Optional[List[CreateNode]] = []
     edges: Optional[List[CreateEdge]] = []
-    
+
+class Edge(BaseModel):
+    source: str
+    target: str
+
+class CreateCourseResponse(BaseModel):
+    course: Course
+    nodes: Optional[List[Node]] = None
+    edges: Optional[List[Edge]] = None
+
 #endregion
 
 

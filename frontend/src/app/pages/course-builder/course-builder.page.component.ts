@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, resolveForwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { AvatarModule } from 'primeng/avatar';
@@ -18,7 +18,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { CardModule } from 'primeng/card';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ChipsModule } from 'primeng/chips';
-import { FileUploadModule } from 'primeng/fileupload';
+import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { EditorModule } from 'primeng/editor';
 
 import { MessagesModule } from 'primeng/messages';
@@ -38,11 +38,13 @@ import { PanelModule } from 'primeng/panel';
 import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
 import { uid } from '../../core/utils/unique-id';
 import { HistoryService } from '../../core/services/history/history.service';
-import { Course, CourseFilters, CreateCourse } from "../../core/models/course.interface";
+import { Course, CourseFilters, CreateCourse, CreateCourseResponse } from "../../core/models/course.interface";
 import { User } from "../../core/models/user.interface";
 import { UserService } from "../../core/services/user/user.service";
 import { Message } from 'primeng/api';
 import { BlockableDiv } from '../../core/components/blockable-div/blockable-div.component';
+import { UploadFile } from '../../core/models/node-content.interface';
+import { readBlobAsBase64 } from '../../core/utils/blob-to-b64';
 
 /**
  * The course view page component
@@ -158,31 +160,9 @@ export class CourseBuilderPageComponent {
     this.courseid = this.route.snapshot.paramMap.get('id');
     if (this.courseid == null) { return; }
 
-    this.courseService.getNodes(this.courseid).subscribe((data) => {
-      this.nodes = [];
-      this.edges = [];
-      this.clusters = [];
-
-      data.forEach((node: NodeOverview) => {
-        this.nodes.push({
-          ...node,
-          color: "var(--text-color)"
-        })
-      });
-      this.nodes = [...this.nodes];
-
-      // Pass to create the edges
-      data.forEach((element: NodeOverview) => {
-        element.parent_nodes.forEach((parent: any) => {
-          this.edges.push({
-            id: uid(),
-            source: parent.id,
-            target: element.id!,
-            color: "var(--text-color)"
-          });
-        });
-      });
-      this.edges = [...this.edges];
+    // TODO, need to get the content for the nodes upon load. 
+    this.courseService.getCourse(this.courseid).subscribe((data) => {
+      this.constructGraphViewFromDatabase(data);
 
       // For some reason this needs to be 1 millisecond delayed at minimum for the zoom and center to apply. Probably for the CSS to update/apply
       setTimeout(() => {
@@ -204,19 +184,43 @@ export class CourseBuilderPageComponent {
    * 
    * @param {boolean} and_publish should we also publish the course?
    */
-  save(and_publish: boolean): void {
+  save = async (and_publish: boolean): Promise<void> => {
     this.updateNodeData();
 
     // Loop through the nodes to set the edges properly...
-    this.nodes.forEach((node: Node): any => {
+    await Promise.all(this.nodes.map(async (node: Node): Promise<void> => {
+      // Set course ID & parents to basic
       node.course_id = this.courseid || '';
       node.parent_ids = [];
+
+      // Setup all edges
       this.edges.forEach((edge: Edge) => {
         if (edge.target === node.id!) {
           node.parent_ids!.push(edge.source);
         }
       });
-    });
+
+      // Setup the file stuff
+      if (node.uploaded_files) {
+        const newFileUploads: UploadFile[] = [];
+        await Promise.all(node.uploaded_files.map(async (file: any) => {
+          if (file.content) {
+            newFileUploads.push(file);
+            return new Promise((resolve, reject) => resolve(""));
+          }
+          const b64data = await readBlobAsBase64(new Blob([file], { type: file.type }));
+          newFileUploads.push({
+            ...(file.id ? { id: file.id } : {}),
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            content: b64data // base64 data
+          });
+          return new Promise((resolve, reject) => resolve(""));
+        }));
+        node.uploaded_files = newFileUploads;
+      }
+    }));
     this.nodes = [...this.nodes];
 
     // Create the object to be sent to the database
@@ -245,8 +249,9 @@ export class CourseBuilderPageComponent {
       }
     });
 
-    this.courseService.addOrUpdateCourse(courseObj).subscribe((res: Course) => {
-      this.courseid = res.id;
+    this.courseService.addOrUpdateCourse(courseObj).subscribe((res: CreateCourseResponse) => {
+      this.courseid = res.course.id;
+      this.constructGraphViewFromDatabase(res);
       this.addMessage({ severity: 'success', summary: 'Success', detail: 'Course saved successfully.' });
     });
   }
@@ -423,6 +428,7 @@ export class CourseBuilderPageComponent {
    */
   onFileSelect(event: any) {
     this.uploadedFiles = [...this.uploadedFiles, ...event.files];
+    console.log(this.uploadedFiles);
   }
 
   /**
@@ -480,24 +486,6 @@ export class CourseBuilderPageComponent {
   //#region Node Highlighting
 
   /**
-   * Highlight all the pre-requisites of a given node with the given color.
-   *
-   * @param selectedNode
-   * @param color
-   */
-  highlightPreRequisites = (selectedNode: Node, color: string): void => {
-    if (!selectedNode) {
-      return;
-    }
-    const preReqs: string[] = this.getPreRequisites(selectedNode);
-    this.setNodeColor(preReqs, color);
-
-    // Grab the edges connecting the pre-reqs and the selectedNode, then color them
-    const filteredEdges = this.edges.filter(edge => preReqs.includes(edge.source) && (preReqs.includes(edge.target) || edge.target == selectedNode.id))
-    this.setEdgeColor(filteredEdges.map(edge => edge.id!), color);
-  }
-
-  /**
    * Set color of all given nodes with matching IDs to the given color string.
    *
    * @param {string[]} nodeIds list of IDs of nodes to update
@@ -538,37 +526,6 @@ export class CourseBuilderPageComponent {
   //#endregion Node Highlighting
 
   //#region Helper Functions
-
-  /**
-   * Gets a list of all pre-requisites of a node (as an array of node ids).
-   *
-   * @param sourceNode
-   * @returns the node ids for the pre-requisites of the node.
-   */
-  getPreRequisites = (sourceNode: Node): string[] => {
-    // Does BFS in reverse in order to get all nodes before the source node.
-    const preReqs: string[] = [];
-    const nodesToCheck: Set<string> = new Set([sourceNode.id!]);
-    const checkedNodes: Set<string> = new Set();
-
-    while (nodesToCheck.size > 0) {
-      const currentNodeId = nodesToCheck.values().next().value; // Get the first value in the set
-      nodesToCheck.delete(currentNodeId); // Remove the node from the set
-      checkedNodes.add(currentNodeId); // Mark the node as visited
-
-      const edgesToCheck = this.edges.filter((edge) => edge.target === currentNodeId);
-      for (let i = 0; i < edgesToCheck.length; i++) {
-        const sourceNodeId = edgesToCheck[i].source;
-        if (!checkedNodes.has(sourceNodeId) && !nodesToCheck.has(sourceNodeId)) {
-          nodesToCheck.add(sourceNodeId);
-          preReqs.push(sourceNodeId);
-        }
-      }
-    }
-
-    return preReqs;
-  }
-
 
   /**
    * Performs DFS lookup to find ALL cycles in the graph. Also, utilizes filters to determine all cycles
@@ -642,6 +599,36 @@ export class CourseBuilderPageComponent {
     });
 
     return { hasCycle: cycles.length > 0, cycles };
+  }
+
+  private constructGraphViewFromDatabase = (data: CreateCourseResponse) => {
+    console.log(data);
+    this.nodes = [];
+    this.edges = [];
+    this.clusters = [];
+
+    data.nodes.forEach((node: Node) => {
+      this.nodes.push({
+        ...node,
+        color: "var(--text-color)"
+      })
+    });
+    this.nodes.forEach((node: Node) => {
+
+    });
+    this.nodes = [...this.nodes];
+
+    // Pass to create the edges
+    if (!data.edges) { return; }
+
+    // this.edges = [...data.edges];
+    data.edges.forEach((edge: Edge) => {
+      this.edges.push({
+        ...edge,
+        color: "var(--text-color)"
+      });
+    });
+    this.edges = [...this.edges];
   }
 
   //#endregion Helper Functions

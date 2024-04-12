@@ -1,5 +1,5 @@
 import { User } from "./user.interface";
-import { Node } from '../../graph/graph.interface';
+import { Edge, Node } from '../../graph/graph.interface';
 import { RichText, Video } from "./node-content.interface";
 
 /**
@@ -32,4 +32,10 @@ export interface CreateCourse {
 
   nodes: Node[], // really CreateNode on backend
   edges: { source: number, target: number }[] // really CreateEdge on backend
+}
+
+export interface CreateCourseResponse {
+  course: Course,
+  nodes: Node[],
+  edges: Edge[]
 }

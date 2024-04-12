@@ -6,8 +6,9 @@ from typing import List
 from sqlmodel import select, Session
 from starlette import status
 
-from models.db_models import Course, User, Node, NodeOverview
-from models.dto_models import CourseFilters, CreateCourse, NodeProgressDetails
+from models.pydantic_models import RichText, ThirdPartyResource, UploadFile, Video
+from models.db_models import Course, NodeParentLink, User, Node, NodeOverview
+from models.dto_models import CourseFilters, CreateCourse, Edge, CreateCourseResponse, NodeProgressDetails
 from services import auth_service
 from services.api_utility_service import get_session
 
@@ -32,12 +33,21 @@ async def search_courses(filters: CourseFilters, db: Session = Depends(get_sessi
     return_obj = db.exec(query_statement).all()
     return return_obj
 
+@router.post('/get/{course_id}', response_model=CreateCourseResponse, response_model_by_alias=False)
+async def get_course(course_id: str, db: Session = Depends(get_session), user: User = Depends(auth_service.validate_token)):
+    """
+    Used by the course builder to initialize the view properly (we need more info than just get_node_overview provides for that page).
+    """
+    finalized_course = db.exec(select(Course).where(Course.id == course_id)).first()
+    finalized_nodes = db.exec(select(Node).where(Node.course_id == course_id)).all()
+    finalized_edges = []
+    for node in finalized_nodes:
+        for child in node.children:
+            finalized_edges.append(Edge(source=str(node.id), target=str(child.id)))
+    return CreateCourseResponse(course=finalized_course, nodes=finalized_nodes, edges=finalized_edges)
 
-@router.post('/add_or_update', response_model=Course, response_model_by_alias=False)
+@router.post('/add_or_update', response_model=CreateCourseResponse, response_model_by_alias=False)
 async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_session), user: User = Depends(auth_service.validate_token)):
-    # TODO: We will utilise the new model to get everything working.
-    print(course)
-
     # Get reference to an existing course (if any)
     existing_course = db.exec(select(Course).where(Course.id == course.id)).first() if course.id else None
 
@@ -72,10 +82,13 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
                 existing_node.title = node.title
                 existing_node.short_description = node.short_description
                 existing_node.tags = node.tags
+
+                # For each content type, we need to persist the id of the content.
                 existing_node.videos = node.videos
                 existing_node.rich_text_files = node.rich_text_files
                 existing_node.uploaded_files = node.uploaded_files
                 existing_node.third_party_resources = node.third_party_resources
+
                 existing_node.parents = [] # Reset all edges
                 db.add(existing_node)
                 db.commit()
@@ -91,8 +104,10 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
             updated_nodes.append(new_node)
 
     # Delete nodes that are not present in the passed-in course object
-    # Error with this typecast when node.id is None
-    for node_id in (existing_node_ids) - {(uuid.UUID)(node.id) for node in course.nodes}:
+    for node in course.nodes:
+        if node.id is not None:
+            existing_node_ids.discard(uuid.UUID(node.id))
+    for node_id in existing_node_ids:
         node_to_delete = db.exec(select(Node).where(Node.id == node_id)).first()
         if node_to_delete:
             db.delete(node_to_delete)
@@ -109,8 +124,14 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
         db.refresh(child_node)
 
     # Return the created course
-    ret_course = db.exec(select(Course).where(Course.id == cur_course_id)).first()
-    return ret_course
+    finalized_course = db.exec(select(Course).where(Course.id == cur_course_id)).first()
+    finalized_nodes = db.exec(select(Node).where(Node.course_id == cur_course_id)).all()
+    print(finalized_nodes)
+    finalized_edges = []
+    for node in finalized_nodes:
+        for child in node.children:
+            finalized_edges.append(Edge(source=str(node.id), target=str(child.id)))
+    return CreateCourseResponse(course=finalized_course, nodes=finalized_nodes, edges=finalized_edges)
 
 
 @router.get('/nodes/{course_id}', response_model=List[NodeOverview], response_model_by_alias=False)
