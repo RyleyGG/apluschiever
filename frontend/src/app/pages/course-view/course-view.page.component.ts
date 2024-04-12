@@ -156,7 +156,7 @@ export class CourseViewPageComponent {
         this.graphComponent.zoomToFit();
         this.graphComponent.panToCenter();
         console.log('done');
-      }, 10);
+      }, 50);
     });
   }
 
