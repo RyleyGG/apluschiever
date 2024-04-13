@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, resolveForwardRef } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, resolveForwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { AvatarModule } from 'primeng/avatar';
@@ -122,7 +122,7 @@ export class CourseBuilderPageComponent {
   /**
    * A variable used to store the source node for the newly made connections
    */
-  private edgeSourceNode: Node | null = null;
+  edgeSourceNode: Node | null = null;
 
   selectedName: string = "";
   selectedAvatarUrl: string = "https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png";
@@ -153,15 +153,13 @@ export class CourseBuilderPageComponent {
     private route: ActivatedRoute,
     private elementRef: ElementRef) {
 
-    this.userService.getCurrentUser().subscribe((res) => {
-      this.courseOwner = res;
-    });
+    this.userService.getCurrentUser().subscribe((res) => { this.courseOwner = res; });
 
     this.courseid = this.route.snapshot.paramMap.get('id');
     if (this.courseid == null) { return; }
 
-    // TODO, need to get the content for the nodes upon load. 
     this.courseService.getCourse(this.courseid).subscribe((data) => {
+      this.courseName = data.course.title;
       this.constructGraphViewFromDatabase(data);
 
       // For some reason this needs to be 1 millisecond delayed at minimum for the zoom and center to apply. Probably for the CSS to update/apply
@@ -169,11 +167,6 @@ export class CourseBuilderPageComponent {
         this.graphComponent.zoomToFit();
         this.graphComponent.panToCenter();
       }, 1);
-    });
-
-    // Set the existingCourse variable
-    this.courseService.getCourses({ ids: [this.courseid] }).subscribe((data: Course[]) => {
-      this.courseName = data[0].title;
     });
   }
 
@@ -186,6 +179,23 @@ export class CourseBuilderPageComponent {
    */
   save = async (and_publish: boolean): Promise<void> => {
     this.updateNodeData();
+
+    if (and_publish) {
+      const validationResult = this.detectAllCycles();
+      if (validationResult.hasCycle == true) {
+        this.setNodeColor(this.nodes.map((node) => node.id!), "var(--text-color)");
+        this.setEdgeColor(this.edges.map((edge) => edge.id!), "var(--text-color)");
+
+        validationResult.cycles.forEach((data: { node_ids: string[], edge_ids: string[] }) => {
+          this.setNodeColor(data.node_ids, "#FF0000");
+          this.setEdgeColor(data.edge_ids, "#FF0000");
+        });
+
+        // some way to alert the user that there is a cycle
+        this.addMessage({ severity: 'error', summary: 'Error', detail: 'There is an cycle in the course structure.' });
+        return;
+      }
+    }
 
     // Loop through the nodes to set the edges properly...
     await Promise.all(this.nodes.map(async (node: Node): Promise<void> => {
@@ -261,7 +271,7 @@ export class CourseBuilderPageComponent {
   /**
    * Function called when undo button is pressed. Updates the state to the previous state.
    */
-  undo(): void {
+  public undo = (): void => {
     const newState = this.historyService.undo();
     if (!newState) {
       return;
@@ -274,7 +284,7 @@ export class CourseBuilderPageComponent {
   /**
    * Function called when undo button is pressed. Updates the state to the new state.
    */
-  redo(): void {
+  public redo = (): void => {
     const newState = this.historyService.redo();
     if (!newState) {
       return;
@@ -288,16 +298,12 @@ export class CourseBuilderPageComponent {
   /**
    * This function fires when the user clicks the button to add a new lesson node.
    */
-  addLesson(): void {
-    if (!this.enableEdits) {
-      return;
-    }
+  public addLesson = (): void => {
+    if (!this.enableEdits) { return; }
 
-    // TODO: maybe make this open a dialog that will ask for information about the lesson first?
     const newNode = {
       id: uid(),
-      label: "Default Label",
-      title: "Default Label",
+      title: "Default Title",
       tags: [],
       color: "var(--text-color)"
     };
@@ -311,7 +317,7 @@ export class CourseBuilderPageComponent {
     });
 
     this.selectedNode = newNode;
-    this.selectedName = newNode.label || "";
+    this.selectedName = newNode.title || "";
     this.selectedTags = newNode.tags;
     this.graphComponent.panToNodeId(newNode.id);
     this.dialogVisible = true;
@@ -322,7 +328,7 @@ export class CourseBuilderPageComponent {
    *
    * @param node The node that was clicked in the graph component.
    */
-  onNodeClick(node: Node) {
+  public onNodeClick = (node: Node): void => {
     if (this.enableEdits && this.deleteElement) {
       this.nodes = [...this.nodes.filter((n) => n.id !== node.id)];
       this.edges = [...this.edges.filter((edge) => edge.source !== node.id && edge.target !== node.id)];
@@ -341,6 +347,9 @@ export class CourseBuilderPageComponent {
       // Select two nodes with different clicks then make the connection between them.
       if (!this.edgeSourceNode) {
         this.edgeSourceNode = node;
+        this.setNodeColor([...this.nodes.filter((n: Node) => n.id! !== node.id!).map((n: Node) => n.id!)], "var(--text-color)");
+        this.setNodeColor([node.id!], "var(--primary-color)");
+        this.nodes = [...this.nodes];
       } else {
         this.edges = [...this.edges, {
           id: uid(),
@@ -349,22 +358,23 @@ export class CourseBuilderPageComponent {
           color: "var(--text-color)"
         }];
         this.edgeSourceNode = null;
-      }
 
-      // update the history
-      this.historyService.saveCurrentState({
-        nodes: this.nodes,
-        edges: this.edges,
-        clusters: this.clusters
-      });
+        this.setNodeColor([...this.nodes.filter((n: Node) => n.id! !== node.id!).map((n: Node) => n.id!)], "var(--text-color)");
+        this.nodes = [...this.nodes];
+
+        // update the history
+        this.historyService.saveCurrentState({
+          nodes: this.nodes,
+          edges: this.edges,
+          clusters: this.clusters
+        });
+      }
 
       return;
     }
 
-    // No special editing mode is enabled, so save info about the current node
+    // Save and swap out the node info...
     this.updateNodeData();
-
-    // Then pan and pull up the info about the node.
     this.selectedNode = node;
     this.selectedName = node.title || "";
     this.selectedDescription = node.short_description || "";
@@ -375,6 +385,10 @@ export class CourseBuilderPageComponent {
     this.assessmentFile = [...this.assessmentFile];
     this.urls = node.third_party_resources && node.third_party_resources.length > 0 ? node.third_party_resources.map((tpr) => tpr.embed_link) : [];
 
+    // Set node color...
+    this.setNodeColor([node.id!], "var(--primary-color)");
+    this.nodes = [...this.nodes];
+
     this.graphComponent.panToNodeId(node.id!);
     this.dialogVisible = true;
   }
@@ -384,7 +398,7 @@ export class CourseBuilderPageComponent {
    *
    * @param edge the edge that was clicked in the graph component.
    */
-  onEdgeClick(edge: Edge) {
+  public onEdgeClick = (edge: Edge): void => {
     if (this.enableEdits && this.deleteElement) {
       this.edges = [...this.edges.filter((e) => e.id !== edge.id)];
 
@@ -400,15 +414,13 @@ export class CourseBuilderPageComponent {
 
   changeAvatarUrl() {
     const newUrl = prompt('Enter new URL for the avatar:');
-    if (newUrl) {
-      this.selectedAvatarUrl = newUrl;
-    }
+    if (newUrl) { this.selectedAvatarUrl = newUrl; }
   }
 
   /**
    * Adds a URL to the list of 3rd party content URLs.
    */
-  addURL() {
+  addURL = (): void => {
     if (this.newURL.trim() !== '') {
       this.urls.push(this.newURL.trim());
       this.newURL = ''; // Clear the input field
@@ -417,26 +429,19 @@ export class CourseBuilderPageComponent {
 
   /**
    * Remove a URL from the 3rd party content URLs list
-   * @param index the index of the content URL to remove
+   * @param {number} index the index of the content URL to remove
    */
-  removeURL(index: number) {
-    if (index >= 0 && index < this.urls.length) {
-      this.urls.splice(index, 1);
-    }
-  }
+  removeURL = (index: number): void => { if (index >= 0 && index < this.urls.length) { this.urls.splice(index, 1); } }
 
   /**
    *
    */
-  onFileSelect(event: any) {
-    this.uploadedFiles = [...this.uploadedFiles, ...event.files];
-    console.log(this.uploadedFiles);
-  }
+  onFileSelect = (event: any): void => { this.uploadedFiles = [...this.uploadedFiles, ...event.files]; }
 
   /**
    * Remove the content file that was selected to be removed
    */
-  onRemoveContentFile(file: any) {
+  onRemoveContentFile = (file: any): void => {
     const index = this.uploadedFiles.findIndex(f => f === file);
     this.uploadedFiles.splice(index, 1);
     this.uploadedFiles = [...this.uploadedFiles];
@@ -445,18 +450,17 @@ export class CourseBuilderPageComponent {
   /**
    * Update the assessment file that is selected.
    */
-  onAssessmentFileSelect(event: any) {
-    this.assessmentFile = [...event.currentFiles];
-  }
+  onAssessmentFileSelect = (event: any): void => { this.assessmentFile = [...event.currentFiles]; }
 
   /**
    * Removes the assessment file that was selected.
    */
-  onRemoveAssessmentFile() {
-    this.assessmentFile = [];
-  }
+  onRemoveAssessmentFile = (): void => { this.assessmentFile = []; }
 
-  updateNodeData() {
+  /**
+   * Saves the current selectedNode data if that is set. Used to allow for menu transitions without issues when updating content between nodes. 
+   */
+  updateNodeData = (): void => {
     if (!this.selectedNode) { return; }
     this.selectedNode.title = this.selectedName || "";
     this.selectedNode.short_description = this.selectedDescription || "";
@@ -466,24 +470,25 @@ export class CourseBuilderPageComponent {
     this.selectedNode.third_party_resources = this.urls.map((url) => { return { embed_link: url, resource_source: '' } });
     this.selectedNode.assessment_files = this.assessmentFile || [];
     const index = this.nodes.findIndex(node => node.id === this.selectedNode.id);
-    if (index !== -1) {
-      this.nodes[index] = Object.assign({}, this.nodes[index], this.selectedNode);
-    }
-
+    if (index !== -1) { this.nodes[index] = Object.assign({}, this.nodes[index], this.selectedNode); }
     this.nodes = [...this.nodes];
   }
 
-  private addMessage(msg: Message) {
+  /**
+   * Adds a message to the builder notification stream. Used to notify of successful/unsuccessful saving. 
+   * 
+   * @param {Message} msg the message to add/display to the user
+   */
+  private addMessage = (msg: Message): void => {
     this.msgs.push(msg);
+    this.msgs = [...this.msgs];
     setTimeout(() => {
       this.msgs.shift();
       this.msgs = [...this.msgs];
     }, 5000);
-    this.msgs = [...this.msgs];
   }
 
   //#endregion UI Functions
-
 
   //#region Node Highlighting
 
@@ -493,17 +498,15 @@ export class CourseBuilderPageComponent {
    * @param {string[]} nodeIds list of IDs of nodes to update
    * @param {string} color the new color to use for all these nodes
    */
-  setNodeColor = (nodeIds: string[], color: string): void => {
+  private setNodeColor = (nodeIds: string[], color: string): void => {
     this.nodes = this.nodes.map(node => {
-      if (!node.id) {
-        return node;
-      }
-
+      if (!node.id) { return node; }
       if (nodeIds.includes(node.id)) {
         return { ...node, color: color };
       }
       return node;
     });
+
   }
 
   /**
@@ -512,12 +515,11 @@ export class CourseBuilderPageComponent {
    * @param {string[]} edgeIds list of IDs of edges to update
    * @param {string} color the new color to use for all these edges
    */
-  setEdgeColor = (edgeIds: string[], color: string): void => {
+  private setEdgeColor = (edgeIds: string[], color: string): void => {
     this.edges = this.edges.map(edge => {
       if (!edge.id) {
         return edge;
       }
-
       if (edgeIds.includes(edge.id)) {
         return { ...edge, color: color };
       }
@@ -535,7 +537,7 @@ export class CourseBuilderPageComponent {
    *
    * @returns An object representing the cycles in the graph.
    */
-  detectAllCycles = (): { hasCycle: boolean, cycles: { node_ids: string[], edge_ids: string[] }[] } => {
+  private detectAllCycles = (): { hasCycle: boolean, cycles: { node_ids: string[], edge_ids: string[] }[] } => {
     const cycles: { node_ids: string[]; edge_ids: string[] }[] = [];
     const visited: { [key: string]: boolean } = {};
     const recursionStack: { [key: string]: boolean } = {};
@@ -603,8 +605,11 @@ export class CourseBuilderPageComponent {
     return { hasCycle: cycles.length > 0, cycles };
   }
 
-  private constructGraphViewFromDatabase = (data: CreateCourseResponse) => {
-    console.log(data);
+  /**
+   * Given a CreateCourseResponse object, resets the displayed graph to match that object
+   * @param { CreateCourseResponse } data the new data for the graph
+   */
+  private constructGraphViewFromDatabase = (data: CreateCourseResponse): void => {
     this.nodes = [];
     this.edges = [];
     this.clusters = [];
