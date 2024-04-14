@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { AppComponent } from './app.component';
-import { signedInGuard, signedOutGuard, teacherOnlyGuard } from './auth/oauth2.guard';
+import { courseOwnerOnlyGuard, signedInGuard, signedOutGuard, teacherOnlyGuard } from './auth/oauth2.guard';
 
 import { SignInPageComponent } from './pages/signin/signin.page.component';
 import { LandingPageComponent } from './pages/landing/landing.page.component';
@@ -24,7 +24,7 @@ export const routes: Routes = [
 
     // Routes for creating content
     { path: "builder", component: CourseBuilderPageComponent, canActivate: [teacherOnlyGuard] },
-    { path: "builder/:id", component: CourseBuilderPageComponent, canActivate: [teacherOnlyGuard] },
+    { path: "builder/:id", component: CourseBuilderPageComponent, canActivate: [courseOwnerOnlyGuard] },
 
     // General
     { path: "landing", component: LandingPageComponent },
