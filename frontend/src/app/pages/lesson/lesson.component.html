@@ -12,7 +12,7 @@
                     </div>
                   </div>
                 <div style="height: 630px; width: 95%; margin: auto;"  *ngIf="fullScreen.componentType === fileComp">
-                    <app-fileviewer></app-fileviewer>
+                    <app-fileviewer [param]="fullScreen.input"></app-fileviewer>
                 </div>
                 <div style="height: 630px; width: 95%; margin: auto;"  *ngIf="fullScreen.componentType === thirdComp">
                     <app-thirdparty [param]="fullScreen.input"></app-thirdparty>
@@ -21,10 +21,19 @@
                     <quiz></quiz>
                 </div>
             </div>
-            <div *ngIf="!fullScreen" class="leftSide">
+            <div *ngIf="lessonComponentArray.length == 0">
+                <div *ngIf="loaded">
+                    <h2>This lesson page is empty!</h2>
+                    <img src="../../assets/emptypage.jpeg" alt="Image Description" width="600px" height="650px" style="opacity: 0.9;">
+                </div>
+                <div class="noContent" *ngIf="!loaded">
+                    <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="6" fill="var(--surface-ground)" animationDuration=".7s"></p-progressSpinner>
+                </div>
+            </div>
+            <div *ngIf="!fullScreen && !(lessonComponentArray.length == 0)" class="leftSide">
                 <div class="description">
-                    <p style="font-size: 1.5rem; font-weight: 600; margin: 0;">Lesson Description</p>
-                        <p>{{desc}}</p>
+                    <p *ngIf="desc" style="font-size: 1.5rem; font-weight: 600; margin: 0;">Lesson Description</p>
+                    <div [innerHTML]="desc"></div>
                         <p-button [rounded]="true" type="button" (click)="showObjectives=!showObjectives">
                             {{ showObjectives ? 'See Less' : 'View Lesson Objectives' }}
                             <i *ngIf="!showObjectives" style="margin-top: 2px; margin-left:4px;" class="pi pi-angle-down" ></i>
@@ -44,9 +53,9 @@
         <div class="grid my-courses-container" *ngIf="lessonComponentArray.length">
                 <div *ngFor="let component of lessonComponentArray; let i = index">
                     <div pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)"  style="background-color: var(--primary-color); color: white; height: 50px; display:flex; border-top-left-radius: 20px; border-top-right-radius: 20px; justify-content:space-between; padding: 7px;">
-                        <h3 style="margin-top: 9px;">
+                        <h4 style="margin-top: 9px;">
                           {{ component.title }}
-                        </h3>
+                        </h4>
                         <div style="justify-content: flex-end;">
                             <p-button *ngIf="component.componentType == thirdComp" type="button" class="fsbutton" [rounded]="true" icon="pi pi-link" (click)="link(component.input)"></p-button>
                           <p-button *ngIf="!fullScreen" type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="maximize(component.componentType, component.input, component.title)"></p-button>
@@ -57,7 +66,7 @@
                       </div>
                     <div *ngIf="component.componentType === fileComp">
                           <div style="height: 400px;" *ngIf="!component.minimize">
-                            <app-fileviewer></app-fileviewer>
+                            <app-fileviewer [param]="component.input"></app-fileviewer>
                           </div>
                     </div>
                     <div *ngIf="component.componentType === quizComp">
@@ -73,11 +82,6 @@
                 </div>
             </div>
         </div>
-
-        <!--TODO: Pretty This Up -->
-        <ng-template *ngIf="lessonComponentArray.length == 0">
-            <h2>There is no content to display.</h2>
-        </ng-template>
     </section>
 
     <!--For some reason padding and grid gap don't play nice, so I add the margin-right here to accomodate-->
@@ -92,7 +96,7 @@
                               <p-button *ngIf="focusComponent" type="button" class="fsbutton" [rounded]="true" icon="pi pi-times" (click)="focusComponent = false"></p-button>
                           </div>
                         <div class="focusBox" *ngIf="focusComponent.componentType === fileComp">
-                            <app-fileviewer></app-fileviewer>
+                            <app-fileviewer [param]="focusComponent.input"></app-fileviewer>
                         </div>
                         <div class="focusBox" *ngIf="focusComponent.componentType === thirdComp">
                             <app-thirdparty [param]="focusComponent.input"></app-thirdparty>

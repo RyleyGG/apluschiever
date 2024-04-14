@@ -9,6 +9,14 @@
 .navButton {
   margin-top: 15px;
 }
+.noContent {
+  margin: auto;
+  height: 400px; 
+  width: 100%;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+}
 .fsbutton {
   margin-left: 5px;
 }

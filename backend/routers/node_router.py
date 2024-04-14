@@ -25,7 +25,7 @@ async def get_node_content(node_id: str, user: User = Depends(auth_service.valid
         )
     return cur_node
 
-@router.post('/search', response_model=List[Course], response_model_by_alias=False)
+@router.post('/search', response_model=List[Node], response_model_by_alias=False)
 async def search_nodes(filters: NodeFilters, db: Session = Depends(get_session)):
     query_statement = select(Node)
     if filters.ids:

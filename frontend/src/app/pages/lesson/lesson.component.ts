@@ -16,11 +16,12 @@ import { CardModule } from 'primeng/card';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Location } from '@angular/common';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-lesson',
   standalone: true,
-  imports: [CommonModule, DragDropModule, RouterLink, QuizComponent, ConfirmDialogModule, CardModule, ThirdpartyComponent, SplitterModule, ButtonModule, VideoComponent, FileviewerComponent, FullscreenComponent],
+  imports: [CommonModule, DragDropModule, ProgressSpinnerModule, RouterLink, QuizComponent, ConfirmDialogModule, CardModule, ThirdpartyComponent, SplitterModule, ButtonModule, VideoComponent, FileviewerComponent, FullscreenComponent],
   templateUrl: './lesson.component.html',
   styleUrl: './lesson.component.css'
 })
@@ -29,6 +30,13 @@ export class LessonComponent implements AfterViewInit {
   videoComp = VideoComponent;
   thirdComp = ThirdpartyComponent;
   quizComp = QuizComponent;
+  loaded = false;
+  ngOnInit() {
+    setTimeout(() => {
+      this.loaded = true;
+      
+    }, 2000); 
+  }
   componentRefs: any[] = [];
   focusComponent: any;
   fullScreen: any;
@@ -39,24 +47,10 @@ export class LessonComponent implements AfterViewInit {
       input: input,
     }
   }
-  lessonComponentArray: { title: any, componentType: any, input: any , minimize: boolean}[] = [
-    { title: "Lesson Assessment", componentType: QuizComponent, input: null, minimize: false},
-    { title: "File", componentType: FileviewerComponent, input: null, minimize: false},
-    { title: "Third party", componentType: ThirdpartyComponent, input: 'https://www.mathsisfun.com/pythagoras.html' , minimize: false},
-    { title: "Third party", componentType: ThirdpartyComponent, input: 'https://www.calculator.net/pythagorean-theorem-calculator.html' , minimize: false},
-    { title: "Video", componentType: ThirdpartyComponent, input: 'https://www.youtube.com/embed/vbG_YBTiN38?si=vnI_tJ4xFaqiMnlz' , minimize: false},
-    { title: "Third party", componentType: ThirdpartyComponent, input: 'https://www.mathplanet.com/education/pre-algebra/right-triangles-and-algebra/the-pythagorean-theorem' , minimize: false},
-    { title: "Video", componentType: ThirdpartyComponent, input: 'https://www.youtube.com/embed/uthjpYKD7Ng?si=CrgWvB8aSgHVGJmr' , minimize: false},
-  ];
+  lessonComponentArray: { title: any, componentType: any, input: any , minimize: boolean}[] = [];
 
   ngAfterViewInit(): void {
-    if (this.lessonComponentArray.length > 0) {
-      this.focusComponent= {
-        title: this.lessonComponentArray[0].title,
-        componentType: this.lessonComponentArray[0].componentType,
-        input: this.lessonComponentArray[0].input
-      }
-    }
+    
   }
   title = "";
   node_id: string | any; 
@@ -94,8 +88,40 @@ export class LessonComponent implements AfterViewInit {
     this.nodeService.getNode(this.node_id).subscribe((data: any) => {
       this.title = data.title;
       this.lesson = data;
-      this.desc = data.short_description
+      this.desc = data.rich_text_files[0].content;
       this.courseId = data.course_id;
+      console.log(this.node_id);
+      
+      data.third_party_resources.forEach((thirdparty: any) => {
+        this.lessonComponentArray.push({
+          title: "Website", 
+          componentType: this.thirdComp, 
+          input: thirdparty.embed_link, 
+          minimize: false
+        });
+      })
+      data.uploaded_files.forEach((file: any) => {
+        this.lessonComponentArray.push({
+          title: file.name.substring(0, file.name.lastIndexOf('.')),
+          
+          componentType: this.fileComp, 
+          input: [file.content,  file.type], 
+          minimize: false
+        });
+
+      })
+      if (this.lessonComponentArray.length > 0) {
+        this.focusComponent= {
+          title: this.lessonComponentArray[0].title,
+          componentType: this.lessonComponentArray[0].componentType,
+          input: this.lessonComponentArray[0].input
+        }
+      }
+
     });
+    if (this.lessonComponentArray.length == 0) {
+      console.log("empty");
+    }
+    console.log(this.lessonComponentArray);
   }
 }
