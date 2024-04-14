@@ -32,14 +32,14 @@
   <ng-template pTemplate="header">
     <div class="dialog-header">
       <p-avatar image="https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png" shape="circle" />
-      <span class="dialog-header-text">{{selectedNode.label}}</span>
+      <span class="dialog-header-text">{{ selectedNode.title }}</span>
     </div>
   </ng-template>
   <div style="display: flex; align-items: center; gap: 0.5em;">
-    <p-tag *ngFor="let tag of selectedNode?.data.tags" value="{{tag}}"></p-tag>
+    <p-tag *ngFor="let tag of selectedNode?.tags" value="{{tag}}"></p-tag>
   </div>
   <p class="m-0">
-    {{selectedNode?.data.short_description}}
+    {{ selectedNode?.short_description }}
   </p>
   <ng-template pTemplate="footer">
     <!--TODO: Have click go to lesson page-->
@@ -47,7 +47,7 @@
       <i class="pi pi-lock" style="font-size: 1.5rem"></i>
     </p-blockUI>
     <blockable-div #lessonButtonWrapper [style]="{display: 'inline-block'}">
-      <p-button id="lessonButton" [routerLink]="['/lesson', selectedNode.label]" icon="pi pi-book"
+      <p-button id="lessonButton" [routerLink]="['/lesson', selectedNode.id]" icon="pi pi-book"
         (click)="dialogVisible = false" label="View Lesson" pAutoFocus [autofocus]="false" [style]="{margin: '0'}" />
     </blockable-div>
   </ng-template>
@@ -65,7 +65,7 @@
     <!--Need wrapping spans in order for label to animate up-->
 
     <span class="p-float-label" style="margin-top: 2em;">
-      <p-multiSelect [options]="nodes" [(ngModel)]="selectedNodes" [selectAll]="selectAllNodes"
+      <p-multiSelect [options]="nodes" optionLabel="title" [(ngModel)]="selectedNodes" [selectAll]="selectAllNodes"
         (onChange)="updateSelectedNodes(); updateHighlights();" (onClear)="updateSelectedNodes(); updateHighlights();"
         (onSelectAllChange)="onSelectAllNodesChange($event);" display="chip" inputId="searchByNameInput" [filter]="true"
         dataKey="id" [style]="{'width':'100%'}" />

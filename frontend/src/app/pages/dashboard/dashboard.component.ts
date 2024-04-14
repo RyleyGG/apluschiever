@@ -112,10 +112,6 @@ export class DashboardComponent {
     });
   }
 
-  /**
-   * Add the currently logged in user to the given course
-   * @param courseid course id of the course to add user to
-   */
   addCourse(courseid: string) {
     this.userService.addCourse(courseid).subscribe((data) => {
       window.location.reload();
@@ -147,8 +143,8 @@ export class DashboardComponent {
   }
 
   /**
-   * Used to prevent a duplicate scrollbar from appearing in the register for classes panel. 
-   * 
+   * Used to prevent a duplicate scrollbar from appearing in the register for classes panel.
+   *
    * @param event true if open sidebar, false if closed
    */
   onSidebarVisibilityChange(event: any) {
