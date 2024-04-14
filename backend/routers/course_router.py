@@ -9,7 +9,7 @@ from starlette import status
 from models.pydantic_models import RichText, ThirdPartyResource, UploadFile, Video
 from models.db_models import Course, NodeParentLink, User, Node, NodeOverview
 from models.dto_models import CourseFilters, CreateCourse, Edge, CreateCourseResponse, NodeProgressDetails
-from services import auth_service
+from services import auth_service, report_service
 from services.api_utility_service import get_session
 
 
@@ -48,6 +48,9 @@ async def get_course(course_id: str, db: Session = Depends(get_session), user: U
 
 @router.post('/add_or_update', response_model=CreateCourseResponse, response_model_by_alias=False)
 async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_session), user: User = Depends(auth_service.validate_token)):
+    # TODO: update this endpoint to only commit transaction after all parsing/uploading is done
+    # this is mostly to ensure we don't upload half-baked data if assessment file parsing fails
+
     # Get reference to an existing course (if any)
     existing_course = db.exec(select(Course).where(Course.id == course.id)).first() if course.id else None
 
@@ -71,6 +74,9 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
     # Also, put all the updated nodes within an array for later. 
     updated_nodes = []
     for node in course.nodes:
+        if node.assessment_file:
+            report_service.parse_assessment_file(node.assessment_file)
+
         try:
             node_id = (uuid.UUID)(node.id)
         except:
@@ -126,7 +132,6 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
     # Return the created course
     finalized_course = db.exec(select(Course).where(Course.id == cur_course_id)).first()
     finalized_nodes = db.exec(select(Node).where(Node.course_id == cur_course_id)).all()
-    print(finalized_nodes)
     finalized_edges = []
     for node in finalized_nodes:
         for child in node.children:

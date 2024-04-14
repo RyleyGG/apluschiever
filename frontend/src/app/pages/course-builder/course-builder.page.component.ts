@@ -1,50 +1,50 @@
-import { Component, ElementRef, HostListener, ViewChild, resolveForwardRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { DialogModule } from 'primeng/dialog';
-import { AvatarModule } from 'primeng/avatar';
-import { ButtonModule } from 'primeng/button';
-import { SidebarModule } from 'primeng/sidebar';
-import { TooltipModule } from 'primeng/tooltip';
-import { SpeedDialModule } from 'primeng/speeddial';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { ColorPickerModule } from 'primeng/colorpicker';
-import { BlockUIModule } from 'primeng/blockui';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { TagModule } from 'primeng/tag';
-import { DividerModule } from 'primeng/divider';
-import { ContextMenuModule } from 'primeng/contextmenu';
-import { SelectButtonModule } from 'primeng/selectbutton';
-import { CardModule } from 'primeng/card';
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import { ChipsModule } from 'primeng/chips';
-import { FileUpload, FileUploadModule } from 'primeng/fileupload';
-import { EditorModule } from 'primeng/editor';
+import {Component, ElementRef, HostListener, ViewChild, resolveForwardRef} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {DialogModule} from 'primeng/dialog';
+import {AvatarModule} from 'primeng/avatar';
+import {ButtonModule} from 'primeng/button';
+import {SidebarModule} from 'primeng/sidebar';
+import {TooltipModule} from 'primeng/tooltip';
+import {SpeedDialModule} from 'primeng/speeddial';
+import {MultiSelectModule} from 'primeng/multiselect';
+import {ColorPickerModule} from 'primeng/colorpicker';
+import {BlockUIModule} from 'primeng/blockui';
+import {AutoCompleteModule} from 'primeng/autocomplete';
+import {InputSwitchModule} from 'primeng/inputswitch';
+import {TagModule} from 'primeng/tag';
+import {DividerModule} from 'primeng/divider';
+import {ContextMenuModule} from 'primeng/contextmenu';
+import {SelectButtonModule} from 'primeng/selectbutton';
+import {CardModule} from 'primeng/card';
+import {ToggleButtonModule} from 'primeng/togglebutton';
+import {ChipsModule} from 'primeng/chips';
+import {FileUpload, FileUploadModule} from 'primeng/fileupload';
+import {EditorModule} from 'primeng/editor';
 
-import { MessagesModule } from 'primeng/messages';
-import { MessageModule } from 'primeng/message';
+import {MessagesModule} from 'primeng/messages';
+import {MessageModule} from 'primeng/message';
 
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 
-import { FormsModule } from '@angular/forms';
+import {FormsModule} from '@angular/forms';
 
-import { GraphComponent } from '../../graph/graph.component';
-import { Node, Edge, Cluster, NodeOverview } from '../../graph/graph.interface';
-import { CourseService } from '../../core/services/course/course.service';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputTextareaModule } from 'primeng/inputtextarea';
+import {GraphComponent} from '../../graph/graph.component';
+import {Node, Edge, Cluster, NodeOverview} from '../../graph/graph.interface';
+import {CourseService} from '../../core/services/course/course.service';
+import {InputTextModule} from 'primeng/inputtext';
+import {InputTextareaModule} from 'primeng/inputtextarea';
 
-import { PanelModule } from 'primeng/panel';
-import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
-import { uid } from '../../core/utils/unique-id';
-import { HistoryService } from '../../core/services/history/history.service';
-import { Course, CourseFilters, CreateCourse, CreateCourseResponse } from "../../core/models/course.interface";
-import { User } from "../../core/models/user.interface";
-import { UserService } from "../../core/services/user/user.service";
-import { Message } from 'primeng/api';
-import { BlockableDiv } from '../../core/components/blockable-div/blockable-div.component';
-import { UploadFile } from '../../core/models/node-content.interface';
-import { readBlobAsBase64 } from '../../core/utils/blob-to-b64';
+import {PanelModule} from 'primeng/panel';
+import {DagreSettings, Orientation} from '../../graph/layouts/dagreCluster';
+import {uid} from '../../core/utils/unique-id';
+import {HistoryService} from '../../core/services/history/history.service';
+import {Course, CourseFilters, CreateCourse, CreateCourseResponse} from "../../core/models/course.interface";
+import {User} from "../../core/models/user.interface";
+import {UserService} from "../../core/services/user/user.service";
+import {Message} from 'primeng/api';
+import {BlockableDiv} from '../../core/components/blockable-div/blockable-div.component';
+import {UploadFile} from '../../core/models/node-content.interface';
+import {readBlobAsBase64} from '../../core/utils/blob-to-b64';
 
 /**
  * The course view page component
@@ -153,10 +153,14 @@ export class CourseBuilderPageComponent {
     private route: ActivatedRoute,
     private elementRef: ElementRef) {
 
-    this.userService.getCurrentUser().subscribe((res) => { this.courseOwner = res; });
+    this.userService.getCurrentUser().subscribe((res) => {
+      this.courseOwner = res;
+    });
 
     this.courseid = this.route.snapshot.paramMap.get('id');
-    if (this.courseid == null) { return; }
+    if (this.courseid == null) {
+      return;
+    }
 
     this.courseService.getCourse(this.courseid).subscribe((data) => {
       this.courseName = data.course.title;
@@ -174,7 +178,7 @@ export class CourseBuilderPageComponent {
 
   /**
    * Function which saves the current state of the course.
-   * 
+   *
    * @param {boolean} and_publish should we also publish the course?
    */
   save = async (and_publish: boolean): Promise<void> => {
@@ -192,7 +196,7 @@ export class CourseBuilderPageComponent {
         });
 
         // some way to alert the user that there is a cycle
-        this.addMessage({ severity: 'error', summary: 'Error', detail: 'There is an cycle in the course structure.' });
+        this.addMessage({severity: 'error', summary: 'Error', detail: 'There is an cycle in the course structure.'});
         return;
       }
     }
@@ -218,9 +222,9 @@ export class CourseBuilderPageComponent {
             newFileUploads.push(file);
             return new Promise((resolve, reject) => resolve(""));
           }
-          const b64data = await readBlobAsBase64(new Blob([file], { type: file.type }));
+          const b64data = await readBlobAsBase64(new Blob([file], {type: file.type}));
           newFileUploads.push({
-            ...(file.id ? { id: file.id } : {}),
+            ...(file.id ? {id: file.id} : {}),
             name: file.name,
             size: file.size,
             type: file.type,
@@ -231,13 +235,29 @@ export class CourseBuilderPageComponent {
         node.uploaded_files = newFileUploads;
       }
 
-      // TODO: Setup the assessment file stuff.
+      const assessmentFiles: any[] = []
+      await Promise.all(node.assessment_file.map(async (file: any) => {
+        if (file.content) {
+          assessmentFiles.push(file);
+          return new Promise((resolve, reject) => resolve(""));
+        }
+        const b64data = await readBlobAsBase64(new Blob([file], {type: file.type}));
+        assessmentFiles.push({
+          ...(file.id ? {id: file.id} : {}),
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          content: b64data // base64 data
+        });
+        return new Promise((resolve, reject) => resolve(""));
+      }));
+      node.assessment_file = assessmentFiles[0];
     }));
     this.nodes = [...this.nodes];
 
     // Create the object to be sent to the database
     const courseObj: CreateCourse = {
-      ...(this.courseid ? { id: this.courseid } : {}),
+      ...(this.courseid ? {id: this.courseid} : {}),
       title: this.courseName,
 
       course_owner_id: this.courseOwner!.id,
@@ -251,7 +271,7 @@ export class CourseBuilderPageComponent {
       // Use the still existing node id to identify source and target properly to setup the array for the backend...
       const sourceIndex = courseObj.nodes.findIndex((node: Node) => edge.source === node.id!);
       const targetIndex = courseObj.nodes.findIndex((node: Node) => edge.target === node.id!);
-      courseObj.edges.push({ source: sourceIndex, target: targetIndex });
+      courseObj.edges.push({source: sourceIndex, target: targetIndex});
     });
 
     // Now delete the bad ids generated by the frontend.
@@ -264,7 +284,7 @@ export class CourseBuilderPageComponent {
     this.courseService.addOrUpdateCourse(courseObj).subscribe((res: CreateCourseResponse) => {
       this.courseid = res.course.id;
       this.constructGraphViewFromDatabase(res);
-      this.addMessage({ severity: 'success', summary: 'Success', detail: 'Course saved successfully.' });
+      this.addMessage({severity: 'success', summary: 'Success', detail: 'Course saved successfully.'});
     });
   }
 
@@ -299,7 +319,9 @@ export class CourseBuilderPageComponent {
    * This function fires when the user clicks the button to add a new lesson node.
    */
   public addLesson = (): void => {
-    if (!this.enableEdits) { return; }
+    if (!this.enableEdits) {
+      return;
+    }
 
     const newNode = {
       id: uid(),
@@ -381,7 +403,7 @@ export class CourseBuilderPageComponent {
     this.selectedTags = node.tags || [];
     this.editorText = node.rich_text_files && node.rich_text_files?.length > 0 ? node.rich_text_files[0].content : "";
     this.uploadedFiles = node.uploaded_files && node.uploaded_files ? node.uploaded_files : [];
-    this.assessmentFile = node.assessment_files && node.assessment_files.length > 0 ? node.assessment_files : [];
+    this.assessmentFile = node.assessment_file && node.assessment_file.length > 0 ? node.assessment_file : [];
     this.assessmentFile = [...this.assessmentFile];
     this.urls = node.third_party_resources && node.third_party_resources.length > 0 ? node.third_party_resources.map((tpr) => tpr.embed_link) : [];
 
@@ -414,7 +436,9 @@ export class CourseBuilderPageComponent {
 
   changeAvatarUrl() {
     const newUrl = prompt('Enter new URL for the avatar:');
-    if (newUrl) { this.selectedAvatarUrl = newUrl; }
+    if (newUrl) {
+      this.selectedAvatarUrl = newUrl;
+    }
   }
 
   /**
@@ -431,12 +455,18 @@ export class CourseBuilderPageComponent {
    * Remove a URL from the 3rd party content URLs list
    * @param {number} index the index of the content URL to remove
    */
-  removeURL = (index: number): void => { if (index >= 0 && index < this.urls.length) { this.urls.splice(index, 1); } }
+  removeURL = (index: number): void => {
+    if (index >= 0 && index < this.urls.length) {
+      this.urls.splice(index, 1);
+    }
+  }
 
   /**
    *
    */
-  onFileSelect = (event: any): void => { this.uploadedFiles = [...this.uploadedFiles, ...event.files]; }
+  onFileSelect = (event: any): void => {
+    this.uploadedFiles = [...this.uploadedFiles, ...event.files];
+  }
 
   /**
    * Remove the content file that was selected to be removed
@@ -450,33 +480,43 @@ export class CourseBuilderPageComponent {
   /**
    * Update the assessment file that is selected.
    */
-  onAssessmentFileSelect = (event: any): void => { this.assessmentFile = [...event.currentFiles]; }
+  onAssessmentFileSelect = (event: any): void => {
+    this.assessmentFile = [...event.currentFiles];
+  }
 
   /**
    * Removes the assessment file that was selected.
    */
-  onRemoveAssessmentFile = (): void => { this.assessmentFile = []; }
+  onRemoveAssessmentFile = (): void => {
+    this.assessmentFile = [];
+  }
 
   /**
-   * Saves the current selectedNode data if that is set. Used to allow for menu transitions without issues when updating content between nodes. 
+   * Saves the current selectedNode data if that is set. Used to allow for menu transitions without issues when updating content between nodes.
    */
   updateNodeData = (): void => {
-    if (!this.selectedNode) { return; }
+    if (!this.selectedNode) {
+      return;
+    }
     this.selectedNode.title = this.selectedName || "";
     this.selectedNode.short_description = this.selectedDescription || "";
     this.selectedNode.tags = this.selectedTags || [];
-    this.selectedNode.rich_text_files = [{ content: this.editorText }] || [""];
+    this.selectedNode.rich_text_files = [{content: this.editorText}] || [""];
     this.selectedNode.uploaded_files = this.uploadedFiles || [];
-    this.selectedNode.third_party_resources = this.urls.map((url) => { return { embed_link: url, resource_source: '' } });
-    this.selectedNode.assessment_files = this.assessmentFile || [];
+    this.selectedNode.third_party_resources = this.urls.map((url) => {
+      return {embed_link: url, resource_source: ''}
+    });
+    this.selectedNode.assessment_file = this.assessmentFile || [];
     const index = this.nodes.findIndex(node => node.id === this.selectedNode.id);
-    if (index !== -1) { this.nodes[index] = Object.assign({}, this.nodes[index], this.selectedNode); }
+    if (index !== -1) {
+      this.nodes[index] = Object.assign({}, this.nodes[index], this.selectedNode);
+    }
     this.nodes = [...this.nodes];
   }
 
   /**
-   * Adds a message to the builder notification stream. Used to notify of successful/unsuccessful saving. 
-   * 
+   * Adds a message to the builder notification stream. Used to notify of successful/unsuccessful saving.
+   *
    * @param {Message} msg the message to add/display to the user
    */
   private addMessage = (msg: Message): void => {
@@ -500,9 +540,11 @@ export class CourseBuilderPageComponent {
    */
   private setNodeColor = (nodeIds: string[], color: string): void => {
     this.nodes = this.nodes.map(node => {
-      if (!node.id) { return node; }
+      if (!node.id) {
+        return node;
+      }
       if (nodeIds.includes(node.id)) {
-        return { ...node, color: color };
+        return {...node, color: color};
       }
       return node;
     });
@@ -521,7 +563,7 @@ export class CourseBuilderPageComponent {
         return edge;
       }
       if (edgeIds.includes(edge.id)) {
-        return { ...edge, color: color };
+        return {...edge, color: color};
       }
       return edge;
     });
@@ -564,7 +606,7 @@ export class CourseBuilderPageComponent {
               const lastEdge = this.edges.find((e: Edge) => (e.source === cycleNodes[cycleNodes.length - 1] && e.target === cycleNodes[0]) || (e.source === cycleNodes[0] && e.target === cycleNodes[cycleNodes.length - 1]));
               if (lastEdge) {
                 cycleEdges.push(lastEdge.id!);
-                cycles.push({ node_ids: cycleNodes, edge_ids: cycleEdges });
+                cycles.push({node_ids: cycleNodes, edge_ids: cycleEdges});
               }
             }
           }
@@ -594,15 +636,17 @@ export class CourseBuilderPageComponent {
     // Push in the short cycles that were found.
     shortCycleEdges.forEach((e: Edge) => {
       if (e.source === e.target) {
-        cycles.push({ node_ids: [e.source], edge_ids: [e.id!] });
+        cycles.push({node_ids: [e.source], edge_ids: [e.id!]});
       } else {
-        const match = this.edges.filter((e2: Edge) => { e2.source === e.target && e2.target === e.source }).map((e2: Edge) => e2.id!);
+        const match = this.edges.filter((e2: Edge) => {
+          e2.source === e.target && e2.target === e.source
+        }).map((e2: Edge) => e2.id!);
 
-        cycles.push({ node_ids: [e.source, e.target], edge_ids: [e.id!, ...match] });
+        cycles.push({node_ids: [e.source, e.target], edge_ids: [e.id!, ...match]});
       }
     });
 
-    return { hasCycle: cycles.length > 0, cycles };
+    return {hasCycle: cycles.length > 0, cycles};
   }
 
   /**
@@ -626,7 +670,9 @@ export class CourseBuilderPageComponent {
     this.nodes = [...this.nodes];
 
     // Pass to create the edges
-    if (!data.edges) { return; }
+    if (!data.edges) {
+      return;
+    }
 
     // this.edges = [...data.edges];
     data.edges.forEach((edge: Edge) => {

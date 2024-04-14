@@ -13,3 +13,4 @@ httpx
 loguru
 bcrypt
 python-multipart
+pandas
