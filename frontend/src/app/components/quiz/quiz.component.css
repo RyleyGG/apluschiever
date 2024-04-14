@@ -1,0 +1,28 @@
+form { 
+border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  height: 100%;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: scroll;
+  display: flex; 
+  flex-direction: column; 
+  gap: 20px;
+  padding: 1rem;
+}
+.wrong {
+    font-weight: 700;
+    color: rgb(221, 94, 94);
+}
+.correct {
+    font-weight: 700;
+    color: rgb(114, 203, 114);
+}
+.buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 80%;
+    margin: auto;
+    margin-top: 0px;
+}

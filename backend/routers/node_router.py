@@ -14,8 +14,18 @@ from services.api_utility_service import get_session
 
 router = APIRouter()
 
+@router.get('/view_node/{node_id}', response_model=Node, response_model_by_alias=False)
+async def get_node_content(node_id: str, user: User = Depends(auth_service.validate_token), db: Session = Depends(get_session)):
+    cur_node = db.exec(select(Node).where(Node.id == node_id)).first()
 
-@router.post('/search', response_model=List[Course], response_model_by_alias=False)
+    if not cur_node:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Supplied Node ID is invalid",
+        )
+    return cur_node
+
+@router.post('/search', response_model=List[Node], response_model_by_alias=False)
 async def search_nodes(filters: NodeFilters, db: Session = Depends(get_session)):
     query_statement = select(Node)
     if filters.ids:
