@@ -25,6 +25,13 @@ import { LocalStorageService } from '../../core/services/local-storage/local-sto
 export class NavbarComponent implements OnInit {
   loggedIn: boolean = false;
   loggedInUser: User | null = null;
+  isDarkMode: boolean = false;
+
+
+  constructor(private oauthService: OAuth2Service, private themeService: ThemeService, private localStorageService: LocalStorageService, private userService: UserService, private internetConnection: InternetConnectionService) {
+    console.log(this.internetConnection.isOnline());
+    this.isDarkMode = this.themeService.theme() == 'arya-blue';
+  }
 
   async ngOnInit() {
     try {
@@ -39,13 +46,10 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  constructor(private oauthService: OAuth2Service, private themeService: ThemeService, private localStorageService: LocalStorageService, private userService: UserService, private internetConnection: InternetConnectionService) {
-    console.log(this.internetConnection.isOnline());
-  }
-
   swapTheme(): void {
     const newTheme = this.themeService.theme() == 'arya-blue' ? 'saga-blue' : 'arya-blue';
     this.themeService.setTheme(newTheme);
     this.localStorageService.set("theme", newTheme);
+    this.isDarkMode = newTheme == 'arya-blue';
   }
 }
