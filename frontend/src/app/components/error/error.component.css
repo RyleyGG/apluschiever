@@ -5,6 +5,8 @@
     align-items: center;
     padding: 1rem;
     flex-direction: column;
+    height: 100%;
+    overflow: scroll;
 }
 .large {
     font-size: 80px;

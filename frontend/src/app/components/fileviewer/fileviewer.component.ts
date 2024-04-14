@@ -7,22 +7,30 @@ import { DragDropModule } from 'primeng/dragdrop';
 import { DragdropDirective } from '../../core/directives/dragdrop.directive';
 import { LessonComponent } from '../../pages/lesson/lesson.component';
 import { HttpClient } from '@angular/common/http';
+import { ErrorComponent } from '../error/error.component';
 
 @Component({
   selector: 'app-fileviewer',
   standalone: true,
-  imports: [ButtonModule, FullscreenComponent, DragdropDirective, CommonModule, DragDropModule],
+  imports: [ButtonModule, ErrorComponent, FullscreenComponent, DragdropDirective, CommonModule, DragDropModule],
   templateUrl: './fileviewer.component.html',
   styleUrl: './fileviewer.component.css'
 })
 export class FileviewerComponent {
-  @Input() public param: string[] | any;
+  @Input() public param: any[] | any;
   content: string | any;
   contentType: string | any;
   safeURL: any;
   constructor(private sanitizer: DomSanitizer) {
-
   } 
+  displayError(): boolean {
+    if (Array.isArray(this.param) && this.param.length === 2) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
   getURL(): SafeResourceUrl  {
     this.content = this.param[0];
     this.contentType = this.param[1];
