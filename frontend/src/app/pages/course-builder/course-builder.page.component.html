@@ -74,7 +74,7 @@
 </graph>
 
 <!--This is a dialog component to display whenever a node is clicked.-->
-<p-dialog header="Header" [draggable]="false" [(visible)]="dialogVisible" [position]="'bottomright'"
+<p-dialog header="Header" [draggable]="false" [(visible)]="dialogVisible" (onHide)="save(false)" [position]="'bottomright'"
   [style]="{ width: '33vw'}">
   <ng-template pTemplate="header">
     <div class="dialog-header">

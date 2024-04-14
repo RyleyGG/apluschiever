@@ -192,7 +192,7 @@ export class CourseBuilderPageComponent {
         });
 
         // some way to alert the user that there is a cycle
-        this.addMessage({ severity: 'error', summary: 'Error', detail: 'There is an cycle in the course structure.' });
+        this.addMessage({ severity: 'error', summary: 'Error', detail: 'There is a cycle in the course structure.' });
         return;
       }
     }
