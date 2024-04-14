@@ -305,7 +305,8 @@ export class CourseBuilderPageComponent {
       id: uid(),
       title: "Default Title",
       tags: [],
-      color: "var(--text-color)"
+      color: "var(--primary-color)",
+      short_description: ""
     };
     this.nodes = [...this.nodes, newNode];
 
@@ -317,8 +318,9 @@ export class CourseBuilderPageComponent {
     });
 
     this.selectedNode = newNode;
-    this.selectedName = newNode.title || "";
+    this.selectedName = newNode.title;
     this.selectedTags = newNode.tags;
+    this.selectedDescription = newNode.short_description;
     this.graphComponent.panToNodeId(newNode.id);
     this.dialogVisible = true;
   }
@@ -374,11 +376,17 @@ export class CourseBuilderPageComponent {
     }
 
     // Save and swap out the node info...
+    this.nodes.forEach((node: any) => {
+      this.setNodeColor([node.node_id], "var(--text-color)");
+    })
     this.updateNodeData();
     this.selectedNode = node;
-    this.selectedName = node.title || "";
-    this.selectedDescription = node.short_description || "";
-    this.selectedTags = node.tags || [];
+    if (node.title)
+      this.selectedName = node.title;
+    if (node.short_description) 
+      this.selectedDescription = node.short_description;
+    if (node.tags)
+      this.selectedTags = node.tags;
     this.editorText = node.rich_text_files && node.rich_text_files?.length > 0 ? node.rich_text_files[0].content : "";
     this.uploadedFiles = node.uploaded_files && node.uploaded_files ? node.uploaded_files : [];
     this.assessmentFile = node.assessment_files && node.assessment_files.length > 0 ? node.assessment_files : [];
@@ -462,9 +470,9 @@ export class CourseBuilderPageComponent {
    */
   updateNodeData = (): void => {
     if (!this.selectedNode) { return; }
-    this.selectedNode.title = this.selectedName || "";
-    this.selectedNode.short_description = this.selectedDescription || "";
-    this.selectedNode.tags = this.selectedTags || [];
+    this.selectedNode.title = this.selectedName;
+    this.selectedNode.short_description = this.selectedDescription;
+    this.selectedNode.tags = this.selectedTags;
     this.selectedNode.rich_text_files = [{ content: this.editorText }] || [""];
     this.selectedNode.uploaded_files = this.uploadedFiles || [];
     this.selectedNode.third_party_resources = this.urls.map((url) => { return { embed_link: url, resource_source: '' } });
