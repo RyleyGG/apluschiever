@@ -35,7 +35,8 @@
                 "input": "src/app/core/services/theme/arya-blue.css",
                 "bundleName": "arya-blue",
                 "inject": false
-              }
+              },
+              "node_modules/quill/dist/quill.snow.css"
             ],
             "scripts": []
           },
@@ -44,8 +45,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "1.5mb",
+                  "maximumError": "3mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -94,7 +95,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/quill/dist/quill.snow.css"
             ],
             "scripts": []
           }

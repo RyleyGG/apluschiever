@@ -1,26 +1,26 @@
 import { TestBed } from '@angular/core/testing';
 
-import { CourseViewPageComponent } from './course-view.page.component';
+import { CourseBuilderPageComponent } from './course-builder.page.component';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { routes } from './../../app.routes';
+import { routes } from '../../app.routes';
 import { provideRouter } from '@angular/router';
 
 
 
-describe('CourseViewPageComponent', () => {
-    let component: CourseViewPageComponent;
+describe('CourseBuilderPageComponent', () => {
+    let component: CourseBuilderPageComponent;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [CourseViewPageComponent],
+            imports: [CourseBuilderPageComponent],
             providers: [
                 provideHttpClient(),
                 provideHttpClientTesting(),
                 provideRouter(routes)
             ]
         }).compileComponents();
-        component = TestBed.createComponent(CourseViewPageComponent).componentInstance;
+        component = TestBed.createComponent(CourseBuilderPageComponent).componentInstance;
     });
 
 
