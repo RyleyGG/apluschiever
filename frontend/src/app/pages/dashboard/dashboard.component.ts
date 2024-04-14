@@ -77,7 +77,7 @@ export class DashboardComponent {
 
 
   constructor(private courseService: CourseService, private userService: UserService, private confirmationService: ConfirmationService, private messageService: MessageService) {
-    this.courseService.getCourses().subscribe((data) => {
+    this.courseService.getCourses({ is_published: true }).subscribe((data) => {
       this.allCourses = [];
       data.forEach((element: Course) => {
         this.allCourses = [...this.allCourses, element];
