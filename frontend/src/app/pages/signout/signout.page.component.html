@@ -1,5 +1,9 @@
 <div class="page-content">
-    <p-card [style]="{ width: '460px' }" header="Hope to see you again!">
-        <p-button [rounded]="true" label="Sign Out" (click)="signout()"></p-button>
+    <p-card [style]="{ width: '460px' }">
+        <div style="display: flex; align-items: center; justify-content: center;">
+            <p style="font-size: 2rem; font-weight: 700; margin: 0;">Hope to see you again!</p>
+        </div>
+
+        <p-button label="Sign Out" (click)="signout()" [style]="{ width: '100%', 'margin-top': '1em' }"></p-button>
     </p-card>
 </div>
