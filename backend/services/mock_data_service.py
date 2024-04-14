@@ -10,9 +10,8 @@ from fastapi.testclient import TestClient
 from starlette import status
 
 from api import app
-from models.db_models import Course, Node, User, NodeParentLink, CourseStudentLink
-from models.dto_models import NodeTags, UserType, SupportedThirdParties
-from models.pydantic_models import Video, RichText
+from models.db_models import Course, Node, User, UserType, NodeParentLink, CourseStudentLink
+from models.pydantic_models import Video, RichText, SupportedThirdParties
 from services.api_utility_service import dbUrl, get_session
 from services.config_service import config
 
@@ -113,21 +112,23 @@ def generate_mock_nodes(db: Session, client: TestClient):
                 # Adding tags
                 new_node.tags = []
                 if random.choice([True, False]):
-                    new_node.tags.append(NodeTags.CORE)
+                    new_node.tags.append("Core")
                 if random.choice([True, False]):
-                    new_node.tags.append(NodeTags.ASSESSMENT)
+                    new_node.tags.append("Assessment")
                 if random.choice([True, False]):
-                    new_node.tags.append(NodeTags.PRACTICE)
+                    new_node.tags.append("Practice")
                 if random.choice([True, False]):
-                    new_node.tags.append(NodeTags.SUPPLEMENTAL)
+                    new_node.tags.append("Supplemental")
 
                 # Adding parent(s)
                 parent_count = random.randint(1, math.ceil(len(node_layers[x - 1]) / 2)) if x > 0 else 0
                 new_node.parents = []
-                while len(new_node.parents) != parent_count:
+                attempts = 0
+                while len(new_node.parents) != parent_count and attempts < 10000:
                     rand_node = random.choice(node_layers[x - 1])
                     if rand_node not in new_node.parents:
                         new_node.parents.append(rand_node)
+                    attempts += 1
                 node_layers[x].append(new_node)
                 db.add(new_node)
                 db.commit()
