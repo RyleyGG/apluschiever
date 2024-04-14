@@ -4,6 +4,7 @@ import { firstValueFrom } from "rxjs";
 import { map, take } from 'rxjs/operators';
 import { OAuth2Service } from "./oauth2.service";
 import { Observable } from 'rxjs';
+import { UserService } from "../core/services/user/user.service";
 
 /**
  * Require a user to be signed in to proceed
@@ -39,3 +40,23 @@ export const signedOutGuard: CanActivateFn = async () => {
 
     return true;
 };
+
+export const teacherOnlyGuard: CanActivateFn = async () => {
+    const authService = inject(OAuth2Service);
+    const userService = inject(UserService);
+    const router = inject(Router);
+
+    const isUserAuthenticated = await firstValueFrom(authService.validate_token());
+    if (!isUserAuthenticated) {
+        router.navigate(['/landing']);
+        return false;
+    }
+
+    const userData = await firstValueFrom(userService.getCurrentUser());
+    if (!(userData.user_type == 'Teacher' || userData.user_type == 'Admin')) {
+        router.navigate(['/dashboard']);
+        return false;
+    }
+
+    return true;
+}
