@@ -22,11 +22,11 @@
                 </div>
             </div>
             <div *ngIf="lessonComponentArray.length == 0">
-                <div *ngIf="loaded">
+                <div class="noContent" *ngIf="loaded">
+                    <img src="../../assets/sadgator.gif" alt="Image Description" width="500px" height="550px">
                     <h2>This lesson page is empty!</h2>
-                    <img src="../../assets/emptypage.jpeg" alt="Image Description" width="600px" height="650px" style="opacity: 0.9;">
                 </div>
-                <div class="noContent" *ngIf="!loaded">
+                <div class="loading" *ngIf="!loaded">
                     <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="6" fill="var(--surface-ground)" animationDuration=".7s"></p-progressSpinner>
                 </div>
             </div>

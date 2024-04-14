@@ -17,11 +17,12 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Location } from '@angular/common';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ErrorComponent } from '../../components/error/error.component';
 
 @Component({
   selector: 'app-lesson',
   standalone: true,
-  imports: [CommonModule, DragDropModule, ProgressSpinnerModule, RouterLink, QuizComponent, ConfirmDialogModule, CardModule, ThirdpartyComponent, SplitterModule, ButtonModule, VideoComponent, FileviewerComponent, FullscreenComponent],
+  imports: [CommonModule, ErrorComponent, DragDropModule, ProgressSpinnerModule, RouterLink, QuizComponent, ConfirmDialogModule, CardModule, ThirdpartyComponent, SplitterModule, ButtonModule, VideoComponent, FileviewerComponent, FullscreenComponent],
   templateUrl: './lesson.component.html',
   styleUrl: './lesson.component.css'
 })
