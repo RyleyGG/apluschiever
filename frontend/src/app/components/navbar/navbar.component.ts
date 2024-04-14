@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -14,11 +14,13 @@ import { firstValueFrom } from 'rxjs';
 import { UserService } from '../../core/services/user/user.service';
 import { User } from '../../core/models/user.interface';
 import { LocalStorageService } from '../../core/services/local-storage/local-storage.service';
+import { MessageModule } from 'primeng/message';
+import { MessagesModule } from 'primeng/messages';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [ButtonModule, RouterLink, OverlayPanelModule, DividerModule, ToolbarModule, MenubarModule, RouterOutlet, ToolbarModule, RouterLinkActive, ToggleButtonModule, CommonModule],
+  imports: [ButtonModule, RouterLink, MessagesModule, MessageModule, OverlayPanelModule, DividerModule, ToolbarModule, MenubarModule, RouterOutlet, ToolbarModule, RouterLinkActive, ToggleButtonModule, CommonModule],
   templateUrl: './navbar.component.html',
   styleUrl: 'navbar.component.css'
 })
@@ -28,7 +30,7 @@ export class NavbarComponent implements OnInit {
   isDarkMode: boolean = false;
 
 
-  constructor(private oauthService: OAuth2Service, private themeService: ThemeService, private localStorageService: LocalStorageService, private userService: UserService, private internetConnection: InternetConnectionService) {
+  constructor(private oauthService: OAuth2Service, private themeService: ThemeService, private localStorageService: LocalStorageService, private userService: UserService, public internetConnection: InternetConnectionService) {
     console.log(this.internetConnection.isOnline());
     this.isDarkMode = this.themeService.theme() == 'arya-blue';
   }
