@@ -12,6 +12,7 @@ import { CardModule } from 'primeng/card';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 /**
  * The sign in page component
@@ -21,7 +22,7 @@ import { of } from 'rxjs';
 @Component({
     selector: 'signin-page',
     standalone: true,
-    imports: [CommonModule, FormsModule, CardModule, ReactiveFormsModule, ButtonModule, CheckboxModule],
+    imports: [CommonModule,RouterLink, FormsModule, CardModule, ReactiveFormsModule, ButtonModule, CheckboxModule],
     templateUrl: './signin.page.component.html',
     styleUrl: './signin.page.component.css'
 })

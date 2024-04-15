@@ -1,6 +1,6 @@
 <div class="page-content">
     <form [formGroup]="registerForm" (ngSubmit)="signup()">
-        <p-card [style]="{ width: '460px' }">
+        <p-card [style]="{'width': '60vw'}">
             <div class="field">
                 <label for="first_name">First Name</label>
                 <input type="text" pInputText formControlName="first_name" class="w-full" name="first_name"
@@ -51,11 +51,16 @@
                 </small>
             </div>
             <div *ngIf="errorMessage" class="error"> {{ errorMessage }}</div>
-            <p-button [rounded]="true" label="Sign-Up" class="w-full" [disabled]="registerForm.invalid"
+            <p-button [style]="{'width': '100%'}" [rounded]="true" label="Sign-Up" class="w-full" [disabled]="registerForm.invalid"
                 type="submit"></p-button>
-                Already have an account? Click here to Sign-In instead
-            <p-button [rounded]="true" label="Sign-In" class="w-full"
-                [routerLink]="['/signin']"></p-button>
+                
+                <footer>
+                    <div>Already have an account?</div> 
+                    <div style="display: flex; flex-direction: row;">
+                        click 
+                        <div [routerLink]="['/signin']" style="cursor: pointer; margin-left: 5px; margin-right: 5px; text-decoration: none; color: var(--primary-color); font-weight: 800; font-size: large;">here</div>
+                       to sign-in instead.
+                    </div></footer>
         </p-card>
     </form>
 </div>

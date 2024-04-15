@@ -53,7 +53,9 @@
                         -->
                         <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
                     </ng-template>
-                    <p>
+                    <p style="margin-top: -15px; width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;">
                         {{course.short_description}}
                     </p>
                     <p-progressBar [value]="course.progress" [style]="{ height: '0.5em'}">
@@ -125,7 +127,9 @@
                         -->
                         <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
                     </ng-template>
-                    <p>
+                    <p style="margin-top: -15px; margin-bottom: -10px; width: 200px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;">
                         {{course.short_description}}
                     </p>
                     <ng-template pTemplate="footer">

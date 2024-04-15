@@ -320,7 +320,10 @@ export class CourseBuilderPageComponent implements OnInit {
       title: "",
       tags: [],
       color: "var(--primary-color)",
-      short_description: ""
+      short_description: "",
+      rich_text_files: [],
+      uploaded_files: [],
+      third_party_resources: []
     };
     this.nodes = [...this.nodes, this.newNode];
     // update the history
@@ -335,6 +338,10 @@ export class CourseBuilderPageComponent implements OnInit {
       this.selectedName = this.newNode.title || "";
       this.selectedTags = this.newNode.tags || ["math"];
       this.selectedDescription = this.newNode.short_description || "";
+      this.uploadedFiles = [];
+      this.urls = [];
+      this.editorText = "";
+      this.assessmentFile = [];
       this.graphComponent.panToNodeId(this.newNode.id!);
     }, 10); 
     

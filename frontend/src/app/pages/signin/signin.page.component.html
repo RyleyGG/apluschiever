@@ -1,6 +1,6 @@
 <div class="page-content">
     <form [formGroup]="signinForm" (ngSubmit)="signin()">
-        <p-card [style]="{ width: '460px' }">
+        <p-card [style]="{ width: '40vw' }">
             <div class="field">
                 <label class="font-bold" for="email_address">Email</label>
                 <input type="text" pInputText formControlName="email_address" class="w-full" name="email_address"
@@ -20,8 +20,15 @@
                 </small>
             </div>
             <div *ngIf="errorMessage" class="error"> {{ errorMessage }}</div>
-            <p-button [rounded]="true" label="Sign-In" class="w-full" [disabled]="signinForm.invalid"
+            <p-button [rounded]="true" [style]="{'width': '100%'}" label="Sign-In" class="w-full" [disabled]="signinForm.invalid"
                 type="submit"></p-button>
+            <footer>
+                <div>Don't have an account?</div> 
+                <div style="display: flex; flex-direction: row;">
+                    click 
+                    <div [routerLink]="['/signup']" style="cursor: pointer; margin-left: 5px; margin-right: 5px; text-decoration: none; color: var(--primary-color); font-weight: 800; font-size: large;">here</div>
+                    to sign-up instead.
+                </div></footer>
         </p-card>
     </form>
 </div>
