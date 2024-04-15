@@ -3,6 +3,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { SignInPageComponent } from './signin.page.component';
+import { routes } from '../../app.routes';
+import { provideRouter } from '@angular/router';
 
 describe('SignInPageComponent', () => {
     let component: SignInPageComponent;
@@ -12,7 +14,8 @@ describe('SignInPageComponent', () => {
             imports: [SignInPageComponent],
             providers: [
                 provideHttpClient(),
-                provideHttpClientTesting()
+                provideHttpClientTesting(),
+                provideRouter(routes)
             ]
         }).compileComponents();
         component = TestBed.createComponent(SignInPageComponent).componentInstance;

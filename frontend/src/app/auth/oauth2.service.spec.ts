@@ -12,7 +12,8 @@ const MOCK_SIGN_UP_INFO: SignUpInfo = {
     first_name: 'Test',
     last_name: 'User',
     email_address: 'testuser@provider.domain',
-    password: 'notR3al123'
+    password: 'notR3al123',
+    user_type: 'Student'
 };
 
 const MOCK_SIGN_IN_INFO: SignInInfo = {
