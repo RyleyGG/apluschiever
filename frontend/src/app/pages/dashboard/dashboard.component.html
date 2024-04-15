@@ -25,6 +25,7 @@
     <section style="grid-column: 1; overflow-x: visible;">
         <div style="display: flex; gap: 1.5em; align-items: center; justify-content: start; overflow-x: visible;">
             <p style="font-size: 2rem; font-weight: 700; margin: 0;">My Courses</p>
+            <input pInputText class="inputText" type="text" [(ngModel)]="searchValue" (input)="search(searchValue)" placeholder="Search">
             <p-button type="button" [rounded]="true" [outlined]="displayedCourses != userCourses" label="All"
                 (click)="displayedCourses = userCourses" />
             <p-button type="button" [rounded]="true" [outlined]="displayedCourses != userInProgressCourses"
@@ -36,8 +37,12 @@
         <p-confirmDialog></p-confirmDialog>
 
         <div class="grid my-courses-container"
-            style="max-height: 500px; padding: 1em 2em 1em 1em; grid-auto-flow: row; overflow-x: visible;"
+            style="height: 500px; padding: 1em 2em 1em 1em; grid-auto-flow: row; overflow-x: visible;"
             *ngIf="displayedCourses.length; else noCourses">
+            <div class="add" (click)="sidebarVisible=true;">
+                <i class="pi pi-plus" style="font-size: 3rem; font-weight: 1000; color: rgb(189, 224, 234)"></i>
+                <h2>Add Course</h2>
+            </div>
             <ng-template ngFor [ngForOf]="displayedCourses" let-course>
                 <p-card [header]="course.title">
                     <ng-template pTemplate="header">
@@ -49,7 +54,7 @@
                         <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
                     </ng-template>
                     <p>
-                        {{course.shortDescription}}
+                        {{course.short_description}}
                     </p>
                     <p-progressBar [value]="course.progress" [style]="{ height: '0.5em'}">
                         <ng-template pTemplate="content" let-value></ng-template>
@@ -67,7 +72,10 @@
         </div>
 
         <ng-template #noCourses>
-            <h2>There are no courses to display.</h2>
+            <div style="padding: 1rem; height: 500px; font-size: 20px; font-weight: 700px; display: flex; flex-direction: column; opacity: 0.8;">
+                <img src="../../assets/sadgator.gif" alt="Image Description" width="250px" height="300px">
+                <h3>There are no courses to display!</h3>
+            </div>
         </ng-template>
     </section>
 

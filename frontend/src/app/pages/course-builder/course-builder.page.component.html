@@ -12,7 +12,8 @@
     <!-- Course Name, Save, Publish, Increase Zoom, Decrease Zoom, Undo, Redo, -->
     <p *ngIf="!enableEdits" style="margin: 0 0 0 0.35em; font-weight: 700; font-size: 1.25em;">{{courseName}}</p>
     <input *ngIf="enableEdits" pInputText type="text" id="nameInput" [(ngModel)]="courseName" />
-
+    <p-button styleClass="p-togglebutton" icon="pi pi-pencil" (click)="this.enableEdits = !this.enableEdits" pTooltip="Edit Course"
+    tooltipPosition="bottom" />
     <p-divider layout="vertical" [style]="{ margin: '0 0.25em', padding: '12px 0.25em' }"></p-divider>
     <p-button styleClass="p-togglebutton" icon="pi pi-save" (click)="save(false)" pTooltip="Save"
       tooltipPosition="bottom" />
@@ -23,6 +24,22 @@
       tooltipPosition="bottom" />
   </div>
 </p-card>
+<p-card *ngIf="enableEdits || courseDescription !== ''" [style]="{
+  position: 'absolute',
+  top: '4.75em',
+  left: '0.75em',
+  'max-width': '402px',
+}">
+  <div style="
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+  "><p *ngIf="!enableEdits" style="margin: 0 0 0 0; font-weight: 400; font-size: 1em;">{{courseDescription}}</p>
+  <span *ngIf="enableEdits" class="p-float-label" style="width: 100%; margin-top: 1rem">
+        <textarea id="courseDesc-input" rows="2" cols="40" pInputTextarea [(ngModel)]="courseDescription"
+          [autoResize]="true" [style]="{ width: '100%'}"></textarea>
+        <label for="courseDesc-input">Course Description</label>
+      </span></div></p-card>
 
 
 <div
@@ -74,7 +91,7 @@
 </graph>
 
 <!--This is a dialog component to display whenever a node is clicked.-->
-<p-dialog header="Header" [draggable]="false" [(visible)]="dialogVisible" (onHide)="save(false)" [position]="'bottomright'"
+<p-dialog header="Header" [draggable]="false" (onHide)="save(false)" [(visible)]="dialogVisible" [position]="'bottomright'"
   [style]="{ width: '33vw'}">
   <ng-template pTemplate="header">
     <div class="dialog-header">
@@ -132,7 +149,7 @@
 </p-dialog>
 
 
-<p-sidebar [(visible)]="addContentSidebarVisible" [style]="{ width: '33vw' }" [modal]="false">
+<p-sidebar [(visible)]="addContentSidebarVisible" (onHide)="save(false)" [style]="{ width: '44vw' }" [modal]="false">
   <ng-template pTemplate="header">
     <h1 style="margin: 0;">
       Add Lesson Content
@@ -141,7 +158,7 @@
   <ng-template pTemplate="content">
     <!--Add text to accompany the lesson-->
     <h2 style="margin: 0.5em 0;">Lesson Text</h2>
-    <p-editor [(ngModel)]="editorText" [style]="{ height: '320px' }"></p-editor>
+    <p-editor [(ngModel)]="editorText" [style]="{ height: '250px' }"></p-editor>
 
     <!--File Upload-->
     <h2 style="margin: 0.5em 0;">Upload Files</h2>

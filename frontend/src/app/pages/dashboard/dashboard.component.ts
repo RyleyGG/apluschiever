@@ -34,6 +34,7 @@ import { uid } from '../../core/utils/unique-id';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
+
   /**
    * A listing of all available courses (used for enrollment)
    */
@@ -70,24 +71,26 @@ export class DashboardComponent {
    * Whether the edit profile dialog should be shown or not
    */
   public editProfileDialogVisible: boolean = false;
-
+  public searchValue: string = "";
   public updatedFirstName: string = "";
   public updatedLastName: string = "";
   public updatedEmail: string = "";
 
 
   constructor(private courseService: CourseService, private userService: UserService, private confirmationService: ConfirmationService, private messageService: MessageService) {
-    this.courseService.getCourses().subscribe((data) => {
-      this.allCourses = [];
-      data.forEach((element: Course) => {
-        this.allCourses = [...this.allCourses, element];
-      });
-    });
 
     this.userService.getUserCourses().subscribe((data) => {
       this.userCourses = [];
       data.forEach((element: Course) => {
         this.userCourses = [...this.userCourses, element];
+      });
+      this.courseService.getCourses().subscribe((data) => {
+        this.allCourses = [];
+        data.forEach((element: Course) => {
+          if (!this.userCourses.some(course => course.id === element.id)) {
+            this.allCourses = [...this.allCourses, element];
+          }
+        });
       });
 
       // Get the course progresses
@@ -117,7 +120,11 @@ export class DashboardComponent {
       window.location.reload();
     });
   }
-
+  search(value: string) {
+    this.displayedCourses = this.userCourses.filter(course =>
+      course.title.toLowerCase().includes(value.toLowerCase())
+    );
+  }
   /**
    * Controls the confirmation pop-up when unenrolling from a course
    * @param courseid the course id to unenroll from.

@@ -53,7 +53,9 @@
             <div *ngIf="errorMessage" class="error"> {{ errorMessage }}</div>
             <p-button [rounded]="true" label="Sign-Up" class="w-full" [disabled]="registerForm.invalid"
                 type="submit"></p-button>
-
+                Already have an account? Click here to Sign-In instead
+            <p-button [rounded]="true" label="Sign-In" class="w-full"
+                [routerLink]="['/signin']"></p-button>
         </p-card>
     </form>
 </div>

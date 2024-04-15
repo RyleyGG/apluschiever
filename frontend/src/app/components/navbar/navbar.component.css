@@ -10,7 +10,13 @@
   background: linear-gradient(120deg, var(--primary-500) 0%, var(--primary-300) 100%);
 
 }
-
+.styled {
+    font-size: 28px;
+    font-weight: bold; 
+    cursor: pointer;
+    vertical-align: top; 
+    color: var(--primary-color-text);
+}
 .navbarTitle {
   top: 0;
   margin-top: 30px;
