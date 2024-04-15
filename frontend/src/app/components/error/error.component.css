@@ -1,0 +1,22 @@
+.page-content {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    flex-direction: column;
+    height: 100%;
+    overflow: scroll;
+}
+.large {
+    font-size: 80px;
+    margin-top: -8px;
+    margin-bottom: 0px;
+}
+.medium {
+    margin-top: -5px;
+}
+.small {
+    opacity: 0.5;
+    margin-top: -8px;
+}

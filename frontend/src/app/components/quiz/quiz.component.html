@@ -1,0 +1,34 @@
+
+    <form #myForm="ngForm">
+    <div *ngFor="let question of questions; let i = index">
+        <p style="margin: 0 0 0.5rem 0; padding: 0;">
+            <span style="font-weight: 700; font-size: 1.5rem; margin-right: 0.5rem; color: var(--primary-color)">
+                {{i + 1}}.
+            </span>
+            {{question.text }}
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 1em;">
+            <div *ngFor="let option of question.options; let j = index">
+            <div style="display: flex; align-items: center;">
+                <p-radioButton [disabled]="submitted" [inputId]="question.id + '_' + option.id" name="optionGroup{{ question.id }}"
+                    value="{{ option.answer }}" [(ngModel)]="selectedOptions[question.id]" />
+                <label for="question.id + '_' + j" style="margin-left: 0.5rem;">{{ option.answer }}</label>
+            </div>
+            </div>
+            <div *ngIf="submitted">
+                <div class="wrong" *ngIf="selectedOptions[question.id] != question.answer">
+                    {{ selectedOptions[question.id] }} is the wrong answer.
+                </div>
+                <div class="correct" *ngIf="selectedOptions[question.id] == question.answer">
+                    {{ question.answer }} is the correct answer.
+                </div>
+            </div>
+        </div>
+    
+    </div>
+    <div class="buttons">
+        <p-button [rounded]="true" type="button" label="Submit" (click)="submit()"></p-button>
+        <p-button [rounded]="true" type="button" label="Try Again" (click)="reset(myForm)"></p-button>
+    </div>
+</form>
