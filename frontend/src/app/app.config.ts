@@ -5,6 +5,9 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { OAuth2Interceptor } from './auth/oauth2.interceptor';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -12,6 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideHttpClient(
       withInterceptors([OAuth2Interceptor])
-    )
+    ),
+    { provide: HTTP_INTERCEPTORS, useValue: ErrorInterceptor, multi: true } 
   ]
 };

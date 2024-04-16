@@ -9,6 +9,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { DialogModule } from 'primeng/dialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { LocalStorageService } from './core/services/local-storage/local-storage.service';
+
 /**
  * The main application component, currently the sample hello world page.
  */
