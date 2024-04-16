@@ -149,7 +149,6 @@ export class DashboardComponent {
   }
   addCourse(courseid: string) {
     this.userService.addCourse(courseid).subscribe((data) => {
-      console.log("added");
       window.location.reload();
     });
   }
