@@ -122,10 +122,10 @@ export class CourseViewPageComponent {
 
   // Set default colors as primeNG ones (todo: have this set in local storage)
   ngOnInit() {
-    this.completeColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--green-700");
-    this.preReqColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--yellow-700");
-    this.searchColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--indigo-700");
-    this.selectedColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--purple-700");
+    this.completeColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--green-500");
+    this.preReqColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--red-500");
+    this.searchColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--orange-500");
+    this.selectedColor = window.getComputedStyle(this.elementRef.nativeElement).getPropertyValue("--blue-500");
 
     this.courseService.getNodes(this.courseid).subscribe((data: NodeOverview[]) => {
       this.nodes = data;

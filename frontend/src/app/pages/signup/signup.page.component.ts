@@ -17,17 +17,19 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SignUpInfo } from '../../core/models/auth.interface';
 import { Router } from '@angular/router';
 import { SignInInfo } from '../../core/models/auth.interface';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+
 /**
  * The signup page component
  * 
  * Right now it has a single button for signing up, and prints the SuccessfulUserAuth result to the console.
  */
 @Component({
-  selector: 'signup-page',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputTextModule, ToggleButtonModule, MessagesModule, MessageModule, CardModule, ButtonModule, FormsModule, PasswordModule, CheckboxModule],
-  templateUrl: './signup.page.component.html',
-  styleUrl: './signup.page.component.css'
+    selector: 'signup-page',
+    standalone: true,
+    imports: [CommonModule, MessageModule, ToggleButtonModule, InputTextModule, MessagesModule, RouterLink, ReactiveFormsModule, CardModule, ButtonModule, FormsModule, PasswordModule, CheckboxModule],
+    templateUrl: './signup.page.component.html',
+    styleUrl: './signup.page.component.css'
 })
 export class SignUpPageComponent {
   public errorMessage = "";

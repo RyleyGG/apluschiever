@@ -6,6 +6,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { Router } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 /**
  * The sign out page component
@@ -15,7 +16,7 @@ import { Router } from '@angular/router';
 @Component({
     selector: 'signout-page',
     standalone: true,
-    imports: [CommonModule, ButtonModule, CardModule, CheckboxModule],
+    imports: [RouterLink, CommonModule, ButtonModule, CardModule, CheckboxModule],
     templateUrl: './signout.page.component.html',
     styleUrl: './signout.page.component.css'
 })

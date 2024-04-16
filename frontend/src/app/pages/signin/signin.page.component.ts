@@ -13,7 +13,9 @@ import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { InputTextModule } from 'primeng/inputtext';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
+import { of } from 'rxjs';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 /**
  * The sign in page component
@@ -23,7 +25,7 @@ import { Router, RouterModule } from '@angular/router';
 @Component({
     selector: 'signin-page',
     standalone: true,
-    imports: [CommonModule, FormsModule, InputTextModule, MessagesModule, MessageModule, CardModule, ReactiveFormsModule, ButtonModule, CheckboxModule, RouterModule],
+    imports: [CommonModule,RouterLink, MessageModule, InputTextModule, MessagesModule, FormsModule, CardModule, ReactiveFormsModule, ButtonModule, CheckboxModule],
     templateUrl: './signin.page.component.html',
     styleUrl: './signin.page.component.css'
 })

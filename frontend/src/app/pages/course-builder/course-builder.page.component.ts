@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, ViewChild, resolveForwardRef } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, resolveForwardRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { AvatarModule } from 'primeng/avatar';
@@ -58,7 +58,7 @@ import { readBlobAsBase64 } from '../../core/utils/blob-to-b64';
   templateUrl: './course-builder.page.component.html',
   styleUrl: './course-builder.page.component.css'
 })
-export class CourseBuilderPageComponent {
+export class CourseBuilderPageComponent implements OnInit {
   /**
    * A reference to the graph component
    */
@@ -123,6 +123,7 @@ export class CourseBuilderPageComponent {
    * A variable used to store the source node for the newly made connections
    */
   edgeSourceNode: Node | null = null;
+  newNode!: Node;
 
   selectedName: string = "";
   selectedAvatarUrl: string = "https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png";
@@ -138,6 +139,7 @@ export class CourseBuilderPageComponent {
 
 
   courseName: string = "Course Name";
+  courseDescription: string = "";
 
   msgs: Message[] = [];
 
@@ -160,6 +162,7 @@ export class CourseBuilderPageComponent {
 
     this.courseService.getCourse(this.courseid).subscribe((data) => {
       this.courseName = data.course.title;
+      this.courseDescription = data.course.short_description || "";
       this.constructGraphViewFromDatabase(data);
 
       // For some reason this needs to be 1 millisecond delayed at minimum for the zoom and center to apply. Probably for the CSS to update/apply
@@ -192,7 +195,7 @@ export class CourseBuilderPageComponent {
         });
 
         // some way to alert the user that there is a cycle
-        this.addMessage({ severity: 'error', summary: 'Error', detail: 'There is an cycle in the course structure.' });
+        this.addMessage({ severity: 'error', summary: 'Error', detail: 'There is a cycle in the course structure.' });
         return;
       }
     }
@@ -239,6 +242,7 @@ export class CourseBuilderPageComponent {
     const courseObj: CreateCourse = {
       ...(this.courseid ? { id: this.courseid } : {}),
       title: this.courseName,
+      short_description: this.courseDescription,
 
       course_owner_id: this.courseOwner!.id,
       is_published: and_publish,
@@ -268,6 +272,12 @@ export class CourseBuilderPageComponent {
     });
   }
 
+  ngOnInit() {
+    setInterval(() => {
+      //if (this.enableEdits) 
+        //this.save(false);
+    }, 5000);
+  }
   /**
    * Function called when undo button is pressed. Updates the state to the previous state.
    */
@@ -300,26 +310,41 @@ export class CourseBuilderPageComponent {
    */
   public addLesson = (): void => {
     if (!this.enableEdits) { return; }
-
-    const newNode = {
+    this.nodes.forEach((node: any) => {
+      this.setNodeColor([node.node_id], "var(--text-color)");
+    })
+    this.updateNodeData();
+    
+    this.newNode = {
       id: uid(),
-      title: "Default Title",
+      title: "",
       tags: [],
-      color: "var(--text-color)"
+      color: "var(--primary-color)",
+      short_description: "",
+      rich_text_files: [],
+      uploaded_files: [],
+      third_party_resources: []
     };
-    this.nodes = [...this.nodes, newNode];
-
+    this.nodes = [...this.nodes, this.newNode];
     // update the history
     this.historyService.saveCurrentState({
       nodes: this.nodes,
       edges: this.edges,
       clusters: this.clusters
     });
-
-    this.selectedNode = newNode;
-    this.selectedName = newNode.title || "";
-    this.selectedTags = newNode.tags;
-    this.graphComponent.panToNodeId(newNode.id);
+    
+    setTimeout(() => {
+      this.selectedNode = this.newNode;
+      this.selectedName = this.newNode.title || "";
+      this.selectedTags = this.newNode.tags || ["math"];
+      this.selectedDescription = this.newNode.short_description || "";
+      this.uploadedFiles = [];
+      this.urls = [];
+      this.editorText = "";
+      this.assessmentFile = [];
+      this.graphComponent.panToNodeId(this.newNode.id!);
+    }, 10); 
+    
     this.dialogVisible = true;
   }
 
@@ -372,13 +397,16 @@ export class CourseBuilderPageComponent {
 
       return;
     }
-
     // Save and swap out the node info...
     this.updateNodeData();
     this.selectedNode = node;
-    this.selectedName = node.title || "";
-    this.selectedDescription = node.short_description || "";
-    this.selectedTags = node.tags || [];
+    this.selectedName = node.title!;
+    this.selectedDescription = node.short_description!;
+    this.selectedTags = node.tags!;
+    this.nodes.forEach((node: any) => {
+      this.setNodeColor([node.node_id], "var(--text-color)");
+    })
+    
     this.editorText = node.rich_text_files && node.rich_text_files?.length > 0 ? node.rich_text_files[0].content : "";
     this.uploadedFiles = node.uploaded_files && node.uploaded_files ? node.uploaded_files : [];
     this.assessmentFile = node.assessment_files && node.assessment_files.length > 0 ? node.assessment_files : [];
@@ -462,9 +490,9 @@ export class CourseBuilderPageComponent {
    */
   updateNodeData = (): void => {
     if (!this.selectedNode) { return; }
-    this.selectedNode.title = this.selectedName || "";
-    this.selectedNode.short_description = this.selectedDescription || "";
-    this.selectedNode.tags = this.selectedTags || [];
+    this.selectedNode.title = this.selectedName;
+    this.selectedNode.short_description = this.selectedDescription;
+    this.selectedNode.tags = this.selectedTags;
     this.selectedNode.rich_text_files = [{ content: this.editorText }] || [""];
     this.selectedNode.uploaded_files = this.uploadedFiles || [];
     this.selectedNode.third_party_resources = this.urls.map((url) => { return { embed_link: url, resource_source: '' } });

@@ -1,12 +1,12 @@
 <div class="page-content">
     <form [formGroup]="registerForm" (ngSubmit)="signup()">
-        <p-card [style]="{ width: '460px' }">
+        <p-card [style]="{ width: '500px' }">
             <div style="display: flex; align-items: center; justify-content: center;">
                 <p style="font-size: 2rem; font-weight: 700; margin: 0;">Sign Up</p>
             </div>
 
             <!--First Name Input-->
-            <div style="display: flex; margin-top: 1.75em; gap: 1em; align-items: center;">
+            <div style="display: flex; margin-top: 1.2em; gap: 1em; align-items: center;">
                 <span class="p-float-label" style="flex-grow: 1;">
                     <input type="text" pInputText formControlName="first_name" name="first_name"
                         [style]="{ width: '100%' }" />
@@ -79,10 +79,17 @@
             </div>
 
             <!--Submit and Errors-->
-            <p-button label="Sign-Up" class="w-full" [disabled]="registerForm.invalid" type="submit"
+            <p-button label="Sign-Up" class="w-full" [rounded]="true" [disabled]="registerForm.invalid" type="submit"
                 [style]="{ width: '100%', 'margin-top': '1em' }" />
             <p-message *ngIf="errorMessage" severity="error" [text]="errorMessage"
                 [style]="{ width: '100%', 'margin-top': '1em' }" />
+                <footer>
+                    <div>Already have an account?</div> 
+                    <div style="display: flex; flex-direction: row;">
+                        click 
+                        <div [routerLink]="['/signin']" style="cursor: pointer; margin-left: 5px; margin-right: 5px; text-decoration: none; color: var(--primary-color); font-weight: 800; font-size: large;">here</div>
+                       to sign-in instead.
+                    </div></footer>
         </p-card>
     </form>
 </div>
