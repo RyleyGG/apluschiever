@@ -3,6 +3,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { SignOutPageComponent } from './signout.page.component';
+import { routes } from '../../app.routes';
+import { provideRouter } from '@angular/router';
 
 describe('SignOutPageComponent', () => {
     let component: SignOutPageComponent;
@@ -12,7 +14,8 @@ describe('SignOutPageComponent', () => {
             imports: [SignOutPageComponent],
             providers: [
                 provideHttpClient(),
-                provideHttpClientTesting()
+                provideHttpClientTesting(),
+                provideRouter(routes)
             ]
         }).compileComponents();
         component = TestBed.createComponent(SignOutPageComponent).componentInstance;
