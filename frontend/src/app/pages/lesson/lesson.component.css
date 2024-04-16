@@ -9,6 +9,12 @@
 .navButton {
   margin-top: 15px;
 }
+.truncate {
+  width: 40%; 
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .loading {
   margin: auto;
   height: 400px; 

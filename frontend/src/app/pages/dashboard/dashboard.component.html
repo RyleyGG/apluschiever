@@ -75,7 +75,10 @@
         </div>
 
         <ng-template #noCourses>
-            <div style="padding: 1rem; height: 600px; font-size: 20px; font-weight: 700px; display: flex; flex-direction: column; opacity: 0.8;">
+            <div class="loading" *ngIf="!loaded">
+                <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="6" fill="var(--surface-ground)" animationDuration=".7s"></p-progressSpinner>
+            </div>
+            <div *ngIf="loaded" style="padding: 1rem; height: 600px; font-size: 20px; font-weight: 700px; display: flex; flex-direction: column; opacity: 0.8;">
                 <img src="../../assets/sadgator.gif" alt="Image Description" width="250px" height="300px">
                 <h3>There are no courses to display!</h3>
             </div>
@@ -117,8 +120,8 @@
         </h1>
     </ng-template>
     <ng-template pTemplate="content">
-        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr 1fr 1fr; padding: 1em 0;" *ngIf="allCourses.length; else noEnroll">
-            <ng-template ngFor [ngForOf]="allCourses" let-course>
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr 1fr 1fr; padding: 1em 0;" *ngIf="toEnroll.length; else noEnroll">
+            <ng-template ngFor [ngForOf]="toEnroll" let-course>
                 <p-card [header]="course.title">
                     <ng-template pTemplate="header">
                         <!--

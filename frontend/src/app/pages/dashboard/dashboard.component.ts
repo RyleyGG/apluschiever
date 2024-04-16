@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { OAuth2Service } from '../../auth/oauth2.service';
 import { SuccessfulUserAuth } from '../../core/models/auth.interface';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -21,6 +21,7 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { User } from '../../core/models/user.interface';
 import { uid } from '../../core/utils/unique-id';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 
 /**
@@ -29,17 +30,20 @@ import { uid } from '../../core/utils/unique-id';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CheckboxModule, CarouselModule, FormsModule, DialogModule, InputTextModule, ProgressBarModule, DataViewModule, SidebarModule, ButtonModule, ConfirmDialogModule, RouterLink, CardModule],
+  imports: [CheckboxModule, ProgressSpinnerModule, CarouselModule, FormsModule, DialogModule, InputTextModule, ProgressBarModule, DataViewModule, SidebarModule, ButtonModule, ConfirmDialogModule, RouterLink, CardModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent implements OnInit {
-
+export class DashboardComponent {
+  public loaded: boolean = false;
   /**
-   * A listing of all available courses (used for enrollment)
+   * A listing of all available courses
    */
   public allCourses: Course[] = [];
-
+  /**
+   * A listing of all courses available for enrollment
+   */
+  public toEnroll: Course[] = [];
   /**
    * The courses displayed to the user in the dashboard. This may be filtered with button clicks. 
    */
@@ -92,54 +96,56 @@ export class DashboardComponent implements OnInit {
       data.forEach((element: Course) => {
         this.userCourses = [...this.userCourses, element];
       });
-      this.courseService.getCourses({ is_published: true }).subscribe((data) => {
-        this.allCourses = [];
-        data.forEach((element: Course) => {
-          if (!this.userCourses.some(course => course.id === element.id)) {
-            this.allCourses = [...this.allCourses, element];
-          }
+    });
+    this.courseService.getCourses({ is_published: true }).subscribe((data) => {
+      this.allCourses = [];
+      data.forEach((element: Course) => {
+          this.allCourses = [...this.allCourses, element];
         });
-      });
-
-      // Get the course progresses
-      this.userService.getUserCoursesProgress(this.userCourses.map(item => item.id)).subscribe((data) => {
-        for (let key in data) {
-          (this.userCourses.find(course => course.id == key) as any).progress = data[key];
-        }
-      });
+    });
+    // Get the course progresses
+    this.userService.getUserCoursesProgress(this.userCourses.map(item => item.id)).subscribe((data) => {
+      for (let key in data) {
+        (this.userCourses.find(course => course.id == key) as any).progress = data[key];
+      }
+    });
       // Create the secondary arrays
       this.userCompletedCourses = this.userCourses.filter((course) => course.progress! === 100);
       this.userInProgressCourses = this.userCourses.filter((course) => course.progress! !== 100);
 
       this.displayedCourses = this.userCourses;
       this.searchedCourses = this.userCourses;
-    });
+    
 
     // Get user information and the coureses the user owns...
     this.userService.getCurrentUser().subscribe((data) => {
       this.loggedInUser = data;
-
       this.updatedFirstName = this.loggedInUser?.first_name || "";
       this.updatedLastName = this.loggedInUser?.last_name || "";
       this.updatedEmail = this.loggedInUser?.email_address || "";
-
-      this.courseService.getCourses({ owned_by: [this.loggedInUser!.id] }).subscribe((data) => {
+      this.courseService.getCourses({ owned_by: [this.loggedInUser!.id] }).subscribe((teacherData) => {
         this.teachingCourses = [];
-        data.forEach((course) => {
-          this.teachingCourses.push(course);
+        teacherData.forEach((element: Course) => {
+          this.teachingCourses = [...this.teachingCourses, element];
         });
-        this.teachingCourses = [...this.teachingCourses];
+        console.log("im teaching here");
+        console.log(this.teachingCourses);
       });
     });
+    setTimeout(() => {
+      this.allCourses.forEach((element: Course) => {
+        if (!this.teachingCourses.some(course => course.id === element.id) && !this.userCourses.some(course => course.id === element.id)) {
+          this.toEnroll = [...this.toEnroll, element];
+        }
+      })
+      this.loaded = true;
+      this.displayAll();
+    }, 500);
 
-  }
-  ngOnInit(): void {
-    this.allCourses = this.allCourses.filter(course => !this.teachingCourses.includes(course));
-    console.log("all" + this.allCourses);
-    console.log(this.allCourses);
   }
   addCourse(courseid: string) {
     this.userService.addCourse(courseid).subscribe((data) => {
+      console.log("added");
       window.location.reload();
     });
   }

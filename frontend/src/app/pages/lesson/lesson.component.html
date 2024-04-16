@@ -4,7 +4,11 @@
         <h1>{{title}}</h1>
             <div style="margin-top: 15px;" *ngIf="fullScreen">
                 <div style="background-color: var(--primary-color);  width: 95%; margin: auto; color: white; height: 50px; display:flex; border-top-left-radius: 20px; border-top-right-radius: 20px; justify-content:space-between; padding: 7px;">
-                    <h2 style="margin-top: 7px;">
+                    <h2 style="margin-top: 7px;
+                    height: 30px;
+                        width: 70%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;">
                       {{ fullScreen.title }}
                     </h2>
                     <div style="justify-content: flex-end;">
@@ -53,11 +57,14 @@
         <div class="grid my-courses-container" *ngIf="lessonComponentArray.length">
                 <div *ngFor="let component of lessonComponentArray; let i = index">
                     <div pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)"  style="background-color: var(--primary-color); color: white; height: 50px; display:flex; border-top-left-radius: 20px; border-top-right-radius: 20px; justify-content:space-between; padding: 7px;">
-                        <h4 style="margin-top: 9px;">
+                        <h4 style="margin-top: 9px; height: 20px;
+                        width: 70%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;">
                           {{ component.title }}
-                        </h4>
+                    </h4>
                         <div style="justify-content: flex-end;">
-                            <p-button *ngIf="component.componentType == thirdComp" type="button" class="fsbutton" [rounded]="true" icon="pi pi-link" (click)="link(component.input)"></p-button>
+                          <p-button *ngIf="component.componentType == thirdComp" type="button" class="fsbutton" [rounded]="true" icon="pi pi-link" (click)="link(component.input)"></p-button>
                           <p-button *ngIf="!fullScreen" type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="maximize(component.componentType, component.input, component.title)"></p-button>
                           <p-button *ngIf="fullScreen" type="button" class="fsbutton" [rounded]="true" icon="pi pi-times" (click)="fullScreen = false"></p-button>
                           <p-button *ngIf="component.minimize" type="button" class="fsbutton" [rounded]="true" icon="pi pi-angle-down" (click)="component.minimize = !component.minimize"></p-button>
@@ -90,7 +97,10 @@
                 <div pDroppable="lessonContent" (onDrop)="focus()">
                     <div *ngIf="focusComponent; else emptyBlock">
                         <div style="background-color: var(--primary-color); color: white; height: 50px; display:flex; justify-content: space-between; border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 7px;">
-                            <h2 style="margin-top: 7px;">
+                            <h2 style="margin-top: 7px; height: 30px;
+                            width: 90%;
+                        overflow: hidden;
+                        text-overflow: ellipsis;">
                                 {{ focusComponent.title}}
                             </h2>
                               <p-button *ngIf="focusComponent" type="button" class="fsbutton" [rounded]="true" icon="pi pi-times" (click)="focusComponent = false"></p-button>

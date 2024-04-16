@@ -11,6 +11,14 @@
   justify-content: space-between;
   margin: auto;
 }
+.loading {
+  margin: auto;
+  height: 400px; 
+  width: 100%;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+}
 .inputText {
   border-radius: 20px;
   color: var(--primary-color);
