@@ -1,59 +1,88 @@
 <div class="page-content">
     <form [formGroup]="registerForm" (ngSubmit)="signup()">
-        <p-card [style]="{'width': '60vw'}">
-            <div class="field">
-                <label for="first_name">First Name</label>
-                <input type="text" pInputText formControlName="first_name" class="w-full" name="first_name"
-                    placeholder="Enter your first name..." />
-                <small *ngIf="first_name.invalid && (first_name.dirty || first_name.touched)" class="block p-error">
-                    <div *ngIf="first_name.errors?.['required']">A name is required</div>
-                    <div *ngIf="first_name.errors?.['pattern']">Please enter a valid name</div>
-                </small>
+        <p-card [style]="{ width: '460px' }">
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <p style="font-size: 2rem; font-weight: 700; margin: 0;">Sign Up</p>
             </div>
-            <div class="field">
-                <label for="last_name">Last Name</label>
-                <input type="text" pInputText formControlName="last_name" class="w-full" name="last_name"
-                    placeholder="Enter your last name..." />
-                <small *ngIf="last_name.invalid && (last_name.dirty || last_name.touched)" class="block p-error">
-                    <div *ngIf="last_name.errors?.['required']">A name is required.</div>
-                    <div *ngIf="last_name.errors?.['pattern']">Please enter a valid name</div>
-                </small>
+
+            <!--First Name Input-->
+            <div style="display: flex; margin-top: 1.75em; gap: 1em; align-items: center;">
+                <span class="p-float-label" style="flex-grow: 1;">
+                    <input type="text" pInputText formControlName="first_name" name="first_name"
+                        [style]="{ width: '100%' }" />
+                    <label for="first_name">First Name</label>
+                </span>
+                <div *ngIf="first_name.invalid && (first_name.dirty || first_name.touched)">
+                    <p-message *ngIf="first_name.errors?.['required']" severity="error" text="A name is required." />
+                    <p-message *ngIf="first_name.errors?.['pattern']" severity="error" text="Enter a valid name." />
+                </div>
             </div>
-            <div class="field">
-                <label for="email_address">Email</label>
-                <input type="text" pInputText formControlName="email_address" class="w-full" name="email_address"
-                    placeholder="Enter your email..." />
-                <small *ngIf="email_address.invalid && (email_address.dirty || email_address.touched)"
-                    class="block p-error">
-                    <div *ngIf="email_address.errors?.['required']">An email is required.</div>
-                    <div *ngIf="email_address.errors?.['email']">Please enter a valid email</div>
-                </small>
+            <!--Last Name Input-->
+            <div style="display: flex; margin-top: 1.75em; gap: 1em; align-items: center;">
+                <span class="p-float-label" style="flex-grow: 1;">
+                    <input type="text" pInputText formControlName="last_name" name="last_name"
+                        [style]="{ width: '100%' }" />
+                    <label for="last_name">Last Name</label>
+                </span>
+                <div *ngIf="last_name.invalid && (last_name.dirty || last_name.touched)">
+                    <p-message *ngIf="last_name.errors?.['required']" severity="error" text="A name is required." />
+                    <p-message *ngIf="last_name.errors?.['pattern']" severity="error" text="Enter a valid name." />
+                </div>
             </div>
-            <div class="field">
-                <label for="password">Password</label>
-                <input type="password" pInputText formControlName="password" class="w-full" name="password"
-                    placeholder="Enter your password..." />
-                <small *ngIf="password.invalid && (password.dirty || password.touched)" class="block p-error">
-                    <div *ngIf="password.errors?.['required']">A password is required.</div>
-                </small>
+            <!--Email Input-->
+            <div style="display: flex; margin-top: 1.75em; gap: 1em; align-items: center;">
+                <span class="p-float-label" style="flex-grow: 1;">
+                    <input type="text" pInputText formControlName="email_address" name="email_address"
+                        [style]="{ width: '100%' }" />
+                    <label for="email_address">Email</label>
+                </span>
+                <div *ngIf="email_address.invalid && (email_address.dirty || email_address.touched)">
+                    <p-message *ngIf="email_address.errors?.['required']" severity="error"
+                        text="An email is required." />
+                    <p-message *ngIf="email_address.errors?.['email']" severity="error" text="Enter a valid email." />
+                </div>
             </div>
-            <div class="field">
-                <label for="confirmPassword">Confirm Password</label>
-                <input type="password" pInputText formControlName="confirmPassword" class="w-full"
-                    name="confirmPassword" placeholder="Confirm Password" />
-                <small *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)"
-                    class="block p-error">
-                    <div *ngIf="confirmPassword.errors?.['required']">Confirm the password.</div>
-                </small>
-                <small class="block p-error"
-                    *ngIf="registerForm.errors?.['passwordMismatch'] && confirmPassword.valid && password.valid">
-                    Password should match
-                </small>
+            <!--Passsword Input-->
+            <div style="display: flex; margin-top: 1.75em; gap: 1em; align-items: center;">
+                <span class="p-float-label" style="flex-grow: 1;">
+                    <input type="password" pInputText formControlName="password" name="password"
+                        [style]="{ width: '100%' }" />
+                    <label for="password">Password</label>
+                </span>
+                <div *ngIf="password.invalid && (password.dirty || password.touched)">
+                    <p-message *ngIf="email_address.errors?.['required']" severity="error"
+                        text="A password is required." />
+                </div>
             </div>
-            <div *ngIf="errorMessage" class="error"> {{ errorMessage }}</div>
-            <p-button [style]="{'width': '100%'}" [rounded]="true" label="Sign-Up" class="w-full" [disabled]="registerForm.invalid"
-                type="submit"></p-button>
-                
+            <!--Confirm  Password Input-->
+            <div style="display: flex; margin-top: 1.75em; gap: 1em; align-items: center;">
+                <span class="p-float-label" style="flex-grow: 1;">
+                    <input type="password" pInputText formControlName="confirmPassword" name="confirmPassword"
+                        [style]="{ width: '100%' }" />
+                    <label for="confirmPassword">Confirm Password</label>
+                </span>
+                <div
+                    *ngIf="(confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched) && confirmPassword.errors?.['required']) || (registerForm.errors?.['passwordMismatch'] && confirmPassword.valid && password.valid)">
+                    <p-message
+                        *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched) && confirmPassword.errors?.['required']"
+                        severity="error" text="Confirm your password." />
+                    <p-message
+                        *ngIf="registerForm.errors?.['passwordMismatch'] && confirmPassword.valid && password.valid"
+                        severity="error" text="Passwords should match." />
+                </div>
+            </div>
+
+            <!--Account Type Button-->
+            <div style="display: flex; align-items: center; gap: 1em; margin-top: 1em;">
+                <p>Account Type: </p>
+                <p-toggleButton formControlName="user_type" onLabel="Teacher" offLabel="Student" />
+            </div>
+
+            <!--Submit and Errors-->
+            <p-button label="Sign-Up" class="w-full" [disabled]="registerForm.invalid" type="submit"
+                [style]="{ width: '100%', 'margin-top': '1em' }" />
+            <p-message *ngIf="errorMessage" severity="error" [text]="errorMessage"
+                [style]="{ width: '100%', 'margin-top': '1em' }" />
                 <footer>
                     <div>Already have an account?</div> 
                     <div style="display: flex; flex-direction: row;">

@@ -1,4 +1,5 @@
-<div class="flex-container">
+<div style="display: flex; flex-direction: column; width: 100%">
+    <div class="flex-container">
     <div style="display: flex; flex-direction: row;" [routerLink]="['/dashboard']">
         <h1>A</h1>
         <div class="styled">+</div>
@@ -16,15 +17,16 @@
                 <!--AN ICON HERE-->
                 <i class="pi pi-user" style="font-size: 2rem; color: var(--primary-color)"></i>
 
-                <div style="display: flex; flex-direction: column;">
-                    <p style="margin: 0; font-weight: 700; font-size: 1em;">
-                        {{loggedInUser?.first_name + ' ' + loggedInUser?.last_name}}
-                    </p>
-                    <p style="margin: 0; font-size: 1em;">
-                        {{loggedInUser?.email_address}}
-                    </p>
+
+                    <div style="display: flex; flex-direction: column;">
+                        <p style="margin: 0; font-weight: 700; font-size: 1em;">
+                            {{loggedInUser?.first_name + ' ' + loggedInUser?.last_name}}
+                        </p>
+                        <p style="margin: 0; font-size: 1em;">
+                            {{loggedInUser?.email_address}}
+                        </p>
+                    </div>
                 </div>
-            </div>
 
             <!--A section for light dark mode toggle, maybe in the future a language select goes here-->
 
@@ -37,4 +39,8 @@
             </div>
         </p-overlayPanel>
     </p-toolbar>
+    </div>
+    <p-message *ngIf="!internetConnection.isOnline()" severity="warn"
+        text="You are not connected to the internet. Many of A+chiever's features will not work as intended."
+        [style]="{ width: '100%', display: 'flex', 'justify-content': 'flex-start' }" />
 </div>
