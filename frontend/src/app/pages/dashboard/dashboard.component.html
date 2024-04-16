@@ -4,12 +4,15 @@
     </section>
 
     <section style="grid-column: 1;">
-        <div style="display: flex; gap: 1em; margin-left: 15px;">
+        <p-card>
+            <p style="margin: 0; padding: 0; font-weight: 700; font-size: 1.75rem;">Begin a new course today!</p>
+        <div style="display: flex; gap: 1em; margin-left: 15px; margin-top: 8px;">
             <p-button type="button" [rounded]="true" label="Enroll in a new course"
                 (click)="sidebarVisible=true;" />
             <p-button *ngIf="loggedInUser?.user_type === 'Teacher'" type="button" [rounded]="true"
                 label="Create a new course" [routerLink]="['/builder']" />
         </div>
+    </p-card>
     </section>
 
     <section style="grid-column: 1; overflow-x: visible;">
@@ -31,7 +34,7 @@
         <p-confirmDialog></p-confirmDialog>
 
         <div class="grid my-courses-container"
-            style="height: 540px; padding: 1em 2em 1.3em 1em; grid-auto-flow: row; overflow-x: visible;"
+            style="height: 49vh; padding: 1em 2em 1.3em 1em; grid-auto-flow: row; overflow-x: visible;"
             *ngIf="searchedCourses.length; else noCourses">
             <!--Template for the enrolled course-->
             <ng-template ngFor [ngForOf]="searchedCourses" let-course>
