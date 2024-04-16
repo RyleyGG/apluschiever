@@ -37,7 +37,8 @@ class Question(SQLModel, table=False):
     answer: List[str]
 
 
-class AssessmentFile(UploadFile, table=False):
+class AssessmentFile(SQLModel, table=False):
+    name: str
     questions: List[Question]
 
 

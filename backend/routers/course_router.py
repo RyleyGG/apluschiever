@@ -74,9 +74,10 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
     # Also, put all the updated nodes within an array for later. 
     updated_nodes = []
     for node in course.nodes:
+        new_assessment_file = None
         if node.assessment_file:
-            report_service.parse_assessment_file(node.assessment_file)
-
+            new_assessment_file = report_service.parse_assessment_file(node.assessment_file)
+            print(new_assessment_file)
         try:
             node_id = (uuid.UUID)(node.id)
         except:
@@ -94,6 +95,7 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
                 existing_node.rich_text_files = node.rich_text_files
                 existing_node.uploaded_files = node.uploaded_files
                 existing_node.third_party_resources = node.third_party_resources
+                existing_node.assessment_file = new_assessment_file
 
                 existing_node.parents = [] # Reset all edges
                 db.add(existing_node)
@@ -103,6 +105,7 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
         else:
             # Create new node
             new_node = Node(**node.model_dump(exclude={"id"}))
+            new_node.assessment_file = new_assessment_file
             new_node.course_id = cur_course_id
             db.add(new_node)
             db.commit()
