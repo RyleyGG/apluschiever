@@ -29,6 +29,7 @@ def parse_assessment_file(file: UploadFile) -> AssessmentFile:
         )
 
     # Dynamically assign column names based on files column count
+    # Note that this is schema dependent
     try:
         with open(file_name, 'r') as f:
             first_line = f.readline()
