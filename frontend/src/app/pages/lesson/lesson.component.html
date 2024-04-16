@@ -5,10 +5,10 @@
             <div style="margin-top: 15px;" *ngIf="fullScreen">
                 <div style="background-color: var(--primary-color);  width: 95%; margin: auto; color: white; height: 50px; display:flex; border-top-left-radius: 20px; border-top-right-radius: 20px; justify-content:space-between; padding: 7px;">
                     <h2 style="margin-top: 7px;
-                    height: 30px;
+                        height: 30px;
                         width: 70%;
-                    overflow: hidden;
-                    text-overflow: ellipsis;">
+                        overflow: hidden;
+                        text-overflow: ellipsis;">
                       {{ fullScreen.title }}
                     </h2>
                     <div style="justify-content: flex-end;">
@@ -59,8 +59,8 @@
                     <div pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)"  style="background-color: var(--primary-color); color: white; height: 50px; display:flex; border-top-left-radius: 20px; border-top-right-radius: 20px; justify-content:space-between; padding: 7px;">
                         <h4 style="margin-top: 9px; height: 20px;
                         width: 70%;
-                    overflow: hidden;
-                    text-overflow: ellipsis;">
+                        overflow: hidden;
+                        text-overflow: ellipsis;">
                           {{ component.title }}
                     </h4>
                         <div style="justify-content: flex-end;">
@@ -99,8 +99,8 @@
                         <div style="background-color: var(--primary-color); color: white; height: 50px; display:flex; justify-content: space-between; border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 7px;">
                             <h2 style="margin-top: 7px; height: 30px;
                             width: 90%;
-                        overflow: hidden;
-                        text-overflow: ellipsis;">
+                            overflow: hidden;
+                            text-overflow: ellipsis;">
                                 {{ focusComponent.title}}
                             </h2>
                               <p-button *ngIf="focusComponent" type="button" class="fsbutton" [rounded]="true" icon="pi pi-times" (click)="focusComponent = false"></p-button>
