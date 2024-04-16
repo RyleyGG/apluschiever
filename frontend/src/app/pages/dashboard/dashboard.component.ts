@@ -44,6 +44,7 @@ export class DashboardComponent {
    */
   public displayedCourses: any[] = [];
 
+
   /**
    * Listing of the courses the user is enrolled in
    */
@@ -56,6 +57,10 @@ export class DashboardComponent {
    * Listing of the courses the user is enrolled in and hasn't completed
    */
   public userInProgressCourses: any[] = [];
+  /**
+   * Listing of the courses the user is a teacher for
+   */
+  public teachingCourses: any[] = [];
 
   /**
    * Whether the enrollment sidebar should be shown or not
@@ -77,13 +82,7 @@ export class DashboardComponent {
 
 
   constructor(private courseService: CourseService, private userService: UserService, private confirmationService: ConfirmationService, private messageService: MessageService) {
-    this.courseService.getCourses().subscribe((data) => {
-      this.allCourses = [];
-      data.forEach((element: Course) => {
-        this.allCourses = [...this.allCourses, element];
-      });
-    });
-
+    // Get the courses the user is enrolled in...
     this.userService.getUserCourses().subscribe((data) => {
       this.userCourses = [];
       data.forEach((element: Course) => {
@@ -97,25 +96,39 @@ export class DashboardComponent {
         }
       });
       // Create the secondary arrays
-      this.userCompletedCourses = this.userCourses.filter((course) => course.progress == 100);
-      this.userInProgressCourses = this.userCourses.filter((course) => course.progress != 100);
+      this.userCompletedCourses = this.userCourses.filter((course) => course.progress! === 100);
+      this.userInProgressCourses = this.userCourses.filter((course) => course.progress! !== 100);
 
       this.displayedCourses = this.userCourses;
     });
 
+    // Get user information and the coureses the user owns...
     this.userService.getCurrentUser().subscribe((data) => {
       this.loggedInUser = data;
 
       this.updatedFirstName = this.loggedInUser?.first_name || "";
       this.updatedLastName = this.loggedInUser?.last_name || "";
       this.updatedEmail = this.loggedInUser?.email_address || "";
+
+      this.courseService.getCourses({ owned_by: [this.loggedInUser!.id] }).subscribe((data) => {
+        this.teachingCourses = [];
+        data.forEach((course) => {
+          this.teachingCourses.push(course);
+        });
+        this.teachingCourses = [...this.teachingCourses];
+      });
+
+      // Only allow a user to enroll in a course that they do not teach...
+      this.courseService.getCourses({ is_published: true }).subscribe((data) => {
+        this.allCourses = [];
+        data.forEach((element: Course) => {
+          if (element.course_owner_id === this.loggedInUser!.id) { return; }
+          this.allCourses = [...this.allCourses, element];
+        });
+      });
     });
   }
 
-  /**
-   * Add the currently logged in user to the given course
-   * @param courseid course id of the course to add user to
-   */
   addCourse(courseid: string) {
     this.userService.addCourse(courseid).subscribe((data) => {
       window.location.reload();
@@ -146,7 +159,18 @@ export class DashboardComponent {
     });
   }
 
-
+  /**
+   * Used to prevent a duplicate scrollbar from appearing in the register for classes panel.
+   *
+   * @param event true if open sidebar, false if closed
+   */
+  onSidebarVisibilityChange(event: any) {
+    if (event) {
+      document.documentElement.classList.add('side-panel-open');
+    } else {
+      document.documentElement.classList.remove('side-panel-open');
+    }
+  }
 
   //#region Updating User Info
 

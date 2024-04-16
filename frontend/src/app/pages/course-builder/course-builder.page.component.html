@@ -1,0 +1,202 @@
+<p-card [style]="{
+  position: 'absolute',
+  top: '0.75em',
+  left: '0.75em',
+}">
+  <div style="
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.5em;
+  ">
+    <!-- Course Name, Save, Publish, Increase Zoom, Decrease Zoom, Undo, Redo, -->
+    <p *ngIf="!enableEdits" style="margin: 0 0 0 0.35em; font-weight: 700; font-size: 1.25em;">{{courseName}}</p>
+    <input *ngIf="enableEdits" pInputText type="text" id="nameInput" [(ngModel)]="courseName" />
+
+    <p-divider layout="vertical" [style]="{ margin: '0 0.25em', padding: '12px 0.25em' }"></p-divider>
+    <p-button styleClass="p-togglebutton" icon="pi pi-save" (click)="save(false)" pTooltip="Save"
+      tooltipPosition="bottom" />
+    <p-button styleClass="p-togglebutton" icon="pi pi-upload" (click)="save(true)" pTooltip="Publish"
+      tooltipPosition="bottom" />
+    <p-button styleClass="p-togglebutton" icon="pi pi-undo" (click)="undo()" pTooltip="Undo" tooltipPosition="bottom" />
+    <p-button styleClass="p-togglebutton" icon="pi pi-refresh" (click)="redo()" pTooltip="Redo"
+      tooltipPosition="bottom" />
+  </div>
+</p-card>
+
+
+<div
+  style="position: absolute; top: 0.75em; right: 0.75em; display: flex; flex-direction: column; gap: 0.5em; align-items: flex-end;">
+  <p-card>
+    <div style="
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      padding: 0.5em;
+    ">
+      <p-toggleButton [(ngModel)]="enableEdits" onIcon="pi pi-lock-open" offIcon="pi pi-lock"
+        [pTooltip]="enableEdits ? 'Disable Edits' : 'Enable Edits'" tooltipPosition="bottom" />
+      <p-button styleClass="p-togglebutton" icon="pi pi-plus-circle" (onClick)="addLesson()" pTooltip="Add Lesson"
+        tooltipPosition="bottom" />
+      <p-toggleButton [(ngModel)]="addConnection" (onChange)="edgeSourceNode = null;" onIcon="pi pi-share-alt"
+        offIcon="pi pi-share-alt" [pTooltip]="addConnection ? 'Disable Adding Connection' : 'Enable Adding Connection'"
+        tooltipPosition="bottom" />
+      <p-toggleButton [(ngModel)]="deleteElement" onIcon="pi pi-trash" offIcon="pi pi-trash"
+        [pTooltip]="deleteElement ? 'Disable Deleting Element' : 'Enable Deleting Element'" tooltipPosition="bottom" />
+    </div>
+  </p-card>
+
+  <p-messages [value]="msgs" [showTransitionOptions]="'250ms'" [hideTransitionOptions]="'250ms'"
+    [style]="{ width: '100%' }" [closable]="false" />
+</div>
+
+
+<!--This displays the graph of the course.-->
+<graph #graphComponent class="course-view-graph-container" [edges]="this.edges" [nodes]="this.nodes"
+  [clusters]="this.clusters" [layoutSettings]="courseViewGraphSettings" (nodeClicked)="onNodeClick($event)"
+  (edgeClicked)="onEdgeClick($event)">
+  <!--An override implementation of the edges so we can have a larger clickable area.-->
+  <ng-template #edgeTemplate let-edge>
+    <!-- Define marker for each edge -->
+    <svg:defs>
+      <svg:marker [attr.id]="'arrow-' + edge.id" [attr.viewBox]="'0 -10 20 20'" refX="8" refY="0" markerWidth="10"
+        markerHeight="10" orient="auto">
+        <svg:path [attr.fill]="edge.color" d="M 0 -10 L 10 0 L 0 10" />
+      </svg:marker>
+    </svg:defs>
+
+    <!--Transparent larger area to click on-->
+    <svg:path class="edge" stroke="transparent" stroke-width="30px" [attr.d]="edge.line" cursor="pointer" />
+
+    <svg:path class="edge" [attr.stroke]="edge.color" [attr.marker-end]="'url(#arrow-' + edge.id + ')'"
+      [attr.d]="edge.line" />
+  </ng-template>
+</graph>
+
+<!--This is a dialog component to display whenever a node is clicked.-->
+<p-dialog header="Header" [draggable]="false" [(visible)]="dialogVisible" [position]="'bottomright'"
+  [style]="{ width: '33vw'}">
+  <ng-template pTemplate="header">
+    <div class="dialog-header">
+      <ng-container *ngIf="enableEdits">
+        <!--TODO: make below so that instead of an image, we show the image and clicking on it prompts for a new URL-->
+        <div (click)="changeAvatarUrl()" style="cursor: pointer;">
+          <p-avatar [image]="selectedAvatarUrl" shape="circle" />
+        </div>
+        <span class="p-float-label">
+          <input pInputText type="text" id="nameInput" [(ngModel)]="selectedName" />
+          <label for="nameInput">Lesson Name</label>
+        </span>
+      </ng-container>
+      <ng-container *ngIf="!enableEdits">
+        <p-avatar [image]="selectedAvatarUrl" shape="circle" />
+        <span class="dialog-header-text">{{ selectedNode.title }}</span>
+      </ng-container>
+
+    </div>
+  </ng-template>
+  <div style="display: flex; align-items: center; gap: 0.5em;">
+    <ng-container *ngIf="enableEdits">
+      <span class="p-float-label" style="margin-top: 1.25em; width: 100%;">
+        <p-chips id="tags-input" [(ngModel)]="selectedTags" [style]="{ width: '100%', display: 'block' }"></p-chips>
+        <label for="tags-input">Tags</label>
+      </span>
+    </ng-container>
+    <ng-container *ngIf="!enableEdits">
+      <p-tag *ngFor="let tag of selectedNode?.tags" value="{{tag}}"></p-tag>
+    </ng-container>
+  </div>
+  <p class="m-0">
+
+    <ng-container *ngIf="enableEdits">
+      <span class="p-float-label" style="margin-top: 1.5em;">
+        <textarea id="summary-input" rows="5" cols="30" pInputTextarea [(ngModel)]="selectedDescription"
+          [autoResize]="true" [style]="{ width: '100%'}"></textarea>
+        <label for="summary-input">Summary</label>
+      </span>
+    </ng-container>
+    <ng-container *ngIf="!enableEdits">
+      {{ selectedNode?.short_description }}
+    </ng-container>
+
+  </p>
+  <ng-template pTemplate="footer">
+    <p-blockUI [target]="addContentButtonWrapper" [blocked]="!enableEdits">
+      <i class="pi pi-lock" style="font-size: 1.5rem"></i>
+    </p-blockUI>
+    <blockable-div #addContentButtonWrapper [style]="{display: 'inline-block'}">
+      <p-button id="addContentButton" icon="pi pi-book" label="Add Content" (click)="addContentSidebarVisible=true;"
+        [style]="{ color: '--primary-color-text', margin: '0'}" />
+    </blockable-div>
+  </ng-template>
+</p-dialog>
+
+
+<p-sidebar [(visible)]="addContentSidebarVisible" [style]="{ width: '33vw' }" [modal]="false">
+  <ng-template pTemplate="header">
+    <h1 style="margin: 0;">
+      Add Lesson Content
+    </h1>
+  </ng-template>
+  <ng-template pTemplate="content">
+    <!--Add text to accompany the lesson-->
+    <h2 style="margin: 0.5em 0;">Lesson Text</h2>
+    <p-editor [(ngModel)]="editorText" [style]="{ height: '320px' }"></p-editor>
+
+    <!--File Upload-->
+    <h2 style="margin: 0.5em 0;">Upload Files</h2>
+    <p-fileUpload name="uploadContentFileUpload" (onSelect)="onFileSelect($event)" [multiple]="true"
+      [maxFileSize]="1000000000" accept="image/*, .pdf, text/plain, text/csv, .xls, .xlsm, .xlsx">
+      <ng-template let-file pTemplate="file" style="display: none;"></ng-template>
+      <ng-template pTemplate="content">
+        <div *ngIf="uploadedFiles">
+          <div *ngFor="let file of uploadedFiles"
+            style="display: flex; align-items: center; justify-content: space-between; gap: 1em;">
+            <p>{{ file.name }} - {{ file.size }} bytes</p>
+            <p-button icon="pi pi-times" (onClick)="onRemoveContentFile(file)" />
+          </div>
+        </div>
+      </ng-template>
+    </p-fileUpload>
+
+    <!--
+      Third Party Content URL
+      TODO: Style this to be nicer looking
+    -->
+    <h2 style="margin: 0.5em 0;">Add Third Party Content URLs</h2>
+    <div>
+      <div style="display: flex; flex-direction: row; justify-content: space-between; gap: 1em;">
+        <input type="text" pInputText [(ngModel)]="newURL" style="flex-grow: 1;" />
+        <button pButton type="button" label="Add URL" (click)="addURL()"></button>
+      </div>
+      <ul *ngIf="urls.length > 0"
+        style="list-style-type: none; display: flex; flex-direction: column; gap: 1em; padding-left: 1em;">
+        <li *ngFor="let url of urls; let i = index"
+          style="display: flex; align-items: center; justify-content: space-between;">
+          <a href="{{url}}">{{ url }}</a>
+          <button pButton type="button" icon="pi pi-times" (click)="removeURL(i)"></button>
+        </li>
+      </ul>
+    </div>
+
+    <!--
+      Assessment Questions
+      TODO: add saving of this to the backend and update file formats allowed.
+    -->
+    <h2 style="margin: 0.5em 0;">Upload Assessment File</h2>
+    <p-fileUpload (onSelect)="onAssessmentFileSelect($event)" name="uploadAssessmentFileUpload" accept="image/*"
+      [maxFileSize]="1000000000">
+      <ng-template let-file pTemplate="file" style="display: none;"></ng-template>
+      <ng-template pTemplate="content">
+        <div *ngIf="assessmentFile">
+          <div *ngFor="let file of assessmentFile"
+            style="display: flex; align-items: center; justify-content: space-between; gap: 1em;">
+            <p>{{ file.name }} - {{ file.size }} bytes</p>
+            <p-button icon="pi pi-times" (onClick)="onRemoveAssessmentFile()" />
+          </div>
+        </div>
+      </ng-template>
+    </p-fileUpload>
+
+  </ng-template>
+</p-sidebar>

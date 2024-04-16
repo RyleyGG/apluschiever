@@ -10,11 +10,11 @@ from fastapi.testclient import TestClient
 from starlette import status
 
 from api import app
-from models.db_models import Course, Node, User, NodeParentLink
-from models.dto_models import NodeTags, UserType
-from models.pydantic_models import Video, Markdown
+from models.db_models import Course, Node, User, UserType, NodeParentLink, CourseStudentLink
+from models.pydantic_models import Video, RichText, SupportedThirdParties
 from services.api_utility_service import dbUrl, get_session
 from services.config_service import config
+
 
 
 def generate_mock_users(db: Session, client: TestClient):
@@ -75,7 +75,7 @@ def generate_mock_users(db: Session, client: TestClient):
 
 def generate_mock_courses(db: Session, client: TestClient):
     for i in range(25):
-        mock_course = Course(title=f'Course #{i + 1}', course_owner_id=config._tests_teacher_id)
+        mock_course = Course(title=f'Course #{i + 1}', course_owner_id=config._tests_teacher_id, is_published=True)
         db.add(mock_course)
     db.commit()
 
@@ -98,35 +98,37 @@ def generate_mock_nodes(db: Session, client: TestClient):
 
                 # Adding content
                 new_node.videos = []
-                new_node.markdown_files = []
+                new_node.rich_text_files = []
                 for n in range(10):
-                    new_node.videos.append(Video(title='wasd', embed_link='wasd', video_source='wasd'))
+                    new_node.videos.append(Video(title='wasd', embed_link='wasd', video_source=SupportedThirdParties.YOUTUBE))
                     if random.choice([True, False]):
                         break
 
                 for n in range(10):
-                    new_node.markdown_files.append(Markdown(title='wasd', content='###wasd'))
+                    new_node.rich_text_files.append(RichText(title='wasd', content='###wasd'))
                     if random.choice([True, False]):
                         break
 
                 # Adding tags
                 new_node.tags = []
                 if random.choice([True, False]):
-                    new_node.tags.append(NodeTags.CORE)
+                    new_node.tags.append("Core")
                 if random.choice([True, False]):
-                    new_node.tags.append(NodeTags.ASSESSMENT)
+                    new_node.tags.append("Assessment")
                 if random.choice([True, False]):
-                    new_node.tags.append(NodeTags.PRACTICE)
+                    new_node.tags.append("Practice")
                 if random.choice([True, False]):
-                    new_node.tags.append(NodeTags.SUPPLEMENTAL)
+                    new_node.tags.append("Supplemental")
 
                 # Adding parent(s)
                 parent_count = random.randint(1, math.ceil(len(node_layers[x - 1]) / 2)) if x > 0 else 0
                 new_node.parents = []
-                while len(new_node.parents) != parent_count:
+                attempts = 0
+                while len(new_node.parents) != parent_count and attempts < 10000:
                     rand_node = random.choice(node_layers[x - 1])
                     if rand_node not in new_node.parents:
                         new_node.parents.append(rand_node)
+                    attempts += 1
                 node_layers[x].append(new_node)
                 db.add(new_node)
                 db.commit()
@@ -139,8 +141,8 @@ def generate_mock_nodes(db: Session, client: TestClient):
                     user_node_progress[str(new_node.id)] = []
                     for video in new_node.videos:
                         user_node_progress[str(new_node.id)].append(str(video.id))
-                    for markdown in new_node.markdown_files:
-                        user_node_progress[str(new_node.id)].append(str(markdown.id))
+                    for rich_text in new_node.rich_text_files:
+                        user_node_progress[str(new_node.id)].append(str(rich_text.id))
                 else:
                     keep_completing = False
 
@@ -160,6 +162,7 @@ def main():
 
     # Prep session
     session = Session(bind=connection)
+    session.exec(delete(CourseStudentLink))
     session.exec(delete(NodeParentLink))
     session.exec(delete(Node))
     session.exec(delete(Course))

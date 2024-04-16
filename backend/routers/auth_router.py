@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import select, Session
 
-from models.db_models import User
-from models.dto_models import SignUpInfo, SignInInfo, SuccessfulUserAuth, RefreshToken, UserType
+from models.db_models import User, UserType
+from models.dto_models import SignUpInfo, SuccessfulUserAuth, RefreshToken
 
 from services.config_service import config
 from services import auth_service

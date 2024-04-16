@@ -6,67 +6,47 @@
     padding: 1rem;
     overflow: auto;
 }
+.navButton {
+  margin-top: 15px;
+}
+.loading {
+  margin: auto;
+  height: 400px; 
+  width: 100%;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+}
+.noContent {
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  flex-direction: column;
+  margin-top: -20px;
+  font-size: 25px;
+  font-weight: 600;
+  opacity: 0.7;
+}
 .fsbutton {
   margin-left: 5px;
 }
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: 500px 700px;
-  grid-column-gap: 30px;
-  grid-row-gap: 50px;
-  width: 98%;
-  margin: auto;
-  margin-bottom: 30px;
+.minimizedContent {
+  display: flex;
+  flex-direction: column;
 }
-.exitbutton {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  border-radius: 20px;
-  background-color: var(--primary-color);
+.focusBox {
+  height: 600px;
 }
-.rectangle {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(11, 1fr);
-  grid-column-gap: 30px;
-  grid-row-gap: 50px;
-  width: 98%;
-  margin: auto;
-  height: 150%;
-  }
-  
-  .box1 { 
-    grid-area: 1 / 4 / 5 / 8; 
-    border-radius: 15px;
-    overflow: hidden;
-    position: relative
-  }
-  .box2 { 
-    grid-area: 5 / 4 / 9 / 8;
-    border-radius: 15px;
-    overflow: hidden;
-    position: relative
-  }
-  .box3 { 
-    grid-area: 9 / 4 / 12 / 8;
-    border-radius:15px;
-    overflow: hidden;
-    position: relative
-  }
-  .box4 { 
-    grid-area: 1 / 1 / 8 / 4; 
-    border-radius: 15px;
-    overflow: hidden;
-    position: relative
-  }
-  .box5 { 
-    grid-area: 8 / 1 / 12 / 4;
-    border-radius: 15px;
-    overflow: hidden;
-    position: relative
-  }
+.box {
+  border: 2px dashed var(--primary-color);
+  border-radius: 10px;
+  width: 100%;
+  font-weight: 500;
+  justify-content: center;
+  padding: 1rem;
+  display: flex;
+  cursor: pointer;
+}
 h1 {
     font-size: 3.125rem;
     cursor: pointer;
@@ -84,4 +64,88 @@ h1 {
     height: 100%;
     width: 100%;
     pointer-events: none;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5em;
+    align-items: stretch;
+    grid-auto-flow: row; 
+    padding: 1em 2em 1em 1em; 
+  }
+  .leftSide {
+    overflow-x: visible;
+    overflow-y: scroll;
+    max-height: 730px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+  }
+
+  .description {
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    max-height: 650px; 
+    padding: 1em 2em 1em 1em; grid-auto-flow: row; overflow-x: visible;
+    border-radius: 20px;
+    width: 92%;
+    margin-left: 15px;
+
+  }
+  
+  .my-courses-container>* {
+    transition-duration: 250ms;
+  }
+  
+  .my-courses-container>*:hover {
+    scale: 1.02;
+  }
+  
+  .user-stats-container>* {
+    flex-grow: 1;
+  }
+  
+  /* width */
+  ::-webkit-scrollbar {
+    width: 0.5em;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {}
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: var(--primary-300);
+    border-radius: 0.25em;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-500);
+  }
+  
+  /* width */
+  ::ng-deep ::-webkit-scrollbar {
+    width: 0.5em;
+  }
+  
+  /* Track */
+  ::ng-deep ::-webkit-scrollbar-track {}
+  
+  /* Handle */
+  ::ng-deep ::-webkit-scrollbar-thumb {
+    background: var(--primary-300);
+    border-radius: 0.25em;
+  }
+  
+  /* Handle on hover */
+  ::ng-deep ::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-500);
+  }
+  
+  :root {
+    overflow: hidden;
+  }
+  
+  /* Override the default PrimeNG dialog component*/
+  ::ng-deep .p-dialog-content {
+    overflow: visible;
   }
