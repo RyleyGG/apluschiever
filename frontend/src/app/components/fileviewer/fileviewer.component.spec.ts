@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FileviewerComponent } from './fileviewer.component';
+import { routes } from './../../app.routes';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('FileviewerComponent', () => {
   let component: FileviewerComponent;
@@ -8,7 +12,12 @@ describe('FileviewerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FileviewerComponent]
+      imports: [FileviewerComponent],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter(routes)
+    ]
     })
     .compileComponents();
     
