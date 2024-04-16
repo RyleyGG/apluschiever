@@ -13,10 +13,10 @@
             <p-button [rounded]="true" [style]="{'background-color': 'transparent', 'border-color': 'transparent'}"
                 *ngIf="!loggedIn" label="Sign-In" icon='pi pi-sign-in' [routerLink]="['/signin']" />
             <p-button [rounded]="true"
-                [style]="{'background-color': 'transparent', 'color': 'white', 'border-color': 'transparent'}"
+                [style]="{'background-color': 'transparent', 'border-color': 'transparent'}"
                 *ngIf="loggedIn" icon="pi pi-home" [routerLink]="['/dashboard']" />
             <p-button
-                [style]="{'margin-left': '5px', 'background-color': 'transparent', 'color': 'white', 'border-color': 'transparent'}"
+                [style]="{'margin-left': '5px', 'background-color': 'transparent', 'border-color': 'transparent'}"
                 *ngIf="loggedIn" icon="pi pi-user" [rounded]="true" (click)="op.toggle($event)" />
             <p-overlayPanel #op [style]="{ 'min-width': '22rem' }">
                 <!--A section for the user information-->
