@@ -123,7 +123,7 @@ def parse_assessment_file(file: UploadFile) -> AssessmentFile:
 
         question = Question(question_text=question_text, options=options, answer=answer, point_value=question_val)
         questions.append(question)
-    assessment_file = AssessmentFile(name=file.name, questions=questions)
+    assessment_file = AssessmentFile(name=file.name, size=file.size, type=file.type, content=file.content, questions=questions)
 
     os.remove(file_name)
     return assessment_file
