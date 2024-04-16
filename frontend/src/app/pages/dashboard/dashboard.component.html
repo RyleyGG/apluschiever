@@ -117,7 +117,7 @@
         </h1>
     </ng-template>
     <ng-template pTemplate="content">
-        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr 1fr 1fr; padding: 1em 0;" *ngIf="allCourses.length">
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr 1fr 1fr; padding: 1em 0;" *ngIf="allCourses.length; else noEnroll">
             <ng-template ngFor [ngForOf]="allCourses" let-course>
                 <p-card [header]="course.title">
                     <ng-template pTemplate="header">
@@ -143,8 +143,11 @@
             </ng-template>
         </div>
     </ng-template>
-    <ng-template pTemplate="footer">
-
+    <ng-template #noEnroll>
+        <div style="margin-left: 50px; padding: 1rem; height: 600px; font-size: 20px; font-weight: 700px; display: flex; flex-direction: column; opacity: 0.8;">
+            <img  src="../../assets/sadgator.gif" alt="Image Description" width="550px" height="600px">
+            <h2>There are no courses available for enrollment!</h2>
+        </div>
     </ng-template>
 </p-sidebar>
 

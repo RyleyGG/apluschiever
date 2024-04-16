@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { OAuth2Service } from '../../auth/oauth2.service';
 import { SuccessfulUserAuth } from '../../core/models/auth.interface';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -33,7 +33,7 @@ import { uid } from '../../core/utils/unique-id';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
 
   /**
    * A listing of all available courses (used for enrollment)
@@ -92,7 +92,7 @@ export class DashboardComponent {
       data.forEach((element: Course) => {
         this.userCourses = [...this.userCourses, element];
       });
-      this.courseService.getCourses().subscribe((data) => {
+      this.courseService.getCourses({ is_published: true }).subscribe((data) => {
         this.allCourses = [];
         data.forEach((element: Course) => {
           if (!this.userCourses.some(course => course.id === element.id)) {
@@ -130,18 +130,14 @@ export class DashboardComponent {
         });
         this.teachingCourses = [...this.teachingCourses];
       });
-
-      // Only allow a user to enroll in a course that they do not teach...
-      this.courseService.getCourses({ is_published: true }).subscribe((data) => {
-        this.allCourses = [];
-        data.forEach((element: Course) => {
-          if (element.course_owner_id === this.loggedInUser!.id) { return; }
-          this.allCourses = [...this.allCourses, element];
-        });
-      });
     });
-  }
 
+  }
+  ngOnInit(): void {
+    this.allCourses = this.allCourses.filter(course => !this.teachingCourses.includes(course));
+    console.log("all" + this.allCourses);
+    console.log(this.allCourses);
+  }
   addCourse(courseid: string) {
     this.userService.addCourse(courseid).subscribe((data) => {
       window.location.reload();
