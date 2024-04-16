@@ -31,7 +31,7 @@
         <p-confirmDialog></p-confirmDialog>
 
         <div class="grid my-courses-container"
-            style="height: 618px; padding: 1em 2em 1.3em 1em; grid-auto-flow: row; overflow-x: visible;"
+            style="height: 600px; padding: 1em 2em 1.3em 1em; grid-auto-flow: row; overflow-x: visible;"
             *ngIf="displayedCourses.length; else noCourses">
             <!--Template for the enrolled course-->
             <ng-template ngFor [ngForOf]="displayedCourses" let-course>
@@ -72,7 +72,7 @@
         </div>
 
         <ng-template #noCourses>
-            <div style="padding: 1rem; height: 500px; font-size: 20px; font-weight: 700px; display: flex; flex-direction: column; opacity: 0.8;">
+            <div style="padding: 1rem; height: 600px; font-size: 20px; font-weight: 700px; display: flex; flex-direction: column; opacity: 0.8;">
                 <img src="../../assets/sadgator.gif" alt="Image Description" width="250px" height="300px">
                 <h3>There are no courses to display!</h3>
             </div>
