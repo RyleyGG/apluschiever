@@ -238,23 +238,24 @@ export class CourseBuilderPageComponent implements OnInit {
         node.uploaded_files = newFileUploads;
       }
 
-      const assessmentFiles: any[] = []
-      await Promise.all(node.assessment_file.map(async (file: any) => {
-        if (file.content) {
-          assessmentFiles.push(file);
-          return new Promise((resolve, reject) => resolve(""));
-        }
+      const file = node.assessment_file[0];
+      if (file && file.content) {
+        // If file content is already available, just push the file to assessmentFiles
+        node.assessment_file = file;
+      } else if (file) {
+        // If file content is not available, read it as base64 and update the file object
         const b64data = await readBlobAsBase64(new Blob([file], { type: file.type }));
-        assessmentFiles.push({
+        node.assessment_file = {
           ...(file.id ? { id: file.id } : {}),
           name: file.name,
           size: file.size,
           type: file.type,
           content: b64data // base64 data
-        });
-        return new Promise((resolve, reject) => resolve(""));
-      }));
-      node.assessment_file = assessmentFiles[0];
+        };
+      } else {
+        // Handle case when there is no file
+        delete node.assessment_file;
+      }
     }));
     this.nodes = [...this.nodes];
 
@@ -685,7 +686,8 @@ export class CourseBuilderPageComponent implements OnInit {
     data.nodes.forEach((node: Node) => {
       this.nodes.push({
         ...node,
-        color: "var(--text-color)"
+        color: "var(--text-color)",
+        assessment_file: [node.assessment_file]
       })
     });
     this.nodes.forEach((node: Node) => {
