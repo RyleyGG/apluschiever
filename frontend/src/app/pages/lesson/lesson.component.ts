@@ -1,4 +1,4 @@
-import { Component, ViewChildren, QueryList, HostListener, ChangeDetectorRef, Injector, ViewChild, OnInit, ElementRef, ComponentRef, AfterViewInit, ViewContainerRef, ComponentFactoryResolver} from '@angular/core';
+import { Component, ViewChildren, QueryList, HostListener, ChangeDetectorRef, Injector, ViewChild, OnInit, ElementRef, ComponentRef, AfterViewInit, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { NgModule } from '@angular/core';
@@ -35,8 +35,8 @@ export class LessonComponent implements AfterViewInit {
   ngOnInit() {
     setTimeout(() => {
       this.loaded = true;
-      
-    }, 2000); 
+
+    }, 2000);
   }
   componentRefs: any[] = [];
   focusComponent: any;
@@ -48,17 +48,18 @@ export class LessonComponent implements AfterViewInit {
       input: input,
     }
   }
-  lessonComponentArray: { title: any, componentType: any, input: any , minimize: boolean}[] = [];
+  lessonComponentArray: { title: any, componentType: any, input: any, minimize: boolean }[] = [];
 
   ngAfterViewInit(): void {
-    
+
   }
   title = "";
-  node_id: string | any; 
+  node_id: string | any;
   lesson: any;
   desc: any;
   indexTarget: any;
   indexSource: any;
+
   drop(index: any) {
     this.indexTarget = index;
     const temp = this.lessonComponentArray[this.indexSource];
@@ -66,6 +67,7 @@ export class LessonComponent implements AfterViewInit {
     this.lessonComponentArray[this.indexTarget] = temp;
     this.cdr.detectChanges();
   }
+
   focus() {
     this.focusComponent = {
       title: this.lessonComponentArray[this.indexSource].title,
@@ -73,18 +75,22 @@ export class LessonComponent implements AfterViewInit {
       input: this.lessonComponentArray[this.indexSource].input
     }
   }
+
   courseId: string | any;
   link(url: any) {
     window.open(url, '_blank');
   }
+
   showObjectives = false;
   dragStart(index: any) {
     this.indexSource = index;
   }
+
   goBack(): void {
     this.location.back();
   }
-  constructor( private location: Location, private cdr: ChangeDetectorRef, private nodeService: NodeService, private route : ActivatedRoute) {
+
+  constructor(private location: Location, private cdr: ChangeDetectorRef, private nodeService: NodeService, private route: ActivatedRoute) {
     this.node_id = this.route.snapshot.paramMap.get('id');
     this.nodeService.getNode(this.node_id).subscribe((data: any) => {
       this.title = data.title;
@@ -92,27 +98,35 @@ export class LessonComponent implements AfterViewInit {
       this.desc = data.rich_text_files[0].content;
       this.courseId = data.course_id;
       console.log(this.node_id);
-      
+
       data.third_party_resources.forEach((thirdparty: any) => {
         this.lessonComponentArray.push({
-          title: "Website", 
-          componentType: this.thirdComp, 
-          input: thirdparty.embed_link, 
+          title: "Website",
+          componentType: this.thirdComp,
+          input: thirdparty.embed_link,
           minimize: false
         });
       })
       data.uploaded_files.forEach((file: any) => {
         this.lessonComponentArray.push({
           title: file.name.substring(0, file.name.lastIndexOf('.')),
-          
-          componentType: this.fileComp, 
-          input: [file.content,  file.type], 
+
+          componentType: this.fileComp,
+          input: [file.content, file.type],
           minimize: false
         });
+      });
+      if (data.assessment_file) {
+        this.lessonComponentArray.push({
+          title: "Assessment",
+          componentType: this.quizComp,
+          input: data.assessment_file.questions,
+          minimize: false
+        });
+      }
 
-      })
       if (this.lessonComponentArray.length > 0) {
-        this.focusComponent= {
+        this.focusComponent = {
           title: this.lessonComponentArray[0].title,
           componentType: this.lessonComponentArray[0].componentType,
           input: this.lessonComponentArray[0].input
@@ -120,6 +134,7 @@ export class LessonComponent implements AfterViewInit {
       }
 
     });
+
     if (this.lessonComponentArray.length == 0) {
       console.log("empty");
     }
