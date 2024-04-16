@@ -32,7 +32,7 @@ export class UserService {
       }),
       catchError((error: HttpErrorResponse) => {
         // Something went really wrong
-        if (this.router.url != '/landing') {
+        if ((this.router.url != '/landing') && (this.router.url != '/signup') && (this.router.url != '/signin')) {
           this.router.navigate(['/error']);
         }
         return throwError(() => error);
