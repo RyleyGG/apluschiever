@@ -35,6 +35,9 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
+  /**
+   * Boolean value keeps track of load state
+   */
   public loaded: boolean = false;
   /**
    * A listing of all available courses
@@ -48,7 +51,6 @@ export class DashboardComponent {
    * The courses displayed to the user in the dashboard. This may be filtered with button clicks. 
    */
   public displayedCourses: any[] = [];
-
 
   /**
    * Listing of the courses the user is enrolled in
@@ -85,10 +87,13 @@ export class DashboardComponent {
   public updatedLastName: string = "";
   public updatedEmail: string = "";
   public searchedCourses: any[] = [];
+
+  //Boolean values keep track of filter state
   ownedByMe: boolean = false;
   all: boolean = true;
   completed: boolean = false;
   inProgress: boolean = false;
+
   constructor(private courseService: CourseService, private userService: UserService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     // Get the courses the user is enrolled in...
     this.userService.getUserCourses().subscribe((data) => {
@@ -109,8 +114,6 @@ export class DashboardComponent {
         (this.userCourses.find(course => course.id == key) as any).progress = data[key];
       }
     });
-    
-
     // Get user information and the coureses the user owns...
     this.userService.getCurrentUser().subscribe((data) => {
       this.loggedInUser = data;
@@ -122,10 +125,11 @@ export class DashboardComponent {
         teacherData.forEach((element: Course) => {
           this.teachingCourses = [...this.teachingCourses, element];
         });
-        console.log("im teaching here");
-        console.log(this.teachingCourses);
       });
     });
+
+    //wait for data to load then set the display courses up
+    //while loading, displays progress spinner
     setTimeout(() => {
       this.allCourses.forEach((element: Course) => {
         if (!this.teachingCourses.some(course => course.id === element.id) && !this.userCourses.some(course => course.id === element.id)) {
@@ -140,7 +144,7 @@ export class DashboardComponent {
       this.displayedCourses = this.userCourses;
       this.searchedCourses = this.userCourses;
       this.displayAll();
-    }, 500);
+    }, 900);
 
   }
   addCourse(courseid: string) {
