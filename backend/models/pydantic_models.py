@@ -33,6 +33,7 @@ class UploadFile(Content, table=False):
 
 class Question(SQLModel, table=False):
     question_text: str
+    point_value: float
     options: List[str]
     answer: List[str]
 

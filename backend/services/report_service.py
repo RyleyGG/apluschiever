@@ -114,13 +114,14 @@ def parse_assessment_file(file: UploadFile) -> AssessmentFile:
     questions = []
     for index, row in assessment_matrix.iterrows():
         question_text = row['D']
+        question_val = row['C']
 
         options = [opt for opt in row[['F', 'G', 'H', 'I', 'J']] if pd.notna(opt)]
 
         correct_answer_indices = [int(ans.strip()) - 1 for ans in str(row['E']).split(',')]
         answer = [options[idx] for idx in correct_answer_indices if len(options) > idx >= 0]
 
-        question = Question(question_text=question_text, options=options, answer=answer)
+        question = Question(question_text=question_text, options=options, answer=answer, point_value=question_val)
         questions.append(question)
     assessment_file = AssessmentFile(name=file.name, questions=questions)
 
