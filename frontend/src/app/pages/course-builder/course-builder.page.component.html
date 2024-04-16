@@ -51,14 +51,14 @@
       gap: 0.5em;
       padding: 0.5em;
     ">
-      <p-toggleButton [(ngModel)]="enableEdits" onIcon="pi pi-lock-open" offIcon="pi pi-lock"
+      <p-toggleButton [(ngModel)]="enableEdits" [onIcon]="'pi pi-lock-open'" offIcon="pi pi-lock"
         [pTooltip]="enableEdits ? 'Disable Edits' : 'Enable Edits'" tooltipPosition="bottom" />
       <p-button styleClass="p-togglebutton" icon="pi pi-plus-circle" (onClick)="addLesson()" pTooltip="Add Lesson"
         tooltipPosition="bottom" />
-      <p-toggleButton [(ngModel)]="addConnection" (onChange)="edgeSourceNode = null;" onIcon="pi pi-share-alt"
+      <p-toggleButton [(ngModel)]="addConnection" (onChange)="edgeSourceNode = null;" [onIcon]="'pi pi-share-alt'"
         offIcon="pi pi-share-alt" [pTooltip]="addConnection ? 'Disable Adding Connection' : 'Enable Adding Connection'"
         tooltipPosition="bottom" />
-      <p-toggleButton [(ngModel)]="deleteElement" onIcon="pi pi-trash" offIcon="pi pi-trash"
+      <p-toggleButton [(ngModel)]="deleteElement" [onIcon]="'pi pi-trash'" offIcon="pi pi-trash"
         [pTooltip]="deleteElement ? 'Disable Deleting Element' : 'Enable Deleting Element'" tooltipPosition="bottom" />
     </div>
   </p-card>
