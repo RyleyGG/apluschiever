@@ -1,27 +1,45 @@
 <div class="page-content">
     <form [formGroup]="signinForm" (ngSubmit)="signin()">
-        <p-card [style]="{ width: '460px' }">
-            <div class="field">
-                <label class="font-bold" for="email_address">Email</label>
-                <input type="text" pInputText formControlName="email_address" class="w-full" name="email_address"
-                    placeholder="Enter your email..." />
-                <small *ngIf="email_address.invalid && (email_address.dirty || email_address.touched)"
-                    class="block p-error">
-                    <div *ngIf="email_address.errors?.['required']">An email is required.</div>
-                    <div *ngIf="email_address.errors?.['email']">Please enter a valid email</div>
-                </small>
+        <p-card [style]="{ width: '500px' }">
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <p style="font-size: 2rem; font-weight: 700; margin: 0;">Sign In</p>
             </div>
-            <div class="field">
-                <label for="password">Password</label>
-                <input type="password" pInputText formControlName="password" class="w-full" name="password"
-                    placeholder="Enter your password..." />
-                <small *ngIf="password.invalid && (password.dirty || password.touched)" class="block p-error">
-                    <div *ngIf="password.errors?.['required']">A password is required.</div>
-                </small>
+            <!--Email Input-->
+            <div style="display: flex; margin-top: 1.2em; gap: 1em; align-items: center;">
+                <span class="p-float-label" style="flex-grow: 1;">
+                    <input type="text" pInputText formControlName="email_address" class="w-full" name="email_address"
+                        [style]="{ width: '100%' }" />
+                    <label for="email_address">Email</label>
+                </span>
+                <div *ngIf="email_address.invalid && (email_address.dirty || email_address.touched)">
+                    <p-message *ngIf="email_address.errors?.['required']" severity="error"
+                        text="An email is required." />
+                    <p-message *ngIf="email_address.errors?.['email']" severity="error" text="Enter a valid email." />
+                </div>
+            </div>
+
+            <!--Password Input-->
+            <div style="display: flex; margin-top: 1.75em; gap: 1em; align-items: center;">
+                <span class="p-float-label" style="flex-grow: 1;">
+                    <input type="password" pInputText formControlName="password" class="w-full" name="password"
+                        [style]="{ width: '100%' }" />
+                    <label for="password">Password</label>
+                </span>
+                <div *ngIf="password.invalid && (password.dirty || password.touched)">
+                    <p-message *ngIf="email_address.errors?.['required']" severity="error"
+                        text="A password is required." />
+                </div>
             </div>
             <div *ngIf="errorMessage" class="error"> {{ errorMessage }}</div>
-            <p-button [rounded]="true" label="Sign-In" class="w-full" [disabled]="signinForm.invalid"
+            <p-button [rounded]="true" [style]="{'margin-top': '1em', 'width': '100%'}" label="Sign-In" class="w-full" [disabled]="signinForm.invalid"
                 type="submit"></p-button>
+            <footer>
+                <div>Don't have an account?</div> 
+                <div style="display: flex; flex-direction: row;">
+                    click 
+                    <div [routerLink]="['/signup']" style="cursor: pointer; margin-left: 5px; margin-right: 5px; text-decoration: none; color: var(--primary-color); font-weight: 800; font-size: large;">here</div>
+                    to sign-up instead.
+                </div></footer>
         </p-card>
     </form>
 </div>

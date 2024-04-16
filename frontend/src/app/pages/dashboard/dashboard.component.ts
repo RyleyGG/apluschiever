@@ -34,6 +34,7 @@ import { uid } from '../../core/utils/unique-id';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
+
   /**
    * A listing of all available courses (used for enrollment)
    */
@@ -43,6 +44,7 @@ export class DashboardComponent {
    * The courses displayed to the user in the dashboard. This may be filtered with button clicks. 
    */
   public displayedCourses: any[] = [];
+
 
   /**
    * Listing of the courses the user is enrolled in
@@ -56,6 +58,10 @@ export class DashboardComponent {
    * Listing of the courses the user is enrolled in and hasn't completed
    */
   public userInProgressCourses: any[] = [];
+  /**
+   * Listing of the courses the user is a teacher for
+   */
+  public teachingCourses: any[] = [];
 
   /**
    * Whether the enrollment sidebar should be shown or not
@@ -70,24 +76,29 @@ export class DashboardComponent {
    * Whether the edit profile dialog should be shown or not
    */
   public editProfileDialogVisible: boolean = false;
-
+  public searchValue: string = "";
   public updatedFirstName: string = "";
   public updatedLastName: string = "";
   public updatedEmail: string = "";
-
-
+  public searchedCourses: any[] = [];
+  ownedByMe: boolean = false;
+  all: boolean = true;
+  completed: boolean = false;
+  inProgress: boolean = false;
   constructor(private courseService: CourseService, private userService: UserService, private confirmationService: ConfirmationService, private messageService: MessageService) {
-    this.courseService.getCourses().subscribe((data) => {
-      this.allCourses = [];
-      data.forEach((element: Course) => {
-        this.allCourses = [...this.allCourses, element];
-      });
-    });
-
+    // Get the courses the user is enrolled in...
     this.userService.getUserCourses().subscribe((data) => {
       this.userCourses = [];
       data.forEach((element: Course) => {
         this.userCourses = [...this.userCourses, element];
+      });
+      this.courseService.getCourses().subscribe((data) => {
+        this.allCourses = [];
+        data.forEach((element: Course) => {
+          if (!this.userCourses.some(course => course.id === element.id)) {
+            this.allCourses = [...this.allCourses, element];
+          }
+        });
       });
 
       // Get the course progresses
@@ -97,18 +108,37 @@ export class DashboardComponent {
         }
       });
       // Create the secondary arrays
-      this.userCompletedCourses = this.userCourses.filter((course) => course.progress == 100);
-      this.userInProgressCourses = this.userCourses.filter((course) => course.progress != 100);
+      this.userCompletedCourses = this.userCourses.filter((course) => course.progress! === 100);
+      this.userInProgressCourses = this.userCourses.filter((course) => course.progress! !== 100);
 
       this.displayedCourses = this.userCourses;
+      this.searchedCourses = this.userCourses;
     });
 
+    // Get user information and the coureses the user owns...
     this.userService.getCurrentUser().subscribe((data) => {
       this.loggedInUser = data;
 
       this.updatedFirstName = this.loggedInUser?.first_name || "";
       this.updatedLastName = this.loggedInUser?.last_name || "";
       this.updatedEmail = this.loggedInUser?.email_address || "";
+
+      this.courseService.getCourses({ owned_by: [this.loggedInUser!.id] }).subscribe((data) => {
+        this.teachingCourses = [];
+        data.forEach((course) => {
+          this.teachingCourses.push(course);
+        });
+        this.teachingCourses = [...this.teachingCourses];
+      });
+
+      // Only allow a user to enroll in a course that they do not teach...
+      this.courseService.getCourses({ is_published: true }).subscribe((data) => {
+        this.allCourses = [];
+        data.forEach((element: Course) => {
+          if (element.course_owner_id === this.loggedInUser!.id) { return; }
+          this.allCourses = [...this.allCourses, element];
+        });
+      });
     });
   }
 
@@ -117,7 +147,43 @@ export class DashboardComponent {
       window.location.reload();
     });
   }
-
+  search(value: string) {
+    this.searchedCourses = this.displayedCourses.filter(course =>
+      course.title.toLowerCase().includes(value.toLowerCase())
+    );
+  }
+  displayAll() {
+    this.displayedCourses = this.userCourses;
+    this.search(this.searchValue);
+    this.all = true;
+    this.inProgress = false;
+    this.completed = false;
+    this.ownedByMe = false;
+  }
+  displayInProgress() {
+    this.displayedCourses = this.userInProgressCourses;
+    this.search(this.searchValue);
+    this.all = false;
+    this.inProgress = true;
+    this.completed = false;
+    this.ownedByMe = false;
+  }
+  displayComplete() {
+    this.displayedCourses = this.userCompletedCourses;
+    this.search(this.searchValue);
+    this.all = false;
+    this.inProgress = false;
+    this.completed = true;
+    this.ownedByMe = false;
+  }
+  displayOwned() {
+    this.displayedCourses = this.teachingCourses;
+    this.search(this.searchValue);
+    this.all = false;
+    this.inProgress = false;
+    this.completed = false;
+    this.ownedByMe = true;
+  }
   /**
    * Controls the confirmation pop-up when unenrolling from a course
    * @param courseid the course id to unenroll from.

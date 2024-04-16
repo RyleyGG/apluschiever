@@ -1,0 +1,10 @@
+<div *ngIf="displayError()">
+    <app-error></app-error>
+</div>
+<div class="file" *ngIf="!displayError()">
+    <iframe [src]="getURL()" width="100%" height="100%" frameborder="0"></iframe>
+    <div class="loading" *ngIf="!loaded">
+        <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="6" animationDuration=".7s"></p-progressSpinner>
+    </div>
+</div>
+

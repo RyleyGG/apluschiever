@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { AppComponent } from './app.component';
-import { signedInGuard, signedOutGuard } from './auth/oauth2.guard';
+import { courseOwnerOnlyGuard, signedInGuard, signedOutGuard, teacherOnlyGuard } from './auth/oauth2.guard';
 
 import { SignInPageComponent } from './pages/signin/signin.page.component';
 import { LandingPageComponent } from './pages/landing/landing.page.component';
@@ -10,8 +10,10 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { CourseViewPageComponent } from './pages/course-view/course-view.page.component';
 import { LessonComponent } from './pages/lesson/lesson.component';
 import { CourseBuilderPageComponent } from './pages/course-builder/course-builder.page.component';
-
+import { ErrorComponent } from './components/error/error.component';
 export const routes: Routes = [
+    // Routes for error
+    { path: "error", component: ErrorComponent},
     // Routes for authentication
     { path: "signup", component: SignUpPageComponent, canActivate: [signedOutGuard] },
     { path: "signin", component: SignInPageComponent, canActivate: [signedOutGuard] },
@@ -23,11 +25,11 @@ export const routes: Routes = [
     { path: "lesson/:id", component: LessonComponent, canActivate: [signedInGuard] },
 
     // Routes for creating content
-    { path: "builder", component: CourseBuilderPageComponent },
-    { path: "builder/:id", component: CourseBuilderPageComponent },
+    { path: "builder", component: CourseBuilderPageComponent, canActivate: [teacherOnlyGuard] },
+    { path: "builder/:id", component: CourseBuilderPageComponent, canActivate: [courseOwnerOnlyGuard] },
 
     // General
     { path: "landing", component: LandingPageComponent },
     { path: '', redirectTo: '/landing', pathMatch: 'full' },
-    { path: '**', component: AppComponent } // TODO: make this a PageNotFound or 404 error page
+    { path: '**', component: ErrorComponent } // TODO: make this a PageNotFound or 404 error page
 ];

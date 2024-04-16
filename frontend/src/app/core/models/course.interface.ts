@@ -17,7 +17,7 @@ export interface Course {
 
 export interface CourseFilters {
   ids?: string[];
-  owned_by?: string;
+  owned_by?: string[];
   course_title?: string;
   is_published?: boolean;
 }

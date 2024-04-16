@@ -1,50 +1,50 @@
-import {Component, ElementRef, HostListener, ViewChild, resolveForwardRef} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {DialogModule} from 'primeng/dialog';
-import {AvatarModule} from 'primeng/avatar';
-import {ButtonModule} from 'primeng/button';
-import {SidebarModule} from 'primeng/sidebar';
-import {TooltipModule} from 'primeng/tooltip';
-import {SpeedDialModule} from 'primeng/speeddial';
-import {MultiSelectModule} from 'primeng/multiselect';
-import {ColorPickerModule} from 'primeng/colorpicker';
-import {BlockUIModule} from 'primeng/blockui';
-import {AutoCompleteModule} from 'primeng/autocomplete';
-import {InputSwitchModule} from 'primeng/inputswitch';
-import {TagModule} from 'primeng/tag';
-import {DividerModule} from 'primeng/divider';
-import {ContextMenuModule} from 'primeng/contextmenu';
-import {SelectButtonModule} from 'primeng/selectbutton';
-import {CardModule} from 'primeng/card';
-import {ToggleButtonModule} from 'primeng/togglebutton';
-import {ChipsModule} from 'primeng/chips';
-import {FileUpload, FileUploadModule} from 'primeng/fileupload';
-import {EditorModule} from 'primeng/editor';
+import { Component, ElementRef, HostListener, ViewChild, resolveForwardRef, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
+import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
+import { SidebarModule } from 'primeng/sidebar';
+import { TooltipModule } from 'primeng/tooltip';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ColorPickerModule } from 'primeng/colorpicker';
+import { BlockUIModule } from 'primeng/blockui';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { TagModule } from 'primeng/tag';
+import { DividerModule } from 'primeng/divider';
+import { ContextMenuModule } from 'primeng/contextmenu';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { CardModule } from 'primeng/card';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { ChipsModule } from 'primeng/chips';
+import { FileUpload, FileUploadModule } from 'primeng/fileupload';
+import { EditorModule } from 'primeng/editor';
 
-import {MessagesModule} from 'primeng/messages';
-import {MessageModule} from 'primeng/message';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
 
-import {ActivatedRoute} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
-import {FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
-import {GraphComponent} from '../../graph/graph.component';
-import {Node, Edge, Cluster, NodeOverview} from '../../graph/graph.interface';
-import {CourseService} from '../../core/services/course/course.service';
-import {InputTextModule} from 'primeng/inputtext';
-import {InputTextareaModule} from 'primeng/inputtextarea';
+import { GraphComponent } from '../../graph/graph.component';
+import { Node, Edge, Cluster, NodeOverview } from '../../graph/graph.interface';
+import { CourseService } from '../../core/services/course/course.service';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
-import {PanelModule} from 'primeng/panel';
-import {DagreSettings, Orientation} from '../../graph/layouts/dagreCluster';
-import {uid} from '../../core/utils/unique-id';
-import {HistoryService} from '../../core/services/history/history.service';
-import {Course, CourseFilters, CreateCourse, CreateCourseResponse} from "../../core/models/course.interface";
-import {User} from "../../core/models/user.interface";
-import {UserService} from "../../core/services/user/user.service";
-import {Message} from 'primeng/api';
-import {BlockableDiv} from '../../core/components/blockable-div/blockable-div.component';
-import {UploadFile} from '../../core/models/node-content.interface';
-import {readBlobAsBase64} from '../../core/utils/blob-to-b64';
+import { PanelModule } from 'primeng/panel';
+import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
+import { uid } from '../../core/utils/unique-id';
+import { HistoryService } from '../../core/services/history/history.service';
+import { Course, CourseFilters, CreateCourse, CreateCourseResponse } from "../../core/models/course.interface";
+import { User } from "../../core/models/user.interface";
+import { UserService } from "../../core/services/user/user.service";
+import { Message } from 'primeng/api';
+import { BlockableDiv } from '../../core/components/blockable-div/blockable-div.component';
+import { UploadFile } from '../../core/models/node-content.interface';
+import { readBlobAsBase64 } from '../../core/utils/blob-to-b64';
 
 /**
  * The course view page component
@@ -58,7 +58,7 @@ import {readBlobAsBase64} from '../../core/utils/blob-to-b64';
   templateUrl: './course-builder.page.component.html',
   styleUrl: './course-builder.page.component.css'
 })
-export class CourseBuilderPageComponent {
+export class CourseBuilderPageComponent implements OnInit {
   /**
    * A reference to the graph component
    */
@@ -123,6 +123,7 @@ export class CourseBuilderPageComponent {
    * A variable used to store the source node for the newly made connections
    */
   edgeSourceNode: Node | null = null;
+  newNode!: Node;
 
   selectedName: string = "";
   selectedAvatarUrl: string = "https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png";
@@ -138,6 +139,7 @@ export class CourseBuilderPageComponent {
 
 
   courseName: string = "Course Name";
+  courseDescription: string = "";
 
   msgs: Message[] = [];
 
@@ -164,6 +166,7 @@ export class CourseBuilderPageComponent {
 
     this.courseService.getCourse(this.courseid).subscribe((data) => {
       this.courseName = data.course.title;
+      this.courseDescription = data.course.short_description || "";
       this.constructGraphViewFromDatabase(data);
 
       // For some reason this needs to be 1 millisecond delayed at minimum for the zoom and center to apply. Probably for the CSS to update/apply
@@ -196,7 +199,7 @@ export class CourseBuilderPageComponent {
         });
 
         // some way to alert the user that there is a cycle
-        this.addMessage({severity: 'error', summary: 'Error', detail: 'There is an cycle in the course structure.'});
+        this.addMessage({ severity: 'error', summary: 'Error', detail: 'There is a cycle in the course structure.' });
         return;
       }
     }
@@ -222,9 +225,9 @@ export class CourseBuilderPageComponent {
             newFileUploads.push(file);
             return new Promise((resolve, reject) => resolve(""));
           }
-          const b64data = await readBlobAsBase64(new Blob([file], {type: file.type}));
+          const b64data = await readBlobAsBase64(new Blob([file], { type: file.type }));
           newFileUploads.push({
-            ...(file.id ? {id: file.id} : {}),
+            ...(file.id ? { id: file.id } : {}),
             name: file.name,
             size: file.size,
             type: file.type,
@@ -241,9 +244,9 @@ export class CourseBuilderPageComponent {
           assessmentFiles.push(file);
           return new Promise((resolve, reject) => resolve(""));
         }
-        const b64data = await readBlobAsBase64(new Blob([file], {type: file.type}));
+        const b64data = await readBlobAsBase64(new Blob([file], { type: file.type }));
         assessmentFiles.push({
-          ...(file.id ? {id: file.id} : {}),
+          ...(file.id ? { id: file.id } : {}),
           name: file.name,
           size: file.size,
           type: file.type,
@@ -257,8 +260,9 @@ export class CourseBuilderPageComponent {
 
     // Create the object to be sent to the database
     const courseObj: CreateCourse = {
-      ...(this.courseid ? {id: this.courseid} : {}),
+      ...(this.courseid ? { id: this.courseid } : {}),
       title: this.courseName,
+      short_description: this.courseDescription,
 
       course_owner_id: this.courseOwner!.id,
       is_published: and_publish,
@@ -271,7 +275,7 @@ export class CourseBuilderPageComponent {
       // Use the still existing node id to identify source and target properly to setup the array for the backend...
       const sourceIndex = courseObj.nodes.findIndex((node: Node) => edge.source === node.id!);
       const targetIndex = courseObj.nodes.findIndex((node: Node) => edge.target === node.id!);
-      courseObj.edges.push({source: sourceIndex, target: targetIndex});
+      courseObj.edges.push({ source: sourceIndex, target: targetIndex });
     });
 
     // Now delete the bad ids generated by the frontend.
@@ -284,10 +288,16 @@ export class CourseBuilderPageComponent {
     this.courseService.addOrUpdateCourse(courseObj).subscribe((res: CreateCourseResponse) => {
       this.courseid = res.course.id;
       this.constructGraphViewFromDatabase(res);
-      this.addMessage({severity: 'success', summary: 'Success', detail: 'Course saved successfully.'});
+      this.addMessage({ severity: 'success', summary: 'Success', detail: 'Course saved successfully.' });
     });
   }
 
+  ngOnInit() {
+    setInterval(() => {
+      //if (this.enableEdits) 
+      //this.save(false);
+    }, 5000);
+  }
   /**
    * Function called when undo button is pressed. Updates the state to the previous state.
    */
@@ -319,18 +329,23 @@ export class CourseBuilderPageComponent {
    * This function fires when the user clicks the button to add a new lesson node.
    */
   public addLesson = (): void => {
-    if (!this.enableEdits) {
-      return;
-    }
+    if (!this.enableEdits) { return; }
+    this.nodes.forEach((node: any) => {
+      this.setNodeColor([node.node_id], "var(--text-color)");
+    })
+    this.updateNodeData();
 
-    const newNode = {
+    this.newNode = {
       id: uid(),
-      title: "Default Title",
+      title: "",
       tags: [],
-      color: "var(--text-color)"
+      color: "var(--primary-color)",
+      short_description: "",
+      rich_text_files: [],
+      uploaded_files: [],
+      third_party_resources: []
     };
-    this.nodes = [...this.nodes, newNode];
-
+    this.nodes = [...this.nodes, this.newNode];
     // update the history
     this.historyService.saveCurrentState({
       nodes: this.nodes,
@@ -338,10 +353,18 @@ export class CourseBuilderPageComponent {
       clusters: this.clusters
     });
 
-    this.selectedNode = newNode;
-    this.selectedName = newNode.title || "";
-    this.selectedTags = newNode.tags;
-    this.graphComponent.panToNodeId(newNode.id);
+    setTimeout(() => {
+      this.selectedNode = this.newNode;
+      this.selectedName = this.newNode.title || "";
+      this.selectedTags = this.newNode.tags || ["math"];
+      this.selectedDescription = this.newNode.short_description || "";
+      this.uploadedFiles = [];
+      this.urls = [];
+      this.editorText = "";
+      this.assessmentFile = [];
+      this.graphComponent.panToNodeId(this.newNode.id!);
+    }, 10);
+
     this.dialogVisible = true;
   }
 
@@ -394,13 +417,16 @@ export class CourseBuilderPageComponent {
 
       return;
     }
-
     // Save and swap out the node info...
     this.updateNodeData();
     this.selectedNode = node;
-    this.selectedName = node.title || "";
-    this.selectedDescription = node.short_description || "";
-    this.selectedTags = node.tags || [];
+    this.selectedName = node.title!;
+    this.selectedDescription = node.short_description!;
+    this.selectedTags = node.tags!;
+    this.nodes.forEach((node: any) => {
+      this.setNodeColor([node.node_id], "var(--text-color)");
+    })
+
     this.editorText = node.rich_text_files && node.rich_text_files?.length > 0 ? node.rich_text_files[0].content : "";
     this.uploadedFiles = node.uploaded_files && node.uploaded_files ? node.uploaded_files : [];
     this.assessmentFile = node.assessment_file && node.assessment_file.length > 0 ? node.assessment_file : [];
@@ -495,16 +521,14 @@ export class CourseBuilderPageComponent {
    * Saves the current selectedNode data if that is set. Used to allow for menu transitions without issues when updating content between nodes.
    */
   updateNodeData = (): void => {
-    if (!this.selectedNode) {
-      return;
-    }
-    this.selectedNode.title = this.selectedName || "";
-    this.selectedNode.short_description = this.selectedDescription || "";
-    this.selectedNode.tags = this.selectedTags || [];
-    this.selectedNode.rich_text_files = [{content: this.editorText}] || [""];
+    if (!this.selectedNode) { return; }
+    this.selectedNode.title = this.selectedName;
+    this.selectedNode.short_description = this.selectedDescription;
+    this.selectedNode.tags = this.selectedTags;
+    this.selectedNode.rich_text_files = [{ content: this.editorText }] || [""];
     this.selectedNode.uploaded_files = this.uploadedFiles || [];
     this.selectedNode.third_party_resources = this.urls.map((url) => {
-      return {embed_link: url, resource_source: ''}
+      return { embed_link: url, resource_source: '' }
     });
     this.selectedNode.assessment_file = this.assessmentFile || [];
     const index = this.nodes.findIndex(node => node.id === this.selectedNode.id);
@@ -544,7 +568,7 @@ export class CourseBuilderPageComponent {
         return node;
       }
       if (nodeIds.includes(node.id)) {
-        return {...node, color: color};
+        return { ...node, color: color };
       }
       return node;
     });
@@ -563,7 +587,7 @@ export class CourseBuilderPageComponent {
         return edge;
       }
       if (edgeIds.includes(edge.id)) {
-        return {...edge, color: color};
+        return { ...edge, color: color };
       }
       return edge;
     });
@@ -606,7 +630,7 @@ export class CourseBuilderPageComponent {
               const lastEdge = this.edges.find((e: Edge) => (e.source === cycleNodes[cycleNodes.length - 1] && e.target === cycleNodes[0]) || (e.source === cycleNodes[0] && e.target === cycleNodes[cycleNodes.length - 1]));
               if (lastEdge) {
                 cycleEdges.push(lastEdge.id!);
-                cycles.push({node_ids: cycleNodes, edge_ids: cycleEdges});
+                cycles.push({ node_ids: cycleNodes, edge_ids: cycleEdges });
               }
             }
           }
@@ -636,17 +660,17 @@ export class CourseBuilderPageComponent {
     // Push in the short cycles that were found.
     shortCycleEdges.forEach((e: Edge) => {
       if (e.source === e.target) {
-        cycles.push({node_ids: [e.source], edge_ids: [e.id!]});
+        cycles.push({ node_ids: [e.source], edge_ids: [e.id!] });
       } else {
         const match = this.edges.filter((e2: Edge) => {
           e2.source === e.target && e2.target === e.source
         }).map((e2: Edge) => e2.id!);
 
-        cycles.push({node_ids: [e.source, e.target], edge_ids: [e.id!, ...match]});
+        cycles.push({ node_ids: [e.source, e.target], edge_ids: [e.id!, ...match] });
       }
     });
 
-    return {hasCycle: cycles.length > 0, cycles};
+    return { hasCycle: cycles.length > 0, cycles };
   }
 
   /**

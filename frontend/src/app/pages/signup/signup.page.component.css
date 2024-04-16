@@ -1,6 +1,15 @@
+footer {
+  margin-top: 20px;
+  font-size: large;
+  opacity: 0.7;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 .page-content {
   width: 100%;
-  min-height: 100%;
+  min-height: 90%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -9,48 +18,26 @@
   position: relative;
 }
 
-.p-card {
+p-card {
   width: 560px;
   align-items: center;
   justify-content: center;
 }
 
 .field {
-    display: grid;
-    gap: 1rem;
-    font-size: large;
-  }
-  label {
-    margin-bottom: -8px;
-  }
-  small {
-    margin-top: -28px;
-  }
-  input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 16px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  .field input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  .navbarTitle {
-    position: fixed; 
-    top: 0;
-    margin-top: 24px;
-    left: 44%; 
-    z-index: 9999;
-    font-weight: 500;
-    font-size: 2.225rem;
-    color:white;
+  display: grid;
+  gap: 1rem;
+  font-size: large;
 }
+
+label {
+  margin-bottom: -8px;
+}
+
+small {
+  margin-top: -28px;
+}
+
 .error {
   color: red;
   font-weight: 500;

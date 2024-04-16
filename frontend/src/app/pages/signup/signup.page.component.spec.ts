@@ -3,6 +3,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { SignUpPageComponent } from './signup.page.component';
+import { routes } from '../../app.routes';
+import { provideRouter } from '@angular/router';
 
 describe('SignUpPageComponent', () => {
     let component: SignUpPageComponent;
@@ -12,7 +14,8 @@ describe('SignUpPageComponent', () => {
             imports: [SignUpPageComponent],
             providers: [
                 provideHttpClient(),
-                provideHttpClientTesting()
+                provideHttpClientTesting(),
+                provideRouter(routes)
             ]
         }).compileComponents();
         component = TestBed.createComponent(SignUpPageComponent).componentInstance;

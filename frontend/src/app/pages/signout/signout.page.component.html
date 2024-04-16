@@ -1,5 +1,16 @@
 <div class="page-content">
-    <p-card [style]="{ width: '460px' }" header="Hope to see you again!">
-        <p-button [rounded]="true" label="Sign Out" (click)="signout()"></p-button>
+    <p-card>
+        <ng-template pTemplate="header">
+            <img alt="Card" height="300px" src="../../assets/goodbye.gif" />
+        </ng-template>
+        <h2 style="margin-bottom: 10px;">Hope to see you again soon!</h2>
+        <p-button [style]="{'width': '100%'}" [rounded]="true" label="Sign Out" (click)="signout()"></p-button>
+        <footer>
+            <div>If this was a mistake,</div> 
+            <div style="display: flex; flex-direction: row;">
+                click 
+                <div [routerLink]="['/dashboard']" style="cursor: pointer; margin-left: 5px; margin-right: 5px; text-decoration: none; color: var(--primary-color); font-weight: 800; font-size: large;">here</div>
+               to return to the home page.
+            </div></footer>
     </p-card>
 </div>

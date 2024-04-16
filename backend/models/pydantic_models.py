@@ -45,4 +45,4 @@ class AssessmentFile(SQLModel, table=False):
 
 class ThirdPartyResource(Content, table=False):
     embed_link: str
-    resource_source: SupportedThirdParties
+    #resource_source: SupportedThirdParties

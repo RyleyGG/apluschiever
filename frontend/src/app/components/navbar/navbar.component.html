@@ -1,42 +1,51 @@
-<div class="flex-container">
-    <h1 [routerLink]="['/dashboard']">A+chiever</h1>
-    <!--User Menu Overlay Panel-->
-    <p-toolbar>
-        <p-button *ngIf="loggedIn" label="Dashboard" [link]="true" [routerLink]="['/dashboard']"
-            [style]="{ 'color': 'var(--primary-color-text)', 'font-weight': '700' }" />
-        <p-button icon="pi pi-user" [rounded]="true" [raised]="true" (click)="op.toggle($event)" />
-        <p-overlayPanel #op [style]="{ 'min-width': '22rem' }">
-            <!--A section for the user information-->
-            <div *ngIf="loggedIn" style="display: flex; gap: 1em; align-items: center;">
-                <!--AN ICON HERE-->
-                <i class="pi pi-user" style="font-size: 2rem; color: var(--primary-color)"></i>
+<div style="display: flex; flex-direction: column; width: 100%">
+    <div class="flex-container">
+        <div style="display: flex; flex-direction: row;" [routerLink]="['/dashboard']">
+            <h1>A</h1>
+            <div class="styled">+</div>
+            <h1>chiever</h1>
+        </div>
+        <!--User Menu Overlay Panel-->
+        <p-toolbar>
+            <p-button [rounded]="true"
+                [style]="{'margin-right':'20px', 'background-color': 'transparent', 'border-color': 'transparent'}"
+                *ngIf="!loggedIn" label="Sign-Up" icon='pi pi-user' [routerLink]="['/signup']" />
+            <p-button [rounded]="true" [style]="{'background-color': 'transparent', 'border-color': 'transparent'}"
+                *ngIf="!loggedIn" label="Sign-In" icon='pi pi-sign-in' [routerLink]="['/signin']" />
+            <p-button [rounded]="true"
+                [style]="{'background-color': 'transparent', 'border-color': 'transparent'}"
+                *ngIf="loggedIn" icon="pi pi-home" [routerLink]="['/dashboard']" />
+            <p-button
+                [style]="{'margin-left': '5px', 'background-color': 'transparent', 'border-color': 'transparent'}"
+                *ngIf="loggedIn" icon="pi pi-user" [rounded]="true" (click)="op.toggle($event)" />
+            <p-overlayPanel #op [style]="{ 'min-width': '22rem' }">
+                <!--A section for the user information-->
+                <div *ngIf="loggedIn" style="display: flex; gap: 1em; align-items: center;">
+                    <!--AN ICON HERE-->
+                    <i class="pi pi-user" style="font-size: 2rem; color: var(--primary-color)"></i>
 
-                <div style="display: flex; flex-direction: column;">
-                    <p style="margin: 0; font-weight: 700; font-size: 1em;">
-                        {{loggedInUser?.first_name + ' ' + loggedInUser?.last_name}}
-                    </p>
-                    <p style="margin: 0; font-size: 1em;">
-                        {{loggedInUser?.email_address}}
-                    </p>
+                    <div style="display: flex; flex-direction: column;">
+                        <p style="margin: 0; font-weight: 700; font-size: 1em;">
+                            {{loggedInUser?.first_name + ' ' + loggedInUser?.last_name}}
+                        </p>
+                        <p style="margin: 0; font-size: 1em;">
+                            {{loggedInUser?.email_address}}
+                        </p>
+                    </div>
                 </div>
-            </div>
 
-            <p-divider *ngIf="loggedIn" />
-
-            <!--A section for light dark mode toggle, maybe in the future a language select goes here-->
-            <p-button [rounded]="true" [outlined]="true" label="Light" icon='pi pi-bolt' (click)="swapTheme()"
-                onLabel="Dark" offLabel="Light" />
-
-            <p-divider />
-            <!--A section for the register, login and logout buttons-->
-            <div style="display: flex; justify-content: space-between; gap: 1em;">
-                <p-button [rounded]="true" [outlined]="true" *ngIf="!loggedIn" label="Sign-Up" icon='pi pi-user'
-                    [routerLink]="['/signup']" />
-                <p-button [rounded]="true" [outlined]="true" *ngIf="!loggedIn" label="Sign-In" icon='pi pi-sign-in'
-                    [routerLink]="['/signin']" />
-                <p-button [rounded]="true" [outlined]="true" *ngIf="loggedIn" label="Sign-Out" icon='pi pi-sign-out'
-                    [routerLink]="['/signout']" />
-            </div>
-        </p-overlayPanel>
-    </p-toolbar>
+                <p-divider *ngIf="loggedIn" />
+                <!--A section for the register, login and logout buttons-->
+                <div style="display: flex; justify-content: space-between; gap: 1em; margin-top: 10px;">
+                    <p-button [rounded]="true" [outlined]="true" [label]="isDarkMode ? 'Dark' : 'Light'"
+                        [icon]="isDarkMode ? 'pi pi-moon' : 'pi pi-sun'" (click)="swapTheme()" />
+                    <p-button [rounded]="true" [outlined]="true" *ngIf="loggedIn" label="Sign-Out" icon='pi pi-sign-out'
+                        [routerLink]="['/signout']" />
+                </div>
+            </p-overlayPanel>
+        </p-toolbar>
+    </div>
+    <p-message *ngIf="!internetConnection.isOnline()" severity="warn"
+        text="You are not connected to the internet. Many of A+chiever's features will not work as intended."
+        [style]="{ width: '100%', display: 'flex', 'justify-content': 'flex-start' }" />
 </div>
