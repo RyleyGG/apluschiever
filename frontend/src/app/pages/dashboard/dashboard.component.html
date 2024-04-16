@@ -16,25 +16,25 @@
         <div
             style="display: flex; flex-wrap: wrap; gap: 1.5em; align-items: center; justify-content: start; overflow-x: visible; margin-bottom: 1em;">
             <p style="font-size: 2rem; font-weight: 700; margin: 0;">My Courses</p>
-            <input pInputText class="inputText" type="text" [(ngModel)]="searchValue" (input)="search(searchValue)" placeholder="Search">
-            <p-button type="button" [rounded]="true" [outlined]="displayedCourses != userCourses" label="All"
-                (click)="displayedCourses = userCourses" />
-            <p-button type="button" [rounded]="true" [outlined]="displayedCourses != userInProgressCourses"
-                label="In Progress" (click)="displayedCourses = userInProgressCourses" />
-            <p-button type="button" [rounded]="true" [outlined]="displayedCourses != userCompletedCourses"
-                label="Completed" (click)="displayedCourses = userCompletedCourses" />
+            <input pInputText class="inputText" type="text" [(ngModel)]="searchValue" (keydown)="search(searchValue)" (ngModelChange)="search(searchValue)" placeholder="Search">
+            <p-button type="button" [rounded]="true" [outlined]="!all" label="All"
+                (click)="displayAll()" />
+            <p-button type="button" [rounded]="true" [outlined]="!inProgress"
+                label="In Progress" (click)="displayInProgress()" />
+            <p-button type="button" [rounded]="true" [outlined]="!completed"
+                label="Completed" (click)="displayComplete()" />
             <p-button type="button" label="Owned By Me" [rounded]="true"
-                [outlined]="displayedCourses != teachingCourses" (click)="displayedCourses = teachingCourses"
+                [outlined]="!ownedByMe" (click)="displayOwned()"
                 *ngIf="loggedInUser?.user_type === 'Teacher'" />
         </div>
 
         <p-confirmDialog></p-confirmDialog>
 
         <div class="grid my-courses-container"
-            style="height: 600px; padding: 1em 2em 1.3em 1em; grid-auto-flow: row; overflow-x: visible;"
-            *ngIf="displayedCourses.length; else noCourses">
+            style="height: 540px; padding: 1em 2em 1.3em 1em; grid-auto-flow: row; overflow-x: visible;"
+            *ngIf="searchedCourses.length; else noCourses">
             <!--Template for the enrolled course-->
-            <ng-template ngFor [ngForOf]="displayedCourses" let-course>
+            <ng-template ngFor [ngForOf]="searchedCourses" let-course>
                 <p-card [header]="course.title">
                     <ng-template pTemplate="header">
                         <!--
