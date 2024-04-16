@@ -1,25 +1,15 @@
 <div style="display: grid; grid-template-columns: 60% 40%; gap: 1.5em; padding: 1.5em; overflow-x: visible;">
     <section style="grid-column: 1 / 2;">
-        <p style="font-size: 2rem; font-weight: 700; margin: 0;">Dashboard</p>
+        <h1>Dashboard</h1>
     </section>
 
     <section style="grid-column: 1;">
-        <p-card>
-            <p style="margin: 0; padding: 0; font-weight: 700; font-size: 1.75rem;">Begin a new course today!</p>
-            <ng-template pTemplate="footer">
-                <div style="display: flex; gap: 1em;">
-                    <p-button type="button" [rounded]="true" label="Enroll in a new course"
-                        (click)="sidebarVisible=true;" />
-
-                    <p-button *ngIf="loggedInUser?.user_type === 'Teacher'" type="button" [rounded]="true"
-                        label="Create a new course" [routerLink]="['/builder']" />
-                </div>
-            </ng-template>
-        </p-card>
-        <!--
-            Make this section a banner for enrolling in a new course...
-            Clicking might have a side menu pop-up or something?
-        -->
+        <div style="display: flex; gap: 1em; margin-left: 15px;">
+            <p-button type="button" [rounded]="true" label="Enroll in a new course"
+                (click)="sidebarVisible=true;" />
+            <p-button *ngIf="loggedInUser?.user_type === 'Teacher'" type="button" [rounded]="true"
+                label="Create a new course" [routerLink]="['/builder']" />
+        </div>
     </section>
 
     <section style="grid-column: 1; overflow-x: visible;">
@@ -37,12 +27,8 @@
         <p-confirmDialog></p-confirmDialog>
 
         <div class="grid my-courses-container"
-            style="height: 500px; padding: 1em 2em 1em 1em; grid-auto-flow: row; overflow-x: visible;"
+            style="height: 618px; padding: 1em 2em 1.3em 1em; grid-auto-flow: row; overflow-x: visible;"
             *ngIf="displayedCourses.length; else noCourses">
-            <div class="add" (click)="sidebarVisible=true;">
-                <i class="pi pi-plus" style="font-size: 3rem; font-weight: 1000; color: rgb(189, 224, 234)"></i>
-                <h2>Add Course</h2>
-            </div>
             <ng-template ngFor [ngForOf]="displayedCourses" let-course>
                 <p-card [header]="course.title">
                     <ng-template pTemplate="header">
@@ -53,12 +39,15 @@
                         -->
                         <img alt="Card" src="https://primefaces.org/cdn/primeng/images/usercard.png" />
                     </ng-template>
-                    <p style="margin-top: -15px; width: 100%;
+                    <p style="margin-top: -15px; display: -webkit-box;
+                    -webkit-line-clamp: 4;
+                    -webkit-box-orient: vertical;
                     overflow: hidden;
-                    text-overflow: ellipsis;">
+                    text-overflow: ellipsis;
+                    max-height: 4.76em;">
                         {{course.short_description}}
                     </p>
-                    <p-progressBar [value]="course.progress" [style]="{ height: '0.5em'}">
+                    <p-progressBar [value]="course.progress" [style]="{ height: '0.5em', 'margin-bottom': '-15px'}">
                         <ng-template pTemplate="content" let-value></ng-template>
                     </p-progressBar>
                     <ng-template pTemplate="footer">
