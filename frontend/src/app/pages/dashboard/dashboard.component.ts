@@ -109,12 +109,6 @@ export class DashboardComponent {
         (this.userCourses.find(course => course.id == key) as any).progress = data[key];
       }
     });
-      // Create the secondary arrays
-      this.userCompletedCourses = this.userCourses.filter((course) => course.progress! === 100);
-      this.userInProgressCourses = this.userCourses.filter((course) => course.progress! !== 100);
-
-      this.displayedCourses = this.userCourses;
-      this.searchedCourses = this.userCourses;
     
 
     // Get user information and the coureses the user owns...
@@ -139,6 +133,12 @@ export class DashboardComponent {
         }
       })
       this.loaded = true;
+      // Create the secondary arrays
+      this.userCompletedCourses = this.userCourses.filter((course) => course.progress! === 100);
+      this.userInProgressCourses = this.userCourses.filter((course) => course.progress! !== 100);
+
+      this.displayedCourses = this.userCourses;
+      this.searchedCourses = this.userCourses;
       this.displayAll();
     }, 500);
 
