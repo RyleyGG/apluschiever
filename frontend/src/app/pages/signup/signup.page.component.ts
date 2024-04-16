@@ -18,6 +18,7 @@ import { SignUpInfo } from '../../core/models/auth.interface';
 import { Router } from '@angular/router';
 import { SignInInfo } from '../../core/models/auth.interface';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+
 /**
  * The signup page component
  * 
@@ -26,7 +27,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 @Component({
     selector: 'signup-page',
     standalone: true,
-    imports: [CommonModule, RouterLink, ReactiveFormsModule, CardModule, ButtonModule, FormsModule, PasswordModule, CheckboxModule],
+    imports: [CommonModule, MessageModule, ToggleButtonModule, InputTextModule, MessagesModule, RouterLink, ReactiveFormsModule, CardModule, ButtonModule, FormsModule, PasswordModule, CheckboxModule],
     templateUrl: './signup.page.component.html',
     styleUrl: './signup.page.component.css'
 })

@@ -1,11 +1,3 @@
-.page-content {
-  width: 100%;
-  min-height: 90%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-}
 footer {
   margin-top: 20px;
   font-size: large;
@@ -15,13 +7,21 @@ footer {
   justify-content: center;
   align-items: center;
 }
-p-card {
+.page-content {
+  width: 100%;
+  min-height: 90%;
   display: flex;
-  width: 600px;
-  
   justify-content: center;
   align-items: center;
   padding: 1rem;
+  box-sizing: inherit;
+  position: relative;
+}
+
+p-card {
+  width: 560px;
+  align-items: center;
+  justify-content: center;
 }
 
 .field {

@@ -25,7 +25,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 @Component({
     selector: 'signin-page',
     standalone: true,
-    imports: [CommonModule,RouterLink, FormsModule, CardModule, ReactiveFormsModule, ButtonModule, CheckboxModule],
+    imports: [CommonModule,RouterLink, MessageModule, InputTextModule, MessagesModule, FormsModule, CardModule, ReactiveFormsModule, ButtonModule, CheckboxModule],
     templateUrl: './signin.page.component.html',
     styleUrl: './signin.page.component.css'
 })

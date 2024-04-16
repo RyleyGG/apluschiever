@@ -7,10 +7,10 @@
     </div>
     <!--User Menu Overlay Panel-->
     <p-toolbar>
-        <p-button [style]="{'background-color': 'transparent', 'border-color': 'transparent'}" *ngIf="!loggedIn" label="Sign-Up" icon='pi pi-user' [routerLink]="['/signup']" />
-        <p-button [style]="{'background-color': 'transparent', 'border-color': 'transparent'}" *ngIf="!loggedIn" label="Sign-In" icon='pi pi-sign-in' [routerLink]="['/signin']" />
-        <p-button [rounded]="true" [style]="{'background-color': 'var(--primary-400)', 'color': 'white', 'border-color': 'var(--primary-400)'}"  *ngIf="loggedIn" icon="pi pi-home" [routerLink]="['/dashboard']"/>
-        <p-button [style]="{'margin-left': '20px', 'background-color': 'var(--primary-400)', 'color': 'white', 'border-color': 'var(--primary-400)'}"  *ngIf="loggedIn" icon="pi pi-user" [rounded]="true" (click)="op.toggle($event)" />
+        <p-button [rounded]="true" [style]="{'margin-right':'20px', 'background-color': 'transparent', 'border-color': 'transparent'}" *ngIf="!loggedIn" label="Sign-Up" icon='pi pi-user' [routerLink]="['/signup']" />
+        <p-button [rounded]="true" [style]="{'background-color': 'transparent', 'border-color': 'transparent'}" *ngIf="!loggedIn" label="Sign-In" icon='pi pi-sign-in' [routerLink]="['/signin']" />
+        <p-button [rounded]="true" [style]="{'background-color': 'transparent', 'color': 'white', 'border-color': 'transparent'}"  *ngIf="loggedIn" icon="pi pi-home" [routerLink]="['/dashboard']"/>
+        <p-button [style]="{'margin-left': '5px', 'background-color': 'transparent', 'color': 'white', 'border-color': 'transparent'}"  *ngIf="loggedIn" icon="pi pi-user" [rounded]="true" (click)="op.toggle($event)" />
         <p-overlayPanel #op [style]="{ 'min-width': '22rem' }">
             <!--A section for the user information-->
             <div *ngIf="loggedIn" style="display: flex; gap: 1em; align-items: center;">
