@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { catchError, map, take, throwError } from "rxjs";
 import { User } from "../../models/user.interface";
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: "root"
@@ -15,7 +16,7 @@ export class UserService {
   /**
    * 
    */
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private router: Router) {
 
   }
 
@@ -31,6 +32,9 @@ export class UserService {
       }),
       catchError((error: HttpErrorResponse) => {
         // Something went really wrong
+        if ((this.router.url != '/landing') && (this.router.url != '/signup') && (this.router.url != '/signin')) {
+          this.router.navigate(['/error']);
+        }
         return throwError(() => error);
       })
     )
