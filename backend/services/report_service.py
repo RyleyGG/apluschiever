@@ -89,6 +89,7 @@ def parse_assessment_file(file: UploadFile) -> AssessmentFile:
                 )
         elif col_iter == 4:
             # Column E: Check if correct answers are correctly formatted and within range
+            assessment_matrix[col] = assessment_matrix[col].astype(str)
             def is_valid_answer(value):
                 try:
                     answers = value.split(',')
@@ -103,6 +104,7 @@ def parse_assessment_file(file: UploadFile) -> AssessmentFile:
                 )
         elif 5 <= col_iter <= 9:
             # Columns F-J: Ensure at least two are filled
+            assessment_matrix[col] = assessment_matrix[col].astype(str)
             if assessment_matrix.iloc[:, 5:10].isna().all(axis=1).any():
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -112,12 +114,14 @@ def parse_assessment_file(file: UploadFile) -> AssessmentFile:
 
     # Parse data
     questions = []
+    columns_to_check = ['F', 'G', 'H', 'I', 'J']  # All possible option columns
+    valid_columns = [col for col in columns_to_check if col in assessment_matrix.columns]
+
     for index, row in assessment_matrix.iterrows():
         question_text = row['D']
         question_val = row['C']
 
-        options = [opt for opt in row[['F', 'G', 'H', 'I', 'J']] if pd.notna(opt)]
-
+        options = [row[col] for col in valid_columns if pd.notna(row[col])]
         correct_answer_indices = [int(ans.strip()) - 1 for ans in str(row['E']).split(',')]
         answer = [options[idx] for idx in correct_answer_indices if len(options) > idx >= 0]
 

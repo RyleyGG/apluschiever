@@ -76,8 +76,11 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
     for node in course.nodes:
         new_assessment_file = None
         if node.assessment_file:
-            new_assessment_file = report_service.parse_assessment_file(node.assessment_file)
-            print(new_assessment_file)
+            try:
+                new_assessment_file = report_service.parse_assessment_file(node.assessment_file)
+            except Exception as e:
+                print(f'Failed assessment upload: {str(e)}')
+                pass # TODO: Convey to user that assessment failed to upload
         try:
             node_id = (uuid.UUID)(node.id)
         except:
