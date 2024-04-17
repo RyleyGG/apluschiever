@@ -135,10 +135,5 @@ export class LessonComponent implements AfterViewInit {
       }
 
     });
-
-    if (this.lessonComponentArray.length == 0) {
-      console.log("empty");
-    }
-    console.log(this.lessonComponentArray);
   }
 }

@@ -34,16 +34,15 @@
             </div>
         </div>
         <div *ngIf="!fullScreen && !(lessonComponentArray.length == 0)" class="leftSide">
-            <div class="description">
+            <div *ngIf="desc.length" class="description">
                 <p *ngIf="desc" style="font-size: 1.5rem; font-weight: 600; margin: 0;">Lesson Description</p>
                 <div [innerHTML]="desc"></div>
-                <p-button [rounded]="true" type="button" (click)="showObjectives=!showObjectives">
+                <!--<p-button [rounded]="true" type="button" (click)="showObjectives=!showObjectives">
                     {{ showObjectives ? 'See Less' : 'View Lesson Objectives' }}
                     <i *ngIf="!showObjectives" style="margin-top: 2px; margin-left:4px;" class="pi pi-angle-down"></i>
                     <i *ngIf="showObjectives" style="margin-top: 1px; margin-left:4px;" class="pi pi-angle-up"></i>
                 </p-button>
                 <div class="objectives" *ngIf="showObjectives">
-                    <!--TODO remove hardcoded objectives-->
                     <h2 style="margin-left: 5px; ">Lesson Objectives</h2>
                     <ul>
                         <li>Understand the Pythagorean theorem</li>
@@ -51,7 +50,7 @@
                         <li>Explore different variations of the pythagorean theorem</li>
                         <li>Practice solving problems using the pythagorean theorem</li>
                     </ul>
-                </div>
+                </div>-->
             </div>
             <div class="grid my-courses-container" *ngIf="lessonComponentArray.length">
                 <div *ngFor="let component of lessonComponentArray; let i = index">
