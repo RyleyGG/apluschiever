@@ -27,6 +27,7 @@ export class QuizComponent {
     reset() {
         this.submitted = false;
         this.notSubmitted = true;
+        this.feedback = [];
         this.myForm.resetForm();
     }
 
@@ -55,6 +56,7 @@ export class QuizComponent {
             totalPoints += question.point_value;
             console.log(question);
             this.feedback.push({ 'answer': question.answer, 'correct': correct});
+            console.log(this.feedback);
         
         });
         return (earnedPoints / totalPoints) * 100;
