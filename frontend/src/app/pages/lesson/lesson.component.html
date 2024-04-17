@@ -56,7 +56,7 @@
             <div class="grid my-courses-container" *ngIf="lessonComponentArray.length">
                 <div *ngFor="let component of lessonComponentArray; let i = index">
                     <div pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)"
-                        (onDrop)="drop(i)"
+                        (onDrop)="drop(i)" [class.min]="component.minimize"
                         style="background-color: var(--primary-color); color: white; height: 50px; display:flex; border-top-left-radius: 20px; border-top-right-radius: 20px; justify-content:space-between; padding: 7px;">
                         <h4 style="margin-top: 9px;">
                             {{ component.title }}

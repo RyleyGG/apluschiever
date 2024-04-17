@@ -9,6 +9,9 @@
 .navButton {
   margin-top: 15px;
 }
+.min {
+  border-radius: 20px;
+}
 .loading {
   margin: auto;
   height: 400px; 
