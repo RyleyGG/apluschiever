@@ -3,6 +3,7 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 
+from sqlalchemy.orm.attributes import flag_modified
 from sqlmodel import select, Session
 from starlette import status
 
@@ -58,12 +59,15 @@ async def get_node_progress_by_course(course_id: str, user: User = Depends(auth_
 
 @router.post('/update_node', response_model=NodeProgressDetails, response_model_by_alias=False)
 async def update_node_progress(update_obj: NodeProgressDetails, user: User = Depends(auth_service.validate_token), db: Session = Depends(get_session)):
+    print(update_obj)
+    print(user.node_progress)
     if update_obj.node_complete and update_obj.node_id not in user.node_progress:
         user.node_progress.append(uuid.UUID(update_obj.node_id))
     elif not update_obj.node_complete and update_obj.node_id in user.node_progress:
         user.node_progress.pop(user.node_progress.index(uuid.UUID(update_obj.node_id)))
 
+    flag_modified(user, "node_progress")
     db.add(user)
     db.commit()
 
-    return NodeProgressDetails
+    return update_obj

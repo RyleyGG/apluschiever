@@ -14,7 +14,7 @@ import {InputSwitchModule} from 'primeng/inputswitch';
 import {TagModule} from 'primeng/tag';
 import {MenuItem} from 'primeng/api';
 import {CardModule} from 'primeng/card';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import {FormsModule} from '@angular/forms';
 
@@ -28,6 +28,9 @@ import {uid} from '../../core/utils/unique-id';
 
 import {PanelModule} from 'primeng/panel';
 import {DagreSettings, Orientation} from '../../graph/layouts/dagreCluster';
+import {NodeService} from "../../core/services/node/node.service";
+import {NodeProgressDetails} from "../../core/models/node-content.interface";
+import {take} from "rxjs/operators";
 
 /**
  * The course view page component
@@ -105,7 +108,7 @@ export class CourseViewPageComponent {
   courseid: string | any;
   public courseName: string = "";
 
-  constructor(private courseService: CourseService, private elementRef: ElementRef, private route: ActivatedRoute) {
+  constructor(private courseService: CourseService, private nodeService: NodeService, private router: Router, private elementRef: ElementRef, private route: ActivatedRoute) {
     this.courseid = this.route.snapshot.paramMap.get('id');
 
     this.nodes = [];
@@ -176,6 +179,28 @@ export class CourseViewPageComponent {
     this.updateHighlights();
   }
 
+
+  /**
+   * If a node doesn't have an assessment, it gets set to complete when a node is opened.
+   * We handle this when the lesson is opened.
+   */
+  onLessonOpen(): void {
+    this.dialogVisible = false;
+
+    if (!this.selectedNode.assessment_file) {
+      let nodeProgress: NodeProgressDetails = {
+        node_id: this.selectedNode.id!,
+        node_complete: true
+      }
+      this.nodeService.updateNodeProgress(nodeProgress).pipe(take(1)).subscribe((res) => {
+        if (!!res) {
+          console.log('update successful');
+        }
+
+        this.router.navigate(['/lesson', this.selectedNode.id]);
+      })
+    }
+  }
 
   //#region Filtering & Searching Methods
 

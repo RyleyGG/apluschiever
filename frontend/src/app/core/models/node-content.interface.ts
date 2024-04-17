@@ -40,5 +40,5 @@ export interface UploadFile {
 
 export interface NodeProgressDetails {
   node_id: string
-  completed_content: string[]
+  node_complete: boolean
 }
