@@ -1,3 +1,4 @@
+import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 
@@ -42,7 +43,8 @@ async def get_enrolled_course_progress(course_id_list: List[str], user: User = D
 
         # Calculate overall completion percentage
         total_nodes = len(course_node_ids)
-        completed_nodes = len([node_id for node_id in user.node_progress if node_id in course_node_ids])
+        
+        completed_nodes = len([node_id for node_id in course_node_ids if uuid.UUID(node_id) in user.node_progress])
         completion_percentage = (completed_nodes / total_nodes) * 100 if total_nodes > 0 else 0
 
         return completion_percentage

@@ -186,20 +186,7 @@ export class CourseViewPageComponent {
    */
   onLessonOpen(): void {
     this.dialogVisible = false;
-
-    if (!this.selectedNode.assessment_file) {
-      let nodeProgress: NodeProgressDetails = {
-        node_id: this.selectedNode.id!,
-        node_complete: true
-      }
-      this.nodeService.updateNodeProgress(nodeProgress).pipe(take(1)).subscribe((res) => {
-        if (!!res) {
-          console.log('update successful');
-        }
-
-        this.router.navigate(['/lesson', this.selectedNode.id]);
-      })
-    }
+    this.router.navigate(['/lesson', this.selectedNode.id]);
   }
 
   //#region Filtering & Searching Methods

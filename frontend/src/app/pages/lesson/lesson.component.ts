@@ -19,6 +19,8 @@ import { Location } from '@angular/common';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ErrorComponent } from '../../components/error/error.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {NodeProgressDetails} from "../../core/models/node-content.interface";
+import {take} from "rxjs/operators";
 
 @Component({
   selector: 'app-lesson',
@@ -133,11 +135,21 @@ export class LessonComponent implements AfterViewInit {
 
       if (this.lessonComponentArray.length > 0) {
         if (!this.focusComponent) {
-        this.focusComponent = {
-          title: this.lessonComponentArray[0].title,
-          componentType: this.lessonComponentArray[0].componentType,
-          input: this.lessonComponentArray[0].input
-        }
+          //that means there was no assessment
+          this.focusComponent = {
+            title: this.lessonComponentArray[0].title,
+            componentType: this.lessonComponentArray[0].componentType,
+            input: this.lessonComponentArray[0].input
+          }
+            let nodeProgress: NodeProgressDetails = {
+              node_id: this.node_id!,
+              node_complete: true
+            }
+            this.nodeService.updateNodeProgress(nodeProgress).pipe(take(1)).subscribe((res) => {
+              if (!!res) {
+                console.log('update successful');
+              }
+            })
       }
       }
 
