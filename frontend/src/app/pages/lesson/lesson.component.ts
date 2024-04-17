@@ -124,14 +124,21 @@ export class LessonComponent implements AfterViewInit {
           input: data.assessment_file.questions,
           minimize: false
         });
+        this.focusComponent = {
+          title: "Assessment",
+          componentType: this.quizComp,
+          input: data.assessment_file.questions
+        }
       }
 
       if (this.lessonComponentArray.length > 0) {
+        if (!this.focusComponent) {
         this.focusComponent = {
           title: this.lessonComponentArray[0].title,
           componentType: this.lessonComponentArray[0].componentType,
           input: this.lessonComponentArray[0].input
         }
+      }
       }
 
     });
