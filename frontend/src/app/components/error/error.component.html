@@ -1,6 +1,12 @@
 <div class="page-content">
-    <img src="../../assets/sadgator.gif" alt="Image Description" width="300px" height="300px" style="opacity: 0.8;">
-    <h1 class="large">404</h1>
-    <h2 class="medium">Not Found</h2>
-    <h4 class="small">The resource requested was not found.</h4>
+    <img src="../../assets/sadgator.gif" alt="Image Description" width="500px" height="500px">
+    <h1 class="large">ERROR</h1>
+    <h4 class="medium">The resource requested was not found or some other error occurred.</h4>
+    <div class="small">Try reloading the page
+            <div style="display: flex; flex-direction: row;">
+                or click 
+                <div [routerLink]="['/landing']" style="cursor: pointer; margin-top: -1.8px; margin-left: 4px; margin-right: 4px; text-decoration: none; color: var(--primary-color); font-weight: 800; font-size: large;">here</div>
+               to return to the landing page.
+            </div>
+        </div> 
 </div>

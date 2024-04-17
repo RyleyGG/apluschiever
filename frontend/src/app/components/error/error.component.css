@@ -5,8 +5,9 @@
     align-items: center;
     padding: 1rem;
     flex-direction: column;
-    height: 100%;
+    height: 80%;
     overflow: scroll;
+    opacity: 0.8;
 }
 .large {
     font-size: 80px;
@@ -17,6 +18,10 @@
     margin-top: -5px;
 }
 .small {
-    opacity: 0.5;
+    opacity: 0.9;
     margin-top: -8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
