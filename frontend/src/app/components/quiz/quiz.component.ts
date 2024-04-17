@@ -1,64 +1,87 @@
-import { Component, Input, OnInit, ViewChild, ElementRef} from '@angular/core';
-import { PanelModule } from 'primeng/panel';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { CheckboxModule } from 'primeng/checkbox';
-import { NgForm } from '@angular/forms';
+import {Component, Input, OnInit, ViewChild, ElementRef} from '@angular/core';
+import {PanelModule} from 'primeng/panel';
+import {ButtonModule} from 'primeng/button';
+import {CardModule} from 'primeng/card';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {CheckboxModule} from 'primeng/checkbox';
+import {NgForm} from '@angular/forms';
+import {NodeProgressDetails} from "../../core/models/node-content.interface";
+import {take} from "rxjs/operators";
+import {NodeService} from "../../core/services/node/node.service";
 
 @Component({
-    selector: 'quiz',
-    standalone: true,
-    templateUrl: './quiz.component.html',
-    styleUrls: ['./quiz.component.css'],
-    imports: [PanelModule, ReactiveFormsModule, CommonModule, FormsModule, CardModule, ButtonModule, CheckboxModule]
+  selector: 'quiz',
+  standalone: true,
+  templateUrl: './quiz.component.html',
+  styleUrls: ['./quiz.component.css'],
+  imports: [PanelModule, ReactiveFormsModule, CommonModule, FormsModule, CardModule, ButtonModule, CheckboxModule]
 })
 export class QuizComponent {
-    @ViewChild('myForm') myForm: NgForm | any;
-    @Input() questions: { question_text: string, point_value: number, options: string[], answer: string[] }[] = [];
-    selectedOptions: { [key: string]: string[] } = {};
-    feedback: any[] = [];
-    submitted: boolean = false;
-    notSubmitted = true;
-    score: any = 0;
-    constructor(private el: ElementRef) { }
+  @ViewChild('myForm') myForm: NgForm | any;
+  @Input() questions: { question_text: string, point_value: number, options: string[], answer: string[] }[] = [];
+  @Input() nodeId: string | any;
+  selectedOptions: { [key: string]: string[] } = {};
+  feedback: any[] = [];
+  submitted: boolean = false;
+  notSubmitted = true;
+  score: any = 0;
 
-    reset() {
-        this.submitted = false;
-        this.notSubmitted = true;
-        this.feedback = [];
-        this.myForm.resetForm();
-    }
+  constructor(private el: ElementRef, private nodeService: NodeService) {
+  }
 
-    submit() {
-        this.score = this.calculateScore();
-        this.submitted = true;
-    }
-    isThisOption(question: any, value: string) {
-        if (this.selectedOptions[question]) {
-            return this.selectedOptions[question].indexOf(value) !== -1;
-        }
-        return false;
-    }
-    private calculateScore = () => {
-        let totalPoints = 0;
-        let earnedPoints = 0;
+  reset() {
+    this.submitted = false;
+    this.notSubmitted = true;
+    this.feedback = [];
+    this.myForm.resetForm();
+  }
 
-        this.questions.forEach((question: { question_text: string, point_value: number, options: string[], answer: string[] }) => {
-            const selected = this.selectedOptions[question.question_text] || [];
-            
-            var correct = false;
-            if (JSON.stringify(question.answer) == JSON.stringify(selected)) {
-                correct = true;
-                earnedPoints += question.point_value;
-            }
-            totalPoints += question.point_value;
-            console.log(question);
-            this.feedback.push({ 'answer': question.answer, 'correct': correct});
-            console.log(this.feedback);
-        
-        });
-        return (earnedPoints / totalPoints) * 100;
+  submit() {
+    this.score = this.calculateScore();
+    let nodeProgress: NodeProgressDetails = {
+      node_id: this.nodeId,
+      node_complete: true
     }
+    this.nodeService.updateNodeProgress(nodeProgress).pipe(take(1)).subscribe((res) => {
+      if (!!res) {
+        console.log('update successful');
+      }
+
+      this.submitted = true;
+    })
+  }
+
+  isThisOption(question: any, value: string) {
+    if (this.selectedOptions[question]) {
+      return this.selectedOptions[question].indexOf(value) !== -1;
+    }
+    return false;
+  }
+
+  private calculateScore = () => {
+    let totalPoints = 0;
+    let earnedPoints = 0;
+
+    this.questions.forEach((question: {
+      question_text: string,
+      point_value: number,
+      options: string[],
+      answer: string[]
+    }) => {
+      const selected = this.selectedOptions[question.question_text] || [];
+
+      var correct = false;
+      if (JSON.stringify(question.answer) == JSON.stringify(selected)) {
+        correct = true;
+        earnedPoints += question.point_value;
+      }
+      totalPoints += question.point_value;
+      console.log(question);
+      this.feedback.push({'answer': question.answer, 'correct': correct});
+      console.log(this.feedback);
+
+    });
+    return (earnedPoints / totalPoints) * 100;
+  }
 }
