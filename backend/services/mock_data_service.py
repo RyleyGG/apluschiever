@@ -83,7 +83,7 @@ def generate_mock_courses(db: Session, client: TestClient):
 def generate_mock_nodes(db: Session, client: TestClient):
     mock_courses = db.exec(select(Course)).all()
     test_user = db.exec(select(User).where(User.id == config._tests_user_id)).first()
-    user_node_progress = {}
+    user_node_progress = []
     for i in range(len(mock_courses)):
         cur_course = mock_courses[i]
         node_layers = {}
@@ -138,11 +138,7 @@ def generate_mock_nodes(db: Session, client: TestClient):
                 # Setting completion status
                 if random.randint(1, 100) <= node_complete_chance and keep_completing:
                     node_complete_chance -= 2
-                    user_node_progress[str(new_node.id)] = []
-                    for video in new_node.videos:
-                        user_node_progress[str(new_node.id)].append(str(video.id))
-                    for rich_text in new_node.rich_text_files:
-                        user_node_progress[str(new_node.id)].append(str(rich_text.id))
+                    user_node_progress.append(str(new_node.id))
                 else:
                     keep_completing = False
 

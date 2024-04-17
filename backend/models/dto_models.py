@@ -139,4 +139,4 @@ class CreateCourseResponse(BaseModel):
 
 class NodeProgressDetails(BaseModel):
     node_id: str
-    completed_content: List[str]
+    node_complete: bool

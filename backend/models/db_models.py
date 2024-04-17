@@ -42,7 +42,10 @@ class User(SQLModel, table=True):
     user_type: UserType
     owned_courses: Optional[List["Course"]] = Relationship(back_populates='course_owner')
     enrolled_courses: Optional[List["Course"]] = Relationship(back_populates='enrolled_students', link_model=CourseStudentLink)
-    node_progress: Dict[uuid.UUID, List[uuid.UUID]] = Field(sa_column=Column(JSON), default={})  # Key-value of {Node ID: [Completed Content IDs]}
+    # Node progress is a list of Node IDs
+    # If a node doesn't have an assessment, completion occurs when the lesson is viewed
+    # If a node does have an assessment, completion occurs when the assessment is submitted
+    node_progress: List[uuid.UUID] = Field(default=[], sa_column=Column(pydantic_column_type(List[uuid.UUID])))
 
 #endregion
 
