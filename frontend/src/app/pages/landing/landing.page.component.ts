@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { OAuth2Service } from "../../auth/oauth2.service";
+import { firstValueFrom } from 'rxjs';
 
 /**
  * The landing page component, it is an 'advertising' page of sorts.
@@ -13,7 +15,19 @@ import { RouterLink } from '@angular/router';
     templateUrl: './landing.page.component.html',
     styleUrl: './landing.page.component.css'
 })
-export class LandingPageComponent {
+export class LandingPageComponent implements OnInit {
+    constructor(private oauthService: OAuth2Service, private router: Router) {}
+
+  async ngOnInit() {
+    try {
+      const isUserAuthenticated = await firstValueFrom(this.oauthService.validate_token());
+      if (isUserAuthenticated) {
+        this.router.navigate(['/dashboard']);
+      }
+    } catch (error) {
+      console.error('Error checking user login status:', error);
+    }
+  }
     title = 'apluschiever';
 
     /**

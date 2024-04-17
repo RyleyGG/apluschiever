@@ -22,7 +22,7 @@ export class FileviewerComponent implements OnInit{
     setTimeout(() => {
       this.loaded = true;
       
-    }, 6000); 
+    }, 1000); 
   }
   @Input() public param: any[] | any;
   content: string | any;
