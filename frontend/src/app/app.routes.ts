@@ -31,5 +31,5 @@ export const routes: Routes = [
     // General
     { path: "landing", component: LandingPageComponent },
     { path: '', redirectTo: '/landing', pathMatch: 'full' },
-    { path: '**', component: ErrorComponent } // TODO: make this a PageNotFound or 404 error page
+    { path: '**', component: ErrorComponent }
 ];

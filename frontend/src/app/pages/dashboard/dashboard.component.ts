@@ -149,7 +149,6 @@ export class DashboardComponent {
       this.searchedCourses = this.userCourses;
       this.displayAll();
     }, 900);
-
   }
   addCourse(courseid: string) {
     this.userService.addCourse(courseid).subscribe((data) => {
