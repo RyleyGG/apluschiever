@@ -6,35 +6,34 @@
     <section style="grid-column: 1;">
         <p-card>
             <p style="margin: 0; padding: 0; font-weight: 700; font-size: 1.75rem;">Begin a new course today!</p>
-        <div style="display: flex; gap: 1em; margin-left: 15px; margin-top: 8px;">
-            <p-button type="button" [rounded]="true" label="Enroll in a new course"
-                (click)="sidebarVisible=true;" />
-            <p-button *ngIf="loggedInUser?.user_type === 'Teacher'" type="button" [rounded]="true"
-                label="Create a new course" [routerLink]="['/builder']" />
-        </div>
-    </p-card>
+            <div style="display: flex; gap: 1em; margin-left: 15px; margin-top: 8px;">
+                <p-button type="button" [rounded]="true" label="Enroll in a new course"
+                    (click)="sidebarVisible=true;" />
+                <p-button *ngIf="loggedInUser?.user_type === 'Teacher'" type="button" [rounded]="true"
+                    label="Create a new course" [routerLink]="['/builder']" />
+            </div>
+        </p-card>
     </section>
 
     <section style="grid-column: 1; overflow-x: visible;">
         <div
             style="display: flex; flex-wrap: wrap; gap: 1.5em; align-items: center; justify-content: start; overflow-x: visible; margin-bottom: 1em;">
             <p style="font-size: 2rem; font-weight: 700; margin: 0;">My Courses</p>
-            <input pInputText class="inputText" type="text" [(ngModel)]="searchValue" (keydown)="search(searchValue)" (ngModelChange)="search(searchValue)" placeholder="Search">
-            <p-button type="button" [rounded]="true" [outlined]="!all" label="All"
-                (click)="displayAll()" />
-            <p-button type="button" [rounded]="true" [outlined]="!inProgress"
-                label="In Progress" (click)="displayInProgress()" />
-            <p-button type="button" [rounded]="true" [outlined]="!completed"
-                label="Completed" (click)="displayComplete()" />
-            <p-button type="button" label="Owned By Me" [rounded]="true"
-                [outlined]="!ownedByMe" (click)="displayOwned()"
-                *ngIf="loggedInUser?.user_type === 'Teacher'" />
+            <input pInputText class="inputText" type="text" [(ngModel)]="searchValue" (keydown)="search(searchValue)"
+                (ngModelChange)="search(searchValue)" placeholder="Search">
+            <p-button type="button" [rounded]="true" [outlined]="!all" label="All" (click)="displayAll()" />
+            <p-button type="button" [rounded]="true" [outlined]="!inProgress" label="In Progress"
+                (click)="displayInProgress()" />
+            <p-button type="button" [rounded]="true" [outlined]="!completed" label="Completed"
+                (click)="displayComplete()" />
+            <p-button type="button" label="Owned By Me" [rounded]="true" [outlined]="!ownedByMe"
+                (click)="displayOwned()" *ngIf="loggedInUser?.user_type === 'Teacher'" />
         </div>
 
         <p-confirmDialog></p-confirmDialog>
 
         <div class="grid my-courses-container"
-            style="height: 49vh; padding: 1em 2em 1.3em 1em; grid-auto-flow: row; overflow-x: visible;"
+            style="height: 49vh; padding: 2em 2em 1.3em 1em; grid-auto-flow: row; overflow-x: visible;"
             *ngIf="searchedCourses.length; else noCourses">
             <!--Template for the enrolled course-->
             <ng-template ngFor [ngForOf]="searchedCourses" let-course>
@@ -76,9 +75,11 @@
 
         <ng-template #noCourses>
             <div class="loading" *ngIf="!loaded">
-                <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="6" fill="var(--surface-ground)" animationDuration=".7s"></p-progressSpinner>
+                <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="6" fill="var(--surface-ground)"
+                    animationDuration=".7s"></p-progressSpinner>
             </div>
-            <div *ngIf="loaded" style="opacity: 0.7; padding: 1rem; height: 600px; font-size: 20px; font-weight: 700px; display: flex; flex-direction: column; opacity: 0.8;">
+            <div *ngIf="loaded"
+                style="opacity: 0.7; padding: 1rem; height: 600px; font-size: 20px; font-weight: 700px; display: flex; flex-direction: column; opacity: 0.8;">
                 <img src="../../assets/sadgator.gif" alt="Image Description" width="270px" height="300px">
                 <h3>There are no courses to display!</h3>
             </div>
@@ -120,7 +121,8 @@
         </h1>
     </ng-template>
     <ng-template pTemplate="content">
-        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr 1fr 1fr; padding: 1em 0;" *ngIf="toEnroll.length; else noEnroll">
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr 1fr 1fr; padding: 1em 0;"
+            *ngIf="toEnroll.length; else noEnroll">
             <ng-template ngFor [ngForOf]="toEnroll" let-course>
                 <p-card [header]="course.title">
                     <ng-template pTemplate="header">
@@ -147,8 +149,9 @@
         </div>
     </ng-template>
     <ng-template #noEnroll>
-        <div style="margin: auto; padding: 1rem; height: 600px; font-size: 20px; font-weight: 700px; display: flex; flex-direction: column; opacity: 0.8;">
-            <img  src="../../assets/sadgator.gif" alt="Image Description" width="550px" height="600px">
+        <div
+            style="margin: auto; padding: 1rem; height: 600px; font-size: 20px; font-weight: 700px; display: flex; flex-direction: column; opacity: 0.8;">
+            <img src="../../assets/sadgator.gif" alt="Image Description" width="550px" height="600px">
             <h2>There are no courses available for enrollment!</h2>
         </div>
     </ng-template>
