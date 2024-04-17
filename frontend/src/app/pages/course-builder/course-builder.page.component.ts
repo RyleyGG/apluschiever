@@ -245,6 +245,7 @@ export class CourseBuilderPageComponent implements OnInit {
       } else if (file) {
         // If file content is not available, read it as base64 and update the file object
         const b64data = await readBlobAsBase64(new Blob([file], { type: file.type }));
+        console.log(file.name);
         node.assessment_file = {
           ...(file.id ? { id: file.id } : {}),
           name: file.name,

@@ -35,9 +35,8 @@ export class QuizComponent {
         this.submitted = true;
     }
     isThisOption(question: any, value: string) {
-        
         if (this.selectedOptions[question]) {
-        return this.selectedOptions[question].indexOf(value) !== -1;
+            return this.selectedOptions[question].indexOf(value) !== -1;
         }
         return false;
     }
@@ -48,8 +47,6 @@ export class QuizComponent {
         this.questions.forEach((question: { question_text: string, point_value: number, options: string[], answer: string[] }) => {
             const selected = this.selectedOptions[question.question_text] || [];
             
-            console.log(selected);
-            console.log(question.answer);
             var correct = false;
             if (JSON.stringify(question.answer) == JSON.stringify(selected)) {
                 correct = true;
