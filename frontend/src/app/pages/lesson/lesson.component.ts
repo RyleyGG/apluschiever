@@ -18,11 +18,12 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Location } from '@angular/common';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ErrorComponent } from '../../components/error/error.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-lesson',
   standalone: true,
-  imports: [CommonModule, ErrorComponent, DragDropModule, ProgressSpinnerModule, RouterLink, QuizComponent, ConfirmDialogModule, CardModule, ThirdpartyComponent, SplitterModule, ButtonModule, VideoComponent, FileviewerComponent, FullscreenComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, ErrorComponent, DragDropModule, ProgressSpinnerModule, RouterLink, QuizComponent, ConfirmDialogModule, CardModule, ThirdpartyComponent, SplitterModule, ButtonModule, VideoComponent, FileviewerComponent, FullscreenComponent],
   templateUrl: './lesson.component.html',
   styleUrl: './lesson.component.css'
 })

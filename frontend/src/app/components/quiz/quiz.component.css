@@ -7,16 +7,29 @@ border-bottom-left-radius: 15px;
   overflow: scroll;
   display: flex; 
   flex-direction: column; 
-  gap: 20px;
+ 
   padding: 1rem;
+  font-weight: 400;
+  font-size: large;
 }
 .wrong {
-    font-weight: 700;
-    color: rgb(221, 94, 94);
+    background-color: rgba(255, 22, 22, 0.146); 
+    width: 80%;
+    border-radius: 10px;
 }
+
 .correct {
     font-weight: 700;
     color: rgb(114, 203, 114);
+}
+.results {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    align-items: center;
+    font-size: large;
+    font-weight: 700;
+    gap: 10px;
 }
 .buttons {
     display: flex;

@@ -20,7 +20,7 @@
                 <app-thirdparty [param]="fullScreen.input"></app-thirdparty>
             </div>
             <div style="height: 630px; width: 95%; margin: auto;" *ngIf="fullScreen.componentType === quizComp">
-                <quiz></quiz>
+                <quiz [questions]="fullScreen.input"></quiz>
             </div>
         </div>
         <div *ngIf="lessonComponentArray.length == 0">
@@ -115,7 +115,7 @@
                         <app-thirdparty [param]="focusComponent.input"></app-thirdparty>
                     </div>
                     <div class="focusBox" *ngIf="focusComponent.componentType === quizComp">
-                        <quiz></quiz>
+                        <quiz [questions]="focusComponent.input"></quiz>
                     </div>
                 </div>
                 <ng-template #emptyBlock>
