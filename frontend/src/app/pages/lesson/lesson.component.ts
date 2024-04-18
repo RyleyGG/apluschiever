@@ -54,7 +54,19 @@ export class LessonComponent implements AfterViewInit {
   lessonComponentArray: { title: any, componentType: any, input: any, minimize: boolean }[] = [];
 
   ngAfterViewInit(): void {
-
+    setTimeout(() => {
+    if (this.focusComponent.componentType != this.quizComp) {
+      let nodeProgress: NodeProgressDetails = {
+        node_id: this.node_id!,
+        node_complete: true
+      }
+      this.nodeService.updateNodeProgress(nodeProgress).pipe(take(1)).subscribe((res) => {
+        if (!!res) {
+          console.log('update successful');
+        }
+      })
+    }
+    }, 1000);
   }
   title = "";
   node_id: string | any;
@@ -141,17 +153,9 @@ export class LessonComponent implements AfterViewInit {
             componentType: this.lessonComponentArray[0].componentType,
             input: this.lessonComponentArray[0].input
           }
-            let nodeProgress: NodeProgressDetails = {
-              node_id: this.node_id!,
-              node_complete: true
-            }
-            this.nodeService.updateNodeProgress(nodeProgress).pipe(take(1)).subscribe((res) => {
-              if (!!res) {
-                console.log('update successful');
-              }
-            })
       }
       }
+      console.log("hullo");
 
     });
   }
