@@ -155,10 +155,14 @@ export class CourseBuilderPageComponent implements OnInit {
     private route: ActivatedRoute,
     private elementRef: ElementRef) {
 
-    this.userService.getCurrentUser().subscribe((res) => { this.courseOwner = res; });
+    this.userService.getCurrentUser().subscribe((res) => {
+      this.courseOwner = res;
+    });
 
     this.courseid = this.route.snapshot.paramMap.get('id');
-    if (this.courseid == null) { return; }
+    if (this.courseid == null) {
+      return;
+    }
 
     this.courseService.getCourse(this.courseid).subscribe((data) => {
       this.courseName = data.course.title;
@@ -177,7 +181,7 @@ export class CourseBuilderPageComponent implements OnInit {
 
   /**
    * Function which saves the current state of the course.
-   * 
+   *
    * @param {boolean} and_publish should we also publish the course?
    */
   save = async (and_publish: boolean): Promise<void> => {
@@ -234,7 +238,25 @@ export class CourseBuilderPageComponent implements OnInit {
         node.uploaded_files = newFileUploads;
       }
 
-      // TODO: Setup the assessment file stuff.
+      const file = node.assessment_file[0];
+      if (file && file.content) {
+        // If file content is already available, just push the file to assessmentFiles
+        node.assessment_file = file;
+      } else if (file) {
+        // If file content is not available, read it as base64 and update the file object
+        const b64data = await readBlobAsBase64(new Blob([file], { type: file.type }));
+        console.log(file.name);
+        node.assessment_file = {
+          ...(file.id ? { id: file.id } : {}),
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          content: b64data // base64 data
+        };
+      } else {
+        // Handle case when there is no file
+        delete node.assessment_file;
+      }
     }));
     this.nodes = [...this.nodes];
 
@@ -275,7 +297,7 @@ export class CourseBuilderPageComponent implements OnInit {
   ngOnInit() {
     setInterval(() => {
       //if (this.enableEdits) 
-        //this.save(false);
+      //this.save(false);
     }, 5000);
   }
   /**
@@ -314,7 +336,7 @@ export class CourseBuilderPageComponent implements OnInit {
       this.setNodeColor([node.node_id], "var(--text-color)");
     })
     this.updateNodeData();
-    
+
     this.newNode = {
       id: uid(),
       title: "",
@@ -332,7 +354,7 @@ export class CourseBuilderPageComponent implements OnInit {
       edges: this.edges,
       clusters: this.clusters
     });
-    
+
     setTimeout(() => {
       this.selectedNode = this.newNode;
       this.selectedName = this.newNode.title || "";
@@ -343,8 +365,8 @@ export class CourseBuilderPageComponent implements OnInit {
       this.editorText = "";
       this.assessmentFile = [];
       this.graphComponent.panToNodeId(this.newNode.id!);
-    }, 10); 
-    
+    }, 10);
+
     this.dialogVisible = true;
   }
 
@@ -406,10 +428,10 @@ export class CourseBuilderPageComponent implements OnInit {
     this.nodes.forEach((node: any) => {
       this.setNodeColor([node.node_id], "var(--text-color)");
     })
-    
+
     this.editorText = node.rich_text_files && node.rich_text_files?.length > 0 ? node.rich_text_files[0].content : "";
     this.uploadedFiles = node.uploaded_files && node.uploaded_files ? node.uploaded_files : [];
-    this.assessmentFile = node.assessment_files && node.assessment_files.length > 0 ? node.assessment_files : [];
+    this.assessmentFile = node.assessment_file && node.assessment_file.length > 0 ? node.assessment_file : [];
     this.assessmentFile = [...this.assessmentFile];
     this.urls = node.third_party_resources && node.third_party_resources.length > 0 ? node.third_party_resources.map((tpr) => tpr.embed_link) : [];
 
@@ -442,7 +464,9 @@ export class CourseBuilderPageComponent implements OnInit {
 
   changeAvatarUrl() {
     const newUrl = prompt('Enter new URL for the avatar:');
-    if (newUrl) { this.selectedAvatarUrl = newUrl; }
+    if (newUrl) {
+      this.selectedAvatarUrl = newUrl;
+    }
   }
 
   /**
@@ -459,12 +483,18 @@ export class CourseBuilderPageComponent implements OnInit {
    * Remove a URL from the 3rd party content URLs list
    * @param {number} index the index of the content URL to remove
    */
-  removeURL = (index: number): void => { if (index >= 0 && index < this.urls.length) { this.urls.splice(index, 1); } }
+  removeURL = (index: number): void => {
+    if (index >= 0 && index < this.urls.length) {
+      this.urls.splice(index, 1);
+    }
+  }
 
   /**
    *
    */
-  onFileSelect = (event: any): void => { this.uploadedFiles = [...this.uploadedFiles, ...event.files]; }
+  onFileSelect = (event: any): void => {
+    this.uploadedFiles = [...this.uploadedFiles, ...event.files];
+  }
 
   /**
    * Remove the content file that was selected to be removed
@@ -478,15 +508,19 @@ export class CourseBuilderPageComponent implements OnInit {
   /**
    * Update the assessment file that is selected.
    */
-  onAssessmentFileSelect = (event: any): void => { this.assessmentFile = [...event.currentFiles]; }
+  onAssessmentFileSelect = (event: any): void => {
+    this.assessmentFile = [...event.currentFiles];
+  }
 
   /**
    * Removes the assessment file that was selected.
    */
-  onRemoveAssessmentFile = (): void => { this.assessmentFile = []; }
+  onRemoveAssessmentFile = (): void => {
+    this.assessmentFile = [];
+  }
 
   /**
-   * Saves the current selectedNode data if that is set. Used to allow for menu transitions without issues when updating content between nodes. 
+   * Saves the current selectedNode data if that is set. Used to allow for menu transitions without issues when updating content between nodes.
    */
   updateNodeData = (): void => {
     if (!this.selectedNode) { return; }
@@ -495,16 +529,20 @@ export class CourseBuilderPageComponent implements OnInit {
     this.selectedNode.tags = this.selectedTags;
     this.selectedNode.rich_text_files = [{ content: this.editorText }] || [""];
     this.selectedNode.uploaded_files = this.uploadedFiles || [];
-    this.selectedNode.third_party_resources = this.urls.map((url) => { return { embed_link: url, resource_source: '' } });
-    this.selectedNode.assessment_files = this.assessmentFile || [];
+    this.selectedNode.third_party_resources = this.urls.map((url) => {
+      return { embed_link: url, resource_source: '' }
+    });
+    this.selectedNode.assessment_file = this.assessmentFile || [];
     const index = this.nodes.findIndex(node => node.id === this.selectedNode.id);
-    if (index !== -1) { this.nodes[index] = Object.assign({}, this.nodes[index], this.selectedNode); }
+    if (index !== -1) {
+      this.nodes[index] = Object.assign({}, this.nodes[index], this.selectedNode);
+    }
     this.nodes = [...this.nodes];
   }
 
   /**
-   * Adds a message to the builder notification stream. Used to notify of successful/unsuccessful saving. 
-   * 
+   * Adds a message to the builder notification stream. Used to notify of successful/unsuccessful saving.
+   *
    * @param {Message} msg the message to add/display to the user
    */
   private addMessage = (msg: Message): void => {
@@ -528,7 +566,9 @@ export class CourseBuilderPageComponent implements OnInit {
    */
   private setNodeColor = (nodeIds: string[], color: string): void => {
     this.nodes = this.nodes.map(node => {
-      if (!node.id) { return node; }
+      if (!node.id) {
+        return node;
+      }
       if (nodeIds.includes(node.id)) {
         return { ...node, color: color };
       }
@@ -624,7 +664,9 @@ export class CourseBuilderPageComponent implements OnInit {
       if (e.source === e.target) {
         cycles.push({ node_ids: [e.source], edge_ids: [e.id!] });
       } else {
-        const match = this.edges.filter((e2: Edge) => { e2.source === e.target && e2.target === e.source }).map((e2: Edge) => e2.id!);
+        const match = this.edges.filter((e2: Edge) => {
+          e2.source === e.target && e2.target === e.source
+        }).map((e2: Edge) => e2.id!);
 
         cycles.push({ node_ids: [e.source, e.target], edge_ids: [e.id!, ...match] });
       }
@@ -645,7 +687,8 @@ export class CourseBuilderPageComponent implements OnInit {
     data.nodes.forEach((node: Node) => {
       this.nodes.push({
         ...node,
-        color: "var(--text-color)"
+        color: "var(--text-color)",
+        assessment_file: [node.assessment_file]
       })
     });
     this.nodes.forEach((node: Node) => {
@@ -654,7 +697,9 @@ export class CourseBuilderPageComponent implements OnInit {
     this.nodes = [...this.nodes];
 
     // Pass to create the edges
-    if (!data.edges) { return; }
+    if (!data.edges) {
+      return;
+    }
 
     // this.edges = [...data.edges];
     data.edges.forEach((edge: Edge) => {

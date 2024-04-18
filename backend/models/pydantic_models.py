@@ -10,21 +10,37 @@ from sqlalchemy import LargeBinary, Column
 class SupportedThirdParties(Enum):
     YOUTUBE = 'YouTube'
 
+
 class Content(SQLModel, table=False):
     id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4)
+
 
 class Video(Content, table=False):
     embed_link: str
     video_source: SupportedThirdParties
 
+
 class RichText(Content, table=False):
     content: str
+
 
 class UploadFile(Content, table=False):
     name: str
     size: int
     type: str
     content: str # base 64 for content
+
+
+class Question(SQLModel, table=False):
+    question_text: str
+    point_value: float
+    options: List[str]
+    answer: List[str]
+
+
+class AssessmentFile(UploadFile, table=False):
+    questions: List[Question]
+
 
 class ThirdPartyResource(Content, table=False):
     embed_link: str

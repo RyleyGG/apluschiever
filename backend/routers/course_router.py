@@ -9,7 +9,7 @@ from starlette import status
 from models.pydantic_models import RichText, ThirdPartyResource, UploadFile, Video
 from models.db_models import Course, NodeParentLink, User, Node, NodeOverview
 from models.dto_models import CourseFilters, CreateCourse, Edge, CreateCourseResponse, NodeProgressDetails
-from services import auth_service
+from services import auth_service, report_service
 from services.api_utility_service import get_session
 
 
@@ -48,6 +48,9 @@ async def get_course(course_id: str, db: Session = Depends(get_session), user: U
 
 @router.post('/add_or_update', response_model=CreateCourseResponse, response_model_by_alias=False)
 async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_session), user: User = Depends(auth_service.validate_token)):
+    # TODO: update this endpoint to only commit transaction after all parsing/uploading is done
+    # this is mostly to ensure we don't upload half-baked data if assessment file parsing fails
+
     # Get reference to an existing course (if any)
     existing_course = db.exec(select(Course).where(Course.id == course.id)).first() if course.id else None
 
@@ -71,6 +74,13 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
     # Also, put all the updated nodes within an array for later. 
     updated_nodes = []
     for node in course.nodes:
+        new_assessment_file = None
+        if node.assessment_file:
+            try:
+                new_assessment_file = report_service.parse_assessment_file(node.assessment_file)
+            except Exception as e:
+                print(f'Failed assessment upload: {str(e)}')
+                pass # TODO: Convey to user that assessment failed to upload
         try:
             node_id = (uuid.UUID)(node.id)
         except:
@@ -88,6 +98,7 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
                 existing_node.rich_text_files = node.rich_text_files
                 existing_node.uploaded_files = node.uploaded_files
                 existing_node.third_party_resources = node.third_party_resources
+                existing_node.assessment_file = new_assessment_file
 
                 existing_node.parents = [] # Reset all edges
                 db.add(existing_node)
@@ -97,6 +108,7 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
         else:
             # Create new node
             new_node = Node(**node.model_dump(exclude={"id"}))
+            new_node.assessment_file = new_assessment_file
             new_node.course_id = cur_course_id
             db.add(new_node)
             db.commit()
@@ -126,7 +138,6 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
     # Return the created course
     finalized_course = db.exec(select(Course).where(Course.id == cur_course_id)).first()
     finalized_nodes = db.exec(select(Node).where(Node.course_id == cur_course_id)).all()
-    print(finalized_nodes)
     finalized_edges = []
     for node in finalized_nodes:
         for child in node.children:
@@ -152,11 +163,7 @@ async def get_node_overview(course_id: str, db: Session = Depends(get_session), 
             title=node.title,
             short_description=node.short_description,
             parent_nodes=node.parents,
-            complete=(node.id in user.node_progress.keys()) and
-                (node.videos is not None and set([file.id for file in node.videos]).issubset(set(user.node_progress[node.id]))) and 
-                (node.rich_text_files is not None and set([file.id for file in node.rich_text_files]).issubset(set(user.node_progress[node.id]))) and
-                (node.uploaded_files is not None and set([file.id for file in node.uploaded_files]).issubset(set(user.node_progress[node.id]))) and
-                (node.third_party_resources is not None and set([file.id for file in node.third_party_resources]).issubset(set(user.node_progress[node.id]))),
+            complete=node.id in user.node_progress,
             tags=node.tags,
             content_types=[key for key in ["videos", "rich_text_files", "uploaded_files", "third_party_resources"] if node.model_dump().get(key) is not None] # We will need to update this listing with new content types as we add more support for them. Maybe this can be turned into a setting somehow?
         ) for node in course_nodes

@@ -108,12 +108,6 @@ export class DashboardComponent {
           this.allCourses = [...this.allCourses, element];
         });
     });
-    // Get the course progresses
-    this.userService.getUserCoursesProgress(this.userCourses.map(item => item.id)).subscribe((data) => {
-      for (let key in data) {
-        (this.userCourses.find(course => course.id == key) as any).progress = data[key];
-      }
-    });
     // Get user information and the coureses the user owns...
     this.userService.getCurrentUser().subscribe((data) => {
       this.loggedInUser = data;
@@ -131,21 +125,30 @@ export class DashboardComponent {
     //wait for data to load then set the display courses up
     //while loading, displays progress spinner
     setTimeout(() => {
+      // Get the course progresses
+      this.userService.getUserCoursesProgress(this.userCourses.map(item => item.id)).subscribe((data) => {
+        this.userCompletedCourses = [];
+        this.userInProgressCourses = [];
+        for (let key in data) {
+          (this.userCourses.find(course => course.id == key) as any).progress = data[key];
+          if (data[key] == 100) {
+            this.userCompletedCourses.push(this.userCourses.find(course => course.id == key) as any);
+          }
+          else {
+            this.userInProgressCourses.push(this.userCourses.find(course => course.id == key) as any);
+          }
+        }
+      });
       this.allCourses.forEach((element: Course) => {
         if (!this.teachingCourses.some(course => course.id === element.id) && !this.userCourses.some(course => course.id === element.id)) {
           this.toEnroll = [...this.toEnroll, element];
         }
       })
       this.loaded = true;
-      // Create the secondary arrays
-      this.userCompletedCourses = this.userCourses.filter((course) => course.progress! === 100);
-      this.userInProgressCourses = this.userCourses.filter((course) => course.progress! !== 100);
-
       this.displayedCourses = this.userCourses;
       this.searchedCourses = this.userCourses;
       this.displayAll();
     }, 900);
-
   }
   addCourse(courseid: string) {
     this.userService.addCourse(courseid).subscribe((data) => {

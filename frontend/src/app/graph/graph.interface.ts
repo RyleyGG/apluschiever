@@ -1,6 +1,6 @@
-import { WritableSignal } from "@angular/core";
-import { RichText, ThirdPartyResource, UploadFile, Video } from "../core/models/node-content.interface";
-import { Course } from "../core/models/course.interface";
+import {WritableSignal} from "@angular/core";
+import {RichText, ThirdPartyResource, UploadFile, Video} from "../core/models/node-content.interface";
+import {Course} from "../core/models/course.interface";
 
 /**
  * Represents the position of a node
@@ -58,7 +58,7 @@ export interface Node {
   rich_text_files?: RichText[];
   uploaded_files?: UploadFile[];
   third_party_resources?: ThirdPartyResource[]
-  assessment_files?: any;
+  assessment_file?: any;
   course_id?: string;
   parent_ids?: string[];
 };

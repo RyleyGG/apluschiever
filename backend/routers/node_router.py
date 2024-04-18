@@ -3,6 +3,7 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 
+from sqlalchemy.orm.attributes import flag_modified
 from sqlmodel import select, Session
 from starlette import status
 
@@ -47,19 +48,24 @@ async def get_node_progress_by_course(course_id: str, user: User = Depends(auth_
             detail="Supplied Course ID is invalid",
         )
     course_node_ids = [str(node.id) for node in cur_course.nodes]
-    filtered_node_progress = {node_id: progress for node_id, progress in user.node_progress.items() if node_id in course_node_ids}
+    completed_nodes = [node_id for node_id in course_node_ids if node_id in user.node_progress]
 
-    node_progress_list = []
-    for k, v in filtered_node_progress.items():
-        node_progress_list.append(NodeProgressDetails(node_id=k, progress=v))
-    return node_progress_list
+    ret_obj = []
+    for completed_id in completed_nodes:
+        ret_obj.append(NodeProgressDetails(node_id=completed_id, node_complete=True))
+
+    return ret_obj
 
 
 @router.post('/update_node', response_model=NodeProgressDetails, response_model_by_alias=False)
 async def update_node_progress(update_obj: NodeProgressDetails, user: User = Depends(auth_service.validate_token), db: Session = Depends(get_session)):
-    if update_obj.node_id not in user.node_progress.keys():
-        user.node_progress[uuid.UUID(update_obj.node_id)] = [uuid.UUID(content_id) for content_id in update_obj.completed_content]
+    if update_obj.node_complete and uuid.UUID(update_obj.node_id) not in user.node_progress:
+        user.node_progress.append(uuid.UUID(update_obj.node_id))
+    elif not update_obj.node_complete and uuid.UUID(update_obj.node_id) in user.node_progress:
+        user.node_progress.pop(user.node_progress.index(uuid.UUID(update_obj.node_id)))
+
+    flag_modified(user, "node_progress")
     db.add(user)
     db.commit()
 
-    return NodeProgressDetails
+    return update_obj

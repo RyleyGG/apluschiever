@@ -6,6 +6,7 @@ from models.pydantic_models import RichText, ThirdPartyResource, UploadFile, Vid
 
 #region Authentication DTO Models
 
+
 class SignUpInfo(BaseModel):
     """
     Used to register a new user. Holds all information necessary to create a new user.
@@ -45,6 +46,7 @@ class RefreshToken(BaseModel):
 
 #region Filter DTO Models
 
+
 class UserFilters(BaseModel):
     """
     Used to make filter queries on users. 
@@ -75,6 +77,7 @@ class NodeFilters(BaseModel):
 
 #region Course Creation/Updating DTO Models
 
+
 class CreateNode(BaseModel): 
     """
     A model used only within the CreateCourse model. This holds all the information
@@ -90,6 +93,8 @@ class CreateNode(BaseModel):
     rich_text_files: Optional[List[RichText]] = []
     uploaded_files: Optional[List[UploadFile]] = []
     third_party_resources: Optional[List[ThirdPartyResource]] = []
+    # Should be UploadFile NOT AssessmentFile here because the backend needs to parse first
+    assessment_file: Optional[UploadFile] = None
 
     # We will grab courseID from the CreateCourse that this is sent from
     # We will generate the parents/children list based on the CreateEdge model below 
@@ -118,9 +123,11 @@ class CreateCourse(BaseModel):
     nodes: Optional[List[CreateNode]] = []
     edges: Optional[List[CreateEdge]] = []
 
+
 class Edge(BaseModel):
     source: str
     target: str
+
 
 class CreateCourseResponse(BaseModel):
     course: Course
@@ -130,9 +137,6 @@ class CreateCourseResponse(BaseModel):
 #endregion
 
 
-
-
-
 class NodeProgressDetails(BaseModel):
     node_id: str
-    completed_content: List[str]
+    node_complete: bool

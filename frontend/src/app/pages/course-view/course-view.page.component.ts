@@ -1,33 +1,36 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { DialogModule } from 'primeng/dialog';
-import { AvatarModule } from 'primeng/avatar';
-import { ButtonModule } from 'primeng/button';
-import { SidebarModule } from 'primeng/sidebar';
-import { TooltipModule } from 'primeng/tooltip';
-import { SpeedDialModule } from 'primeng/speeddial';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { ColorPickerModule } from 'primeng/colorpicker';
-import { BlockUIModule } from 'primeng/blockui';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { InputSwitchModule } from 'primeng/inputswitch';
-import { TagModule } from 'primeng/tag';
-import { MenuItem } from 'primeng/api';
-import { CardModule } from 'primeng/card';
-import { ActivatedRoute } from '@angular/router';
+import {Component, ElementRef, ViewChild} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {DialogModule} from 'primeng/dialog';
+import {AvatarModule} from 'primeng/avatar';
+import {ButtonModule} from 'primeng/button';
+import {SidebarModule} from 'primeng/sidebar';
+import {TooltipModule} from 'primeng/tooltip';
+import {SpeedDialModule} from 'primeng/speeddial';
+import {MultiSelectModule} from 'primeng/multiselect';
+import {ColorPickerModule} from 'primeng/colorpicker';
+import {BlockUIModule} from 'primeng/blockui';
+import {AutoCompleteModule} from 'primeng/autocomplete';
+import {InputSwitchModule} from 'primeng/inputswitch';
+import {TagModule} from 'primeng/tag';
+import {MenuItem} from 'primeng/api';
+import {CardModule} from 'primeng/card';
+import {ActivatedRoute, Router} from '@angular/router';
 
-import { FormsModule } from '@angular/forms';
+import {FormsModule} from '@angular/forms';
 
-import { GraphComponent } from '../../graph/graph.component';
-import { BlockableDiv } from '../../core/components/blockable-div/blockable-div.component';
-import { Node, Edge, Cluster, NodeOverview } from '../../graph/graph.interface';
-import { CourseService } from '../../core/services/course/course.service';
-import { InputTextModule } from 'primeng/inputtext';
-import { DividerModule } from 'primeng/divider';
-import { uid } from '../../core/utils/unique-id';
+import {GraphComponent} from '../../graph/graph.component';
+import {BlockableDiv} from '../../core/components/blockable-div/blockable-div.component';
+import {Node, Edge, Cluster, NodeOverview} from '../../graph/graph.interface';
+import {CourseService} from '../../core/services/course/course.service';
+import {InputTextModule} from 'primeng/inputtext';
+import {DividerModule} from 'primeng/divider';
+import {uid} from '../../core/utils/unique-id';
 
-import { PanelModule } from 'primeng/panel';
-import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
+import {PanelModule} from 'primeng/panel';
+import {DagreSettings, Orientation} from '../../graph/layouts/dagreCluster';
+import {NodeService} from "../../core/services/node/node.service";
+import {NodeProgressDetails} from "../../core/models/node-content.interface";
+import {take} from "rxjs/operators";
 
 /**
  * The course view page component
@@ -105,7 +108,7 @@ export class CourseViewPageComponent {
   courseid: string | any;
   public courseName: string = "";
 
-  constructor(private courseService: CourseService, private elementRef: ElementRef, private route: ActivatedRoute) {
+  constructor(private courseService: CourseService, private nodeService: NodeService, private router: Router, private elementRef: ElementRef, private route: ActivatedRoute) {
     this.courseid = this.route.snapshot.paramMap.get('id');
 
     this.nodes = [];
@@ -113,9 +116,9 @@ export class CourseViewPageComponent {
     this.clusters = [];
 
     /**
-     * 
+     *
      */
-    this.courseService.getCourses({ ids: [this.courseid] }).subscribe((courses) => {
+    this.courseService.getCourses({ids: [this.courseid]}).subscribe((courses) => {
       this.courseName = courses[0].title;
     });
   }
@@ -161,8 +164,6 @@ export class CourseViewPageComponent {
   }
 
 
-
-
   /**
    * This function fires whenever a node (or cluster) is clicked.
    * It updates the selected node, pans to that node and opens the dialog component.
@@ -178,6 +179,15 @@ export class CourseViewPageComponent {
     this.updateHighlights();
   }
 
+
+  /**
+   * If a node doesn't have an assessment, it gets set to complete when a node is opened.
+   * We handle this when the lesson is opened.
+   */
+  onLessonOpen(): void {
+    this.dialogVisible = false;
+    this.router.navigate(['/lesson', this.selectedNode.id]);
+  }
 
   //#region Filtering & Searching Methods
 
@@ -225,7 +235,7 @@ export class CourseViewPageComponent {
           case (contentType === 'Files'):
             return node.uploaded_files && node.uploaded_files?.length > 0;
           case (contentType === 'Assessment'):
-            return node.assessment_files && node.assessment_files?.length > 0;
+            return node.assessment_file && node.assessment_file?.length > 0;
         }
       }));
 
@@ -267,7 +277,9 @@ export class CourseViewPageComponent {
    * @param color
    */
   highlightCompleted = (color: string): void => {
-    if (!this.showComplete) { return; }
+    if (!this.showComplete) {
+      return;
+    }
     // Use filters and maps to get completed node and edge ids
     const completedNodes = this.nodes.filter((node) => node.complete === true).map((node) => node.id!);
     const completedEdges = this.edges.filter((edge) => completedNodes.includes(edge.source)).map((edge) => edge.id!);
@@ -283,8 +295,12 @@ export class CourseViewPageComponent {
    * @param color
    */
   highlightPreRequisites = (selectedNode: Node, color: string): void => {
-    if (!this.showPreReqs) { return; }
-    if (!selectedNode) { return; }
+    if (!this.showPreReqs) {
+      return;
+    }
+    if (!selectedNode) {
+      return;
+    }
     const preReqs: string[] = this.getPreRequisites(selectedNode);
     this.setNodeColor(preReqs, color);
 
@@ -301,10 +317,12 @@ export class CourseViewPageComponent {
    */
   setNodeColor = (nodeIds: string[], color: string): void => {
     this.nodes = this.nodes.map(node => {
-      if (!node.id) { return node; }
+      if (!node.id) {
+        return node;
+      }
 
       if (nodeIds.includes(node.id)) {
-        return { ...node, color: color };
+        return {...node, color: color};
       }
       return node;
     });
@@ -318,10 +336,12 @@ export class CourseViewPageComponent {
    */
   setEdgeColor = (edgeIds: string[], color: string): void => {
     this.edges = this.edges.map(edge => {
-      if (!edge.id) { return edge; }
+      if (!edge.id) {
+        return edge;
+      }
 
       if (edgeIds.includes(edge.id)) {
-        return { ...edge, color: color };
+        return {...edge, color: color};
       }
       return edge;
     });

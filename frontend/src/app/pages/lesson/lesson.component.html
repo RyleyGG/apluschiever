@@ -1,131 +1,117 @@
 <div style="display: grid; grid-template-columns: 60% 40%; gap: 1.5em; padding: 1.5em; overflow-x: visible;">
 
-    <section style="grid-column: 1 / 2; overflow-x: visible;">
-        <h1>{{title}}</h1>
-            <div style="margin-top: 15px;" *ngIf="fullScreen">
-                <div style="background-color: var(--primary-color);  width: 95%; margin: auto; color: white; height: 50px; display:flex; border-top-left-radius: 20px; border-top-right-radius: 20px; justify-content:space-between; padding: 7px;">
-                    <h2 style="margin-top: 7px;
-                        height: 30px;
-                        width: 70%;
-                        overflow: hidden;
-                        text-overflow: ellipsis;">
-                      {{ fullScreen.title }}
-                    </h2>
-                    <div style="justify-content: flex-end;">
-                      <p-button *ngIf="fullScreen" type="button" class="fsbutton" [rounded]="true" icon="pi pi-times" (click)="fullScreen = false"></p-button>
-                    </div>
-                  </div>
-                <div style="height: 630px; width: 95%; margin: auto;"  *ngIf="fullScreen.componentType === fileComp">
-                    <app-fileviewer [param]="fullScreen.input"></app-fileviewer>
-                </div>
-                <div style="height: 630px; width: 95%; margin: auto;"  *ngIf="fullScreen.componentType === thirdComp">
-                    <app-thirdparty [param]="fullScreen.input"></app-thirdparty>
-                </div>
-                <div style="height: 630px; width: 95%; margin: auto;"  *ngIf="fullScreen.componentType === quizComp">
-                    <quiz></quiz>
-                </div>
-            </div>
-            <div *ngIf="lessonComponentArray.length == 0">
-                <div class="noContent" *ngIf="loaded">
-                    <img src="../../assets/sadgator.gif" alt="Image Description" width="500px" height="550px">
-                    <h2>This lesson page is empty!</h2>
-                </div>
-                <div class="loading" *ngIf="!loaded">
-                    <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="6" fill="var(--surface-ground)" animationDuration=".7s"></p-progressSpinner>
-                </div>
-            </div>
-            <div *ngIf="!fullScreen && !(lessonComponentArray.length == 0)" class="leftSide">
-                <div class="description">
-                    <p *ngIf="desc" style="font-size: 1.5rem; font-weight: 600; margin: 0;">Lesson Description</p>
-                    <div [innerHTML]="desc"></div>
-                        <p-button [rounded]="true" type="button" (click)="showObjectives=!showObjectives">
-                            {{ showObjectives ? 'See Less' : 'View Lesson Objectives' }}
-                            <i *ngIf="!showObjectives" style="margin-top: 2px; margin-left:4px;" class="pi pi-angle-down" ></i>
-                        <i *ngIf="showObjectives" style="margin-top: 1px; margin-left:4px;" class="pi pi-angle-up" ></i>
-                        </p-button>
-                        <div class="objectives" *ngIf="showObjectives">
-                            <!--TODO remove hardcoded objectives-->
-                            <h2 style="margin-left: 5px; ">Lesson Objectives</h2>
-                            <ul >
-                                <li>Understand the Pythagorean theorem</li>
-                                <li>Learn how to apply the Pythagorean theorem correctly</li>
-                                <li>Explore different variations of the pythagorean theorem</li>
-                                <li>Practice solving problems using the pythagorean theorem</li>
-                            </ul>
-                        </div>
-                </div>
-        <div class="grid my-courses-container" *ngIf="lessonComponentArray.length">
-                <div *ngFor="let component of lessonComponentArray; let i = index">
-                    <div pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)"  style="background-color: var(--primary-color); color: white; height: 50px; display:flex; border-top-left-radius: 20px; border-top-right-radius: 20px; justify-content:space-between; padding: 7px;">
-                        <h4 style="margin-top: 9px; height: 20px;
-                        width: 70%;
-                        overflow: hidden;
-                        text-overflow: ellipsis;">
-                          {{ component.title }}
-                    </h4>
-                        <div style="justify-content: flex-end;">
-                          <p-button *ngIf="component.componentType == thirdComp" type="button" class="fsbutton" [rounded]="true" icon="pi pi-link" (click)="link(component.input)"></p-button>
-                          <p-button *ngIf="!fullScreen" type="button" class="fsbutton" [rounded]="true" icon="pi pi-window-maximize" (click)="maximize(component.componentType, component.input, component.title)"></p-button>
-                          <p-button *ngIf="fullScreen" type="button" class="fsbutton" [rounded]="true" icon="pi pi-times" (click)="fullScreen = false"></p-button>
-                          <p-button *ngIf="component.minimize" type="button" class="fsbutton" [rounded]="true" icon="pi pi-angle-down" (click)="component.minimize = !component.minimize"></p-button>
-                          <p-button *ngIf="!component.minimize" type="button" class="fsbutton" [rounded]="true" icon="pi pi-angle-up" (click)="component.minimize = !component.minimize"></p-button>
-                        </div>
-                      </div>
-                    <div *ngIf="component.componentType === fileComp">
-                          <div style="height: 400px;" *ngIf="!component.minimize">
-                            <app-fileviewer [param]="component.input"></app-fileviewer>
-                          </div>
-                    </div>
-                    <div *ngIf="component.componentType === quizComp">
-                        <div style="height: 400px;" *ngIf="!component.minimize">
-                      <quiz></quiz>
-                      </div>
-                  </div>
-                    <div *ngIf="component.componentType === thirdComp">
-                          <div style="height: 400px;" *ngIf="!component.minimize">
-                        <app-thirdparty [param]="component.input"></app-thirdparty>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <section style="grid-column: 1 / 2; overflow-x: visible;">
+    <h1>{{ title }}</h1>
+    <div style="margin-top: 15px;" *ngIf="fullScreen">
+      <div
+        style="background-color: var(--primary-color);  width: 95%; margin: auto; color: white; height: 50px; display:flex; border-top-left-radius: 20px; border-top-right-radius: 20px; justify-content:space-between; padding: 7px;">
+        <h2 style="margin-top: 7px;">{{ fullScreen.title }}</h2>
+        <div style="justify-content: flex-end;">
+          <p-button *ngIf="fullScreen" type="button" class="fsbutton" [rounded]="true" icon="pi pi-times"
+            (click)="fullScreen = null" />
         </div>
-    </section>
+      </div>
 
-    <!--For some reason padding and grid gap don't play nice, so I add the margin-right here to accomodate-->
-    <section style="grid-column: 2;  padding: 1rem;">
-        <p-card>
-                <div pDroppable="lessonContent" (onDrop)="focus()">
-                    <div *ngIf="focusComponent; else emptyBlock">
-                        <div style="background-color: var(--primary-color); color: white; height: 50px; display:flex; justify-content: space-between; border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 7px;">
-                            <h2 style="margin-top: 7px; height: 30px;
-                            width: 90%;
-                            overflow: hidden;
-                            text-overflow: ellipsis;">
-                                {{ focusComponent.title}}
-                            </h2>
-                              <p-button *ngIf="focusComponent" type="button" class="fsbutton" [rounded]="true" icon="pi pi-times" (click)="focusComponent = false"></p-button>
-                          </div>
-                        <div class="focusBox" *ngIf="focusComponent.componentType === fileComp">
-                            <app-fileviewer [param]="focusComponent.input"></app-fileviewer>
-                        </div>
-                        <div class="focusBox" *ngIf="focusComponent.componentType === thirdComp">
-                            <app-thirdparty [param]="focusComponent.input"></app-thirdparty>
-                        </div>
-                        <div class="focusBox" *ngIf="focusComponent.componentType === quizComp">
-                          <quiz></quiz>
-                      </div>
-                    </div>
-                    <ng-template  #emptyBlock>
-                        <div class="box">drop item here to focus</div>
-                    </ng-template>
-                </div>
+      <div style="height: 630px; width: 95%; margin: auto;" *ngIf="fullScreen.componentType === fileComp">
+        <app-fileviewer [param]="fullScreen.input" />
+      </div>
+      <div style="height: 630px; width: 95%; margin: auto;" *ngIf="fullScreen.componentType === thirdComp">
+        <app-thirdparty [param]="fullScreen.input" />
+      </div>
+      <div style="height: 630px; width: 95%; margin: auto;" *ngIf="fullScreen.componentType === quizComp">
+        <quiz [nodeId]="node_id" [questions]="fullScreen.input" />
+      </div>
+    </div>
+    <div *ngIf="lessonComponentArray.length == 0">
+      <div class="noContent" *ngIf="loaded">
+        <img src="../../assets/sadgator.gif" alt="Image Description" width="500px" height="550px">
+        <h2>This lesson page is empty!</h2>
+      </div>
 
-        </p-card>
-        <div class="navButton">
-            <p-button [rounded]="true" type="button" [routerLink]="['/viewer', courseId]">
-                <i  style="margin-top: 2px; margin-right :8px;" class="pi pi-arrow-left" ></i> Go Back to Course Page
-            </p-button>
+      <div class="loading" *ngIf="!loaded">
+        <p-progressSpinner styleClass="w-4rem h-4rem" strokeWidth="6" fill="var(--surface-ground)"
+          animationDuration=".7s" />
+      </div>
+    </div>
+    <div *ngIf="!fullScreen && !(lessonComponentArray.length == 0)" class="leftSide">
+      <div *ngIf="desc.length" class="description">
+        <p *ngIf="desc" style="font-size: 1.5rem; font-weight: 600; margin: 0;">Lesson Description</p>
+        <div [innerHTML]="desc"></div>
+      </div>
+
+      <div class="grid my-courses-container" *ngIf="lessonComponentArray.length">
+        <div *ngFor="let component of lessonComponentArray; let i = index">
+          <div pDraggable="lessonContent" pDroppable="lessonContent" (onDragStart)="dragStart(i)" (onDrop)="drop(i)"
+            [class.min]="component.minimize"
+            style="background-color: var(--primary-color); color: var(--primary-color-text); height: 50px; display:flex; border-top-left-radius: 20px; border-top-right-radius: 20px; justify-content:space-between; padding: 7px;">
+            <h4 style="margin-top: 9px;">{{ component.title }}</h4>
+
+            <div style="justify-content: flex-end;">
+              <p-button *ngIf="component.componentType === thirdComp" type="button" class="fsbutton" [rounded]="true"
+                icon="pi pi-link" (click)="link(component.input)" />
+
+              <p-button *ngIf="!fullScreen" type="button" class="fsbutton" [rounded]="true"
+                [icon]="!fullScreen ? 'pi pi-window-maximize' : 'pi pi-times'"
+                (click)="!fullScreen ? maximize(component.componentType, component.input, component.title) : fullScreen = null" />
+
+              <p-button type="button" class="fsbutton" [rounded]="true"
+                [icon]="component.minimize ? 'pi pi-angle-down' : 'pi pi-angle-up'"
+                (click)="component.minimize = !component.minimize" />
+            </div>
+          </div>
+
+          <div style="height: 400px;" *ngIf="component.componentType === fileComp && !component.minimize">
+            <app-fileviewer [param]="component.input" />
+          </div>
+
+          <div style="height: 400px;" *ngIf="component.componentType === quizComp && !component.minimize">
+            <quiz [nodeId]="node_id" [questions]="component.input" />
+          </div>
+
+          <div style="height: 400px;" *ngIf="component.componentType === thirdComp && !component.minimize">
+            <app-thirdparty [param]="component.input" />
+          </div>
         </div>
-        
-    </section>
+      </div>
+    </div>
+  </section>
+
+  <!--For some reason padding and grid gap don't play nice, so I add the margin-right here to accomodate-->
+  <section style="grid-column: 2;  padding: 1rem;">
+    <p-card>
+      <div pDroppable="lessonContent" (onDrop)="focus()">
+        <div *ngIf="focusComponent; else emptyBlock">
+          <div
+            style="background-color: var(--primary-color); color: var(--primary-color-text); height: 50px; display:flex; justify-content: space-between; border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 7px;">
+            <h2 style="margin-top: 7px;">
+              {{ focusComponent.title }}
+            </h2>
+            <p-button *ngIf="focusComponent" type="button" class="fsbutton" [rounded]="true" icon="pi pi-times"
+              (click)="focusComponent = null" />
+          </div>
+
+          <div class="focusBox" *ngIf="focusComponent.componentType === fileComp">
+            <app-fileviewer [param]="focusComponent.input" />
+          </div>
+          <div class="focusBox" *ngIf="focusComponent.componentType === thirdComp">
+            <app-thirdparty [param]="focusComponent.input" />
+          </div>
+          <div class="focusBox" *ngIf="focusComponent.componentType === quizComp">
+            <quiz [nodeId]="node_id" [questions]="focusComponent.input" />
+          </div>
+        </div>
+
+        <ng-template #emptyBlock>
+          <div class="box">drop item here to focus</div>
+        </ng-template>
+      </div>
+    </p-card>
+
+    <div class="navButton">
+      <p-button [rounded]="true" type="button" [routerLink]="['/viewer', courseId]">
+        <i style="margin-top: 2px; margin-right :8px;" class="pi pi-arrow-left"></i> Go Back to Course Page
+      </p-button>
+    </div>
+
+  </section>
 </div>

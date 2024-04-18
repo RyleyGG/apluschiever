@@ -12,8 +12,8 @@
     <!-- Course Name, Save, Publish, Increase Zoom, Decrease Zoom, Undo, Redo, -->
     <p *ngIf="!enableEdits" style="margin: 0 0 0 0.35em; font-weight: 700; font-size: 1.25em;">{{courseName}}</p>
     <input *ngIf="enableEdits" pInputText type="text" id="nameInput" [(ngModel)]="courseName" />
-    <p-button styleClass="p-togglebutton" icon="pi pi-pencil" (click)="this.enableEdits = !this.enableEdits" pTooltip="Edit Course"
-    tooltipPosition="bottom" />
+    <p-button styleClass="p-togglebutton" icon="pi pi-pencil" (click)="this.enableEdits = !this.enableEdits"
+      pTooltip="Edit Course" tooltipPosition="bottom" />
     <p-divider layout="vertical" [style]="{ margin: '0 0.25em', padding: '12px 0.25em' }"></p-divider>
     <p-button styleClass="p-togglebutton" icon="pi pi-save" (click)="save(false)" pTooltip="Save"
       tooltipPosition="bottom" />
@@ -34,12 +34,15 @@
     display: flex;
     align-items: center;
     padding: 1rem;
-  "><p *ngIf="!enableEdits" style="margin: 0 0 0 0; font-weight: 400; font-size: 1em;">{{courseDescription}}</p>
-  <span *ngIf="enableEdits" class="p-float-label" style="width: 100%; margin-top: 1rem">
-        <textarea id="courseDesc-input" rows="2" cols="40" pInputTextarea [(ngModel)]="courseDescription"
-          [autoResize]="true" [style]="{ width: '100%'}"></textarea>
-        <label for="courseDesc-input">Course Description</label>
-      </span></div></p-card>
+  ">
+    <p *ngIf="!enableEdits" style="margin: 0 0 0 0; font-weight: 400; font-size: 1em;">{{courseDescription}}</p>
+    <span *ngIf="enableEdits" class="p-float-label" style="width: 100%; margin-top: 1rem">
+      <textarea id="courseDesc-input" rows="2" cols="40" pInputTextarea [(ngModel)]="courseDescription"
+        [autoResize]="true" [style]="{ width: '100%'}"></textarea>
+      <label for="courseDesc-input">Course Description</label>
+    </span>
+  </div>
+</p-card>
 
 
 <div
@@ -91,8 +94,8 @@
 </graph>
 
 <!--This is a dialog component to display whenever a node is clicked.-->
-<p-dialog header="Header" [draggable]="false" (onHide)="save(false)" [(visible)]="dialogVisible" [position]="'bottomright'"
-  [style]="{ width: '33vw'}">
+<p-dialog header="Header" [draggable]="false" (onHide)="save(false)" [(visible)]="dialogVisible"
+  [position]="'bottomright'" [style]="{ width: '33vw'}">
   <ng-template pTemplate="header">
     <div class="dialog-header">
       <ng-container *ngIf="enableEdits">
@@ -201,7 +204,7 @@
       TODO: add saving of this to the backend and update file formats allowed.
     -->
     <h2 style="margin: 0.5em 0;">Upload Assessment File</h2>
-    <p-fileUpload (onSelect)="onAssessmentFileSelect($event)" name="uploadAssessmentFileUpload" accept="image/*"
+    <p-fileUpload (onSelect)="onAssessmentFileSelect($event)" name="uploadAssessmentFileUpload" accept="text/csv"
       [maxFileSize]="1000000000">
       <ng-template let-file pTemplate="file" style="display: none;"></ng-template>
       <ng-template pTemplate="content">

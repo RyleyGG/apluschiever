@@ -6,7 +6,7 @@ from pydantic import field_validator, BaseModel
 from sqlalchemy import JSON, Column
 from sqlmodel import SQLModel, Field, Relationship
 
-from models.pydantic_models import Video, UploadFile, ThirdPartyResource, RichText
+from models.pydantic_models import Video, UploadFile, ThirdPartyResource, RichText, AssessmentFile
 from services.api_utility_service import pydantic_column_type
 
 #region User Related Database Models & Tables
@@ -42,7 +42,10 @@ class User(SQLModel, table=True):
     user_type: UserType
     owned_courses: Optional[List["Course"]] = Relationship(back_populates='course_owner')
     enrolled_courses: Optional[List["Course"]] = Relationship(back_populates='enrolled_students', link_model=CourseStudentLink)
-    node_progress: Dict[uuid.UUID, List[uuid.UUID]] = Field(sa_column=Column(JSON), default={})  # Key-value of {Node ID: [Completed Content IDs]}
+    # Node progress is a list of Node IDs
+    # If a node doesn't have an assessment, completion occurs when the lesson is viewed
+    # If a node does have an assessment, completion occurs when the assessment is submitted
+    node_progress: List[uuid.UUID] = Field(default=[], sa_column=Column(pydantic_column_type(List[uuid.UUID])))
 
 #endregion
 
@@ -72,6 +75,7 @@ class Node(SQLModel, table=True):
     videos: Optional[List[Video]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[Video]])))
     rich_text_files: Optional[List[RichText]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[RichText]])))
     uploaded_files: Optional[List[UploadFile]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[UploadFile]])))
+    assessment_file: Optional[AssessmentFile] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[AssessmentFile])))
     third_party_resources: Optional[List[ThirdPartyResource]] = Field(default=None, sa_column=Column(pydantic_column_type(Optional[List[ThirdPartyResource]])))
     course_id: uuid.UUID = Field(foreign_key='Course.id')
     course: Optional["Course"] = Relationship(back_populates="nodes")
@@ -98,6 +102,7 @@ class Node(SQLModel, table=True):
         """
         return hash(self.id)
 
+
 class Course(SQLModel, table=True):
     """
     Data representing a course. A Course is composed of many nodes.
@@ -115,6 +120,7 @@ class Course(SQLModel, table=True):
     is_published: bool = Field(default=False)
 
 #endregion
+
 
 # DTO models that have to be defined here because they rely on Node or Course and therefore must init after
 class NodeOverview(BaseModel):

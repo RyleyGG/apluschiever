@@ -10,28 +10,29 @@
     padding: 0.5em;
   ">
     <!-- Course Name, Filter, Zoom To Fit -->
-    <p style="margin: 0 0 0 0.35em; font-weight: 700; font-size: 1.25em;">{{courseName}}</p>
+    <p style="margin: 0 0 0 0.35em; font-weight: 700; font-size: 1.25em;">{{ courseName }}</p>
 
     <p-divider layout="vertical" [style]="{ margin: '0 0.25em', padding: '12px 0.25em' }"></p-divider>
 
     <p-button styleClass="p-togglebutton" icon="pi pi-filter-fill" (onClick)="sidebarVisible = true;"
-      pTooltip="Apply Filters" tooltipPosition="bottom" />
+              pTooltip="Apply Filters" tooltipPosition="bottom"/>
 
     <p-button styleClass="p-togglebutton" icon="pi pi-money-bill" (onClick)="zoomGraphToFit()" pTooltip="Zoom to Fit"
-      tooltipPosition="bottom" />
+              tooltipPosition="bottom"/>
   </div>
 </p-card>
 
 <!--This displays the graph of the course.-->
 <graph #graphComponent class="course-view-graph-container" [edges]="this.edges" [nodes]="this.nodes"
-  [clusters]="this.clusters" [layoutSettings]="courseViewGraphSettings" (nodeClicked)="onNodeClick($event)"></graph>
+       [clusters]="this.clusters" [layoutSettings]="courseViewGraphSettings"
+       (nodeClicked)="onNodeClick($event)"></graph>
 
 <!--This is a dialog component to display whenever a node is clicked.-->
 <p-dialog header="Header" [draggable]="false" [(visible)]="dialogVisible" [position]="'bottomright'"
-  [style]="{ width: '33vw' }">
+          [style]="{ width: '33vw' }">
   <ng-template pTemplate="header">
     <div class="dialog-header">
-      <p-avatar image="https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png" shape="circle" />
+      <p-avatar image="https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png" shape="circle"/>
       <span class="dialog-header-text">{{ selectedNode.title }}</span>
     </div>
   </ng-template>
@@ -47,8 +48,8 @@
       <i class="pi pi-lock" style="font-size: 1.5rem"></i>
     </p-blockUI>
     <blockable-div #lessonButtonWrapper [style]="{display: 'inline-block'}">
-      <p-button id="lessonButton" [routerLink]="['/lesson', selectedNode.id]" icon="pi pi-book"
-        (click)="dialogVisible = false" label="View Lesson" pAutoFocus [autofocus]="false" [style]="{margin: '0'}" />
+      <p-button id="lessonButton" icon="pi pi-book"
+                (click)="onLessonOpen()" label="View Lesson" pAutoFocus [autofocus]="false" [style]="{margin: '0'}"/>
     </blockable-div>
   </ng-template>
 </p-dialog>
@@ -66,25 +67,31 @@
 
     <span class="p-float-label" style="margin-top: 2em;">
       <p-multiSelect [options]="nodes" optionLabel="title" [(ngModel)]="selectedNodes" [selectAll]="selectAllNodes"
-        (onChange)="updateSelectedNodes(); updateHighlights();" (onClear)="updateSelectedNodes(); updateHighlights();"
-        (onSelectAllChange)="onSelectAllNodesChange($event);" display="chip" inputId="searchByNameInput" [filter]="true"
-        dataKey="id" [style]="{'width':'100%'}" />
+                     (onChange)="updateSelectedNodes(); updateHighlights();"
+                     (onClear)="updateSelectedNodes(); updateHighlights();"
+                     (onSelectAllChange)="onSelectAllNodesChange($event);" display="chip" inputId="searchByNameInput"
+                     [filter]="true"
+                     dataKey="id" [style]="{'width':'100%'}"/>
       <label for="searchNodeNameInput">Search By Name</label>
     </span>
 
     <span *ngIf="tags.length > 0" class="p-float-label" style="margin-top: 2em;">
       <p-multiSelect [options]="tags" [(ngModel)]="selectedTags" [selectAll]="selectAllTags"
-        (onChange)="updateSelectedNodes(); updateHighlights();" (onClear)="updateSelectedNodes(); updateHighlights();"
-        (onSelectAllChange)="onSelectAllTagsChange($event);" [filter]="true" display="chip" inputId="searchByTagsInput"
-        [style]="{'width':'100%'}"></p-multiSelect>
+                     (onChange)="updateSelectedNodes(); updateHighlights();"
+                     (onClear)="updateSelectedNodes(); updateHighlights();"
+                     (onSelectAllChange)="onSelectAllTagsChange($event);" [filter]="true" display="chip"
+                     inputId="searchByTagsInput"
+                     [style]="{'width':'100%'}"></p-multiSelect>
       <label for="searchByTagsInput">Search By Tags</label>
     </span>
 
     <span *ngIf="contentTypes.length > 0" class="p-float-label" style="margin-top: 2em;">
       <p-multiSelect [options]="contentTypes" [(ngModel)]="selectedContentTypes" [selectAll]="selectAllContentTypes"
-        (onChange)="updateSelectedNodes(); updateHighlights();" (onClear)="updateSelectedNodes(); updateHighlights();"
-        (onSelectAllChange)="onSelectAllContentTypesChange($event);" display="chip" inputId="searchByContentTypeInput"
-        [filter]="true" [style]="{'width':'100%'}"></p-multiSelect>
+                     (onChange)="updateSelectedNodes(); updateHighlights();"
+                     (onClear)="updateSelectedNodes(); updateHighlights();"
+                     (onSelectAllChange)="onSelectAllContentTypesChange($event);" display="chip"
+                     inputId="searchByContentTypeInput"
+                     [filter]="true" [style]="{'width':'100%'}"></p-multiSelect>
       <label for="searchByContentTypeInput">Search By Content Type</label>
     </span>
 
@@ -94,38 +101,38 @@
     <div style="margin-top: 2em; display: flex; align-items: center;">
       <!--style is a hotfix for centering label-->
       <p-inputSwitch [(ngModel)]="showPreReqs" (onChange)="updateHighlights()" inputId="showPreReqsToggle"
-        height="28px" />
+                     height="28px"/>
       <label style="margin-left: 0.5em;" for="showPreReqsToggle">Show Pre-Requisites</label>
     </div>
 
     <div style="margin-top: 0.5em; display: flex; align-items: center;">
       <!--style of below is a hotfix for centering label-->
       <p-inputSwitch [(ngModel)]="showComplete" (onChange)="updateHighlights()" inputId="showCompleteToggle"
-        height="28px" />
+                     height="28px"/>
       <label style="margin-left: 0.5em;" for="showCompleteToggle">Show Completed</label>
     </div>
 
     <div style="margin-top: 2em; display: flex; align-items: center;">
       <p-colorPicker [(ngModel)]="selectedColor" (onChange)="updateHighlights()"
-        inputId="selectedColorPicker"></p-colorPicker>
+                     inputId="selectedColorPicker"></p-colorPicker>
       <label style="margin-left: 0.5em;" for="selectedColorPicker">Selected Node Color</label>
     </div>
 
     <div style="margin-top: 0.5em; display: flex; align-items: center;">
       <p-colorPicker [(ngModel)]="searchColor" (onChange)="updateHighlights()"
-        inputId="searchColorPicker"></p-colorPicker>
+                     inputId="searchColorPicker"></p-colorPicker>
       <label style="margin-left: 0.5em;" for="searchColorPicker">Search Node Results Color</label>
     </div>
 
     <div style="margin-top: 0.5em; display: flex; align-items: center;">
       <p-colorPicker [(ngModel)]="preReqColor" (onChange)="updateHighlights()"
-        inputId="preReqColorPicker"></p-colorPicker>
+                     inputId="preReqColorPicker"></p-colorPicker>
       <label style="margin-left: 0.5em;" for="preReqColorPicker">Pre-Requisite Node Color</label>
     </div>
 
     <div style="margin-top: 0.5em; display: flex; align-items: center;">
       <p-colorPicker [(ngModel)]="completeColor" (onChange)="updateHighlights()"
-        inputId="completeColorPicker"></p-colorPicker>
+                     inputId="completeColorPicker"></p-colorPicker>
       <label style="margin-left: 0.5em;" for="completeColorPicker">Complete Node Color</label>
     </div>
 
