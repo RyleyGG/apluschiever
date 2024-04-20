@@ -189,7 +189,7 @@ export class CourseBuilderPageComponent implements OnInit {
   save = async (and_publish: boolean): Promise<void> => {
     this.updateNodeData();
 
-    if (and_publish) {
+    if (and_publish || this.previouslyPublished) {
       const validationResult = this.detectAllCycles();
       if (validationResult.hasCycle == true) {
         this.setNodeColor(this.nodes.map((node) => node.id!), "var(--text-color)");
