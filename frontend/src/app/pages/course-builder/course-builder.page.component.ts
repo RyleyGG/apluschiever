@@ -147,6 +147,7 @@ export class CourseBuilderPageComponent implements OnInit {
    * The id of the course that is being built. Set to null or '' if the course being built is not already in the database.
    */
   courseid: string | null = null;
+  previouslyPublished: boolean = false;
 
   constructor(
     private courseService: CourseService,
@@ -167,6 +168,7 @@ export class CourseBuilderPageComponent implements OnInit {
     this.courseService.getCourse(this.courseid).subscribe((data) => {
       this.courseName = data.course.title;
       this.courseDescription = data.course.short_description || "";
+      this.previouslyPublished = data.course.is_published;
       this.constructGraphViewFromDatabase(data);
 
       // For some reason this needs to be 1 millisecond delayed at minimum for the zoom and center to apply. Probably for the CSS to update/apply
@@ -267,7 +269,7 @@ export class CourseBuilderPageComponent implements OnInit {
       short_description: this.courseDescription,
 
       course_owner_id: this.courseOwner!.id,
-      is_published: and_publish,
+      is_published: and_publish || this.previouslyPublished,
 
       nodes: [...this.nodes],
       edges: []
@@ -289,6 +291,7 @@ export class CourseBuilderPageComponent implements OnInit {
 
     this.courseService.addOrUpdateCourse(courseObj).subscribe((res: CreateCourseResponse) => {
       this.courseid = res.course.id;
+      this.previouslyPublished = res.course.is_published;
       this.constructGraphViewFromDatabase(res);
       this.addMessage({ severity: 'success', summary: 'Success', detail: 'Course saved successfully.' });
     });
