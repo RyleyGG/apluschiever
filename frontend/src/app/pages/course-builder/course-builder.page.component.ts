@@ -444,6 +444,7 @@ export class CourseBuilderPageComponent implements OnInit {
 
     this.graphComponent.panToNodeId(node.id!);
     this.dialogVisible = true;
+    console.log(this.assessmentFile);
   }
 
   /**
