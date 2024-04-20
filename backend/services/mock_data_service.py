@@ -11,7 +11,7 @@ from starlette import status
 
 from api import app
 from models.db_models import Course, Node, User, UserType, NodeParentLink, CourseStudentLink
-from models.pydantic_models import Video, RichText, SupportedThirdParties
+from models.pydantic_models import Video, RichText, ThirdPartyResource, SupportedThirdParties
 from services.api_utility_service import dbUrl, get_session
 from services.config_service import config
 
@@ -74,7 +74,7 @@ def generate_mock_users(db: Session, client: TestClient):
 
 
 def generate_mock_courses(db: Session, client: TestClient):
-    for i in range(25):
+    for i in range(10):
         mock_course = Course(title=f'Course #{i + 1}', course_owner_id=config._tests_teacher_id, is_published=True)
         db.add(mock_course)
     db.commit()
@@ -99,13 +99,17 @@ def generate_mock_nodes(db: Session, client: TestClient):
                 # Adding content
                 new_node.videos = []
                 new_node.rich_text_files = []
+                new_node.third_party_resources = []
                 for n in range(10):
-                    new_node.videos.append(Video(title='wasd', embed_link='wasd', video_source=SupportedThirdParties.YOUTUBE))
+                    new_node.rich_text_files.append(RichText(title='wasd', content='This is a rich text which can be used to display information about the lesson.'))
                     if random.choice([True, False]):
                         break
 
                 for n in range(10):
-                    new_node.rich_text_files.append(RichText(title='wasd', content='###wasd'))
+                    if random.choice([True, False]):
+                        new_node.third_party_resources.append(ThirdPartyResource(embed_link='https://www.youtube.com/embed/OSfDRqxmXAE?si=124qiWY5ajFxKIQc'))
+                    else:
+                        new_node.third_party_resources.append(ThirdPartyResource(embed_link='https://www.mathsisfun.com/whole-numbers.html'))
                     if random.choice([True, False]):
                         break
 

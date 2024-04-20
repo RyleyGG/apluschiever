@@ -61,7 +61,7 @@
                     </p-progressBar>
                     <ng-template pTemplate="footer">
                         <div style="display: flex; justify-content: space-between;">
-                            <p-button type="button" [rounded]="true" [outlined]="true" icon="pi pi-trash"
+                            <p-button type="button" [rounded]="true" *ngIf="displayedCourses != teachingCourses" [outlined]="true" icon="pi pi-trash"
                                 (click)="confirm(course.id)" />
                             <p-button *ngIf="displayedCourses != teachingCourses" label="View" [rounded]="true"
                                 [outlined]="true" [routerLink]="['/viewer', course.id]" />

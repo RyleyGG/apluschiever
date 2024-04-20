@@ -106,24 +106,28 @@ export class LessonComponent {
       this.courseId = data.course_id;
 
       // Add all the third party resources
-      data.third_party_resources.forEach((thirdparty: any) => {
-        this.lessonComponentArray.push({
-          title: "Website",
-          componentType: this.thirdComp,
-          input: thirdparty.embed_link,
-          minimize: false
+      if (data.third_party_resources) {
+        data.third_party_resources.forEach((thirdparty: any) => {
+          this.lessonComponentArray.push({
+            title: "Website",
+            componentType: this.thirdComp,
+            input: thirdparty.embed_link,
+            minimize: false
+          });
         });
-      });
+      }
 
       // Add all the uploaded files
-      data.uploaded_files.forEach((file: any) => {
-        this.lessonComponentArray.push({
-          title: file.name.substring(0, file.name.lastIndexOf('.')),
-          componentType: this.fileComp,
-          input: [file.content, file.type],
-          minimize: false
+      if (data.uploaded_files) {
+        data.uploaded_files.forEach((file: any) => {
+          this.lessonComponentArray.push({
+            title: file.name.substring(0, file.name.lastIndexOf('.')),
+            componentType: this.fileComp,
+            input: [file.content, file.type],
+            minimize: false
+          });
         });
-      });
+      }
 
       // Add and focus the assessment if one exists...
       if (data.assessment_file) {
