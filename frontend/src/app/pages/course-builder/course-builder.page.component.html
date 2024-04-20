@@ -208,11 +208,13 @@
       [maxFileSize]="1000000000">
       <ng-template let-file pTemplate="file" style="display: none;"></ng-template>
       <ng-template pTemplate="content">
-        <div *ngIf="assessmentFile">
-          <div *ngFor="let file of assessmentFile"
-            style="display: flex; align-items: center; justify-content: space-between; gap: 1em;">
-            <p>{{ file.name }} - {{ file.size }} bytes</p>
-            <p-button icon="pi pi-times" (onClick)="onRemoveAssessmentFile()" />
+        <div *ngIf="assessmentFile.length !== 0">
+          <div *ngFor="let file of assessmentFile">
+            <div *ngIf="file !== null"
+              style="display: flex; align-items: center; justify-content: space-between; gap: 1em;">
+              <p>{{ file.name }} - {{ file.size }} bytes</p>
+              <p-button icon="pi pi-times" (onClick)="onRemoveAssessmentFile()" />
+            </div>
           </div>
         </div>
       </ng-template>
