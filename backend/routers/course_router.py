@@ -50,7 +50,6 @@ async def get_course(course_id: str, db: Session = Depends(get_session), user: U
 async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_session), user: User = Depends(auth_service.validate_token)):
     # TODO: update this endpoint to only commit transaction after all parsing/uploading is done
     # this is mostly to ensure we don't upload half-baked data if assessment file parsing fails
-
     # Get reference to an existing course (if any)
     existing_course = db.exec(select(Course).where(Course.id == course.id)).first() if course.id else None
 
@@ -110,6 +109,8 @@ async def add_or_update_course(course: CreateCourse, db: Session = Depends(get_s
             new_node = Node(**node.model_dump(exclude={"id"}))
             new_node.assessment_file = new_assessment_file
             new_node.course_id = cur_course_id
+            if (len(new_node.third_party_resources) == 0):
+                new_node.third_party_resources = None
             db.add(new_node)
             db.commit()
             db.refresh(new_node)
@@ -157,6 +158,13 @@ async def get_node_overview(course_id: str, db: Session = Depends(get_session), 
     course_node_ids = [str(node.id) for node in cur_course.nodes]
     course_nodes = db.exec(select(Node).where(Node.id.in_(course_node_ids))).all()
 
+    content_types = []
+    for index, node in enumerate(course_nodes):
+        content_types.append([])
+        for key in ["rich_text_files", "uploaded_files", "third_party_resources"]:
+            if (node.model_dump().get(key) is not None and not node.model_dump().get(key)):
+                content_types[index].append(key)
+    
     node_overview = [
         NodeOverview(
             id=node.id,
@@ -165,7 +173,7 @@ async def get_node_overview(course_id: str, db: Session = Depends(get_session), 
             parent_nodes=node.parents,
             complete=node.id in user.node_progress,
             tags=node.tags,
-            content_types=[key for key in ["videos", "rich_text_files", "uploaded_files", "third_party_resources"] if node.model_dump().get(key) is not None] # We will need to update this listing with new content types as we add more support for them. Maybe this can be turned into a setting somehow?
-        ) for node in course_nodes
+            content_types=content_types[index]
+        ) for index, node in enumerate(course_nodes)
     ]
     return node_overview
