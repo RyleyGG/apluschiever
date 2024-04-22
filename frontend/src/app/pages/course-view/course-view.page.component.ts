@@ -1,36 +1,36 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {DialogModule} from 'primeng/dialog';
-import {AvatarModule} from 'primeng/avatar';
-import {ButtonModule} from 'primeng/button';
-import {SidebarModule} from 'primeng/sidebar';
-import {TooltipModule} from 'primeng/tooltip';
-import {SpeedDialModule} from 'primeng/speeddial';
-import {MultiSelectModule} from 'primeng/multiselect';
-import {ColorPickerModule} from 'primeng/colorpicker';
-import {BlockUIModule} from 'primeng/blockui';
-import {AutoCompleteModule} from 'primeng/autocomplete';
-import {InputSwitchModule} from 'primeng/inputswitch';
-import {TagModule} from 'primeng/tag';
-import {MenuItem} from 'primeng/api';
-import {CardModule} from 'primeng/card';
-import {ActivatedRoute, Router} from '@angular/router';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
+import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
+import { SidebarModule } from 'primeng/sidebar';
+import { TooltipModule } from 'primeng/tooltip';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ColorPickerModule } from 'primeng/colorpicker';
+import { BlockUIModule } from 'primeng/blockui';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { TagModule } from 'primeng/tag';
+import { MenuItem } from 'primeng/api';
+import { CardModule } from 'primeng/card';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import {FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
-import {GraphComponent} from '../../graph/graph.component';
-import {BlockableDiv} from '../../core/components/blockable-div/blockable-div.component';
-import {Node, Edge, Cluster, NodeOverview} from '../../graph/graph.interface';
-import {CourseService} from '../../core/services/course/course.service';
-import {InputTextModule} from 'primeng/inputtext';
-import {DividerModule} from 'primeng/divider';
-import {uid} from '../../core/utils/unique-id';
+import { GraphComponent } from '../../graph/graph.component';
+import { BlockableDiv } from '../../core/components/blockable-div/blockable-div.component';
+import { Node, Edge, Cluster, NodeOverview } from '../../graph/graph.interface';
+import { CourseService } from '../../core/services/course/course.service';
+import { InputTextModule } from 'primeng/inputtext';
+import { DividerModule } from 'primeng/divider';
+import { uid } from '../../core/utils/unique-id';
 
-import {PanelModule} from 'primeng/panel';
-import {DagreSettings, Orientation} from '../../graph/layouts/dagreCluster';
-import {NodeService} from "../../core/services/node/node.service";
-import {NodeProgressDetails} from "../../core/models/node-content.interface";
-import {take} from "rxjs/operators";
+import { PanelModule } from 'primeng/panel';
+import { DagreSettings, Orientation } from '../../graph/layouts/dagreCluster';
+import { NodeService } from "../../core/services/node/node.service";
+import { NodeProgressDetails } from "../../core/models/node-content.interface";
+import { take } from "rxjs/operators";
 
 /**
  * The course view page component
@@ -118,7 +118,7 @@ export class CourseViewPageComponent {
     /**
      *
      */
-    this.courseService.getCourses({ids: [this.courseid]}).subscribe((courses) => {
+    this.courseService.getCourses({ ids: [this.courseid] }).subscribe((courses) => {
       this.courseName = courses[0].title;
     });
   }
@@ -226,17 +226,21 @@ export class CourseViewPageComponent {
 
     // then add on searches by content types
     const contentTypeResults = this.nodes
-      .filter((node) => this.selectedContentTypes.some((contentType: any) => {
-        switch (contentType) {
-          case (contentType === 'Video'):
-            return node.videos && node.videos?.length > 0;
-          case (contentType === 'Text'):
-            return node.rich_text_files && node.rich_text_files?.length > 0;
-          case (contentType === 'Files'):
-            return node.uploaded_files && node.uploaded_files?.length > 0;
-          case (contentType === 'Assessment'):
-            return node.assessment_file && node.assessment_file?.length > 0;
-        }
+      .filter((node: any) => this.selectedContentTypes.some((contentType: any) => {
+        return node.content_types.includes(contentType);
+        // console.log(contentType);
+        // switch (contentType) {
+        //   case (contentType === 'video'):
+        //     return node.videos && node.videos?.length > 0;
+        //   case (contentType === 'third_party_resources'):
+        //     return node.third_party_resources && node.third_party_resources?.length > 0;
+        //   case (contentType === 'rich_text_files'):
+        //     return node.rich_text_files && node.rich_text_files?.length > 0;
+        //   case (contentType === 'uploaded_files'):
+        //     return node.uploaded_files && node.uploaded_files?.length > 0;
+        //   case (contentType === 'assessment_file'):
+        //     return node.assessment_file && node.assessment_file?.length > 0;
+        // }
       }));
 
     // take the results of the above into one big array (this.searchResults) and remove all duplicates
@@ -322,7 +326,7 @@ export class CourseViewPageComponent {
       }
 
       if (nodeIds.includes(node.id)) {
-        return {...node, color: color};
+        return { ...node, color: color };
       }
       return node;
     });
@@ -341,7 +345,7 @@ export class CourseViewPageComponent {
       }
 
       if (edgeIds.includes(edge.id)) {
-        return {...edge, color: color};
+        return { ...edge, color: color };
       }
       return edge;
     });

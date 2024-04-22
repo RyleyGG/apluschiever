@@ -10,8 +10,8 @@ from fastapi.testclient import TestClient
 from starlette import status
 
 from api import app
-from models.db_models import Course, Node, User, UserType, NodeParentLink, CourseStudentLink
-from models.pydantic_models import Video, RichText, ThirdPartyResource, SupportedThirdParties
+from models.db_models import Course, Node, User, NodeParentLink, CourseStudentLink
+from models.pydantic_models import RichText, ThirdPartyResource
 from services.api_utility_service import dbUrl, get_session
 from services.config_service import config
 
@@ -97,12 +97,13 @@ def generate_mock_nodes(db: Session, client: TestClient):
                 new_node = Node(title=f'Node {node_cnt}', short_description=f'Node {node_cnt}', course=cur_course)
 
                 # Adding content
-                new_node.videos = []
                 new_node.rich_text_files = []
                 new_node.third_party_resources = []
                 for n in range(10):
                     new_node.rich_text_files.append(RichText(title='wasd', content='This is a rich text which can be used to display information about the lesson.'))
                     if random.choice([True, False]):
+                        if len(new_node.rich_text_files) == 0:
+                            new_node.rich_text_files = None
                         break
 
                 for n in range(10):
@@ -111,6 +112,8 @@ def generate_mock_nodes(db: Session, client: TestClient):
                     else:
                         new_node.third_party_resources.append(ThirdPartyResource(embed_link='https://www.mathsisfun.com/whole-numbers.html'))
                     if random.choice([True, False]):
+                        if len(new_node.third_party_resources) == 0:
+                            new_node.third_party_resources = None
                         break
 
                 # Adding tags

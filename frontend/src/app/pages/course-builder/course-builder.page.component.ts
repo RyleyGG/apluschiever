@@ -219,8 +219,20 @@ export class CourseBuilderPageComponent implements OnInit {
         }
       });
 
+      if (node.videos === undefined || node.videos.length === 0) {
+        delete node.videos;
+      }
+
+      if (node.rich_text_files === undefined || node.rich_text_files![0] === undefined || node.rich_text_files![0].content === '') {
+        delete node.rich_text_files;
+      }
+
+      if (node.third_party_resources === undefined || node.third_party_resources === null || node.third_party_resources.length === 0) {
+        delete node.third_party_resources;
+      }
+
       // Setup the file stuff
-      if (node.uploaded_files) {
+      if (node.uploaded_files && node.uploaded_files.length > 0) {
         const newFileUploads: UploadFile[] = [];
         await Promise.all(node.uploaded_files.map(async (file: any) => {
           if (file.content) {
@@ -238,6 +250,8 @@ export class CourseBuilderPageComponent implements OnInit {
           return new Promise((resolve, reject) => resolve(""));
         }));
         node.uploaded_files = newFileUploads;
+      } else {
+        delete node.uploaded_files;
       }
 
       const file = node.assessment_file[0];
